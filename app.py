@@ -5,7 +5,7 @@ import time
 # --- 1. SETTING HALAMAN & MODERATION STYLE ---
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
-# CSS Sederhana biar tampilannya ada sentuhan Earth Tone minimalis
+# CSS
 st.markdown("""
     <style>
     .main { background-color: #fdfdfb; }
@@ -16,7 +16,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # --- 2. DATABASE TIRUAN (Mewakili data Excel Toko) ---
-# Ini data yang harusnya dibaca dari Excel, kita simpan di Pandas DataFrame
 data_gudang = {
     'nama_produk': ['White Linen Shirt', 'Beige Chino Pants', 'Sage Green Outer', 'Olive Cargo Pants'],
     'kategori_baju': ['Atasan', 'Bawahan', 'Atasan', 'Bawahan'],
@@ -27,7 +26,7 @@ data_gudang = {
 }
 df_stok = pd.DataFrame(data_gudang)
 
-# --- 3. MENU NAVIGASI (Stakeholder Map: Pembeli vs Admin) ---
+# --- 3. MENU NAVIGASI ---
 st.title("VIBE-ID 🛍️")
 st.caption("AI Smart Bundle & Visual Search Discovery Platform")
 
@@ -42,18 +41,13 @@ if menu == "Pembeli (Visual Search)":
     file_foto = st.file_uploader("Pilih foto pakaian...", type=["jpg", "jpeg", "png"])
 
     if file_foto is not None:
-        # Menampilkan foto yang di-upload pembeli
         st.image(file_foto, caption="Foto Inspirasi Kamu", use_container_width=True)
-        
-        # Tombol untuk memicu "AI" bekerja
         tombol_cari = st.button("JELAJAHI GAYA INI (Jalankan AI)")
 
         if tombol_cari:
-            # Efek Animasi Loading seolah-olah AI lagi mikir (Computer Vision sedang memproses)
             with st.spinner('Model Computer Vision sedang mendeteksi warna dan jenis pakaian...'):
-                time.sleep(2) # AI pura-pura mikir 2 detik
+                time.sleep(2) 
             
-            # Tampilan Hasil Deteksi Feature Extraction AI
             st.success("Analisis Computer Vision Berhasil!")
             
             col_deteksi1, col_deteksi2 = st.columns(2)
@@ -66,10 +60,8 @@ if menu == "Pembeli (Visual Search)":
             st.subheader("📦 Hasil Rekomendasi Smart Bundle")
             st.write("Berikut setelan baju dari gudang toko kami yang paling cocok dengan foto kamu:")
 
-            # Proses Pandas (Rule-Based Matching): Kita filter baju yang bernuansa 'Earth Tone' atau 'Casual'
-            hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Casual'] # Contoh menyaring data casual
+            hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Casual'] 
 
-            # Menampilkan produk rekomendasi dalam bentuk kolom kotak-kotak
             total_harga = 0
             for idx, row in hasil_rekomendasi.iterrows():
                 with st.container():
@@ -78,25 +70,26 @@ if menu == "Pembeli (Visual Search)":
                     total_harga += row['harga']
             
             st.markdown(f"### **Total Harga Paket: Rp {total_harga:,}**")
-            
-            # Tombol Beli
+            st.session_state.tombol_beli_muncul = True
+
+        # Mengunci posisi tombol beli di luar fungsi tombol cari agar tidak hilang saat direfresh
+        if st.session_state.get('tombol_beli_muncul', False):
+            st.write("")
             if st.button("🛒 BELI SATU PAKET"):
-                st.balloons() # Efek balon perayaan pas sukses beli
-                st.success("Transaksi Berhasil! Stok di database Excel otomatis terpotong.")
+                st.balloons()
+                st.success("🎉 Transaksi Berhasil!")
 
 # ==================== Halaman 2: SISI ADMIN ====================
 else:
     st.header("📊 Admin Dashboard & Manajemen Inventaris")
     st.write("Perbarui seluruh data produk aplikasi secara instan hanya dengan file Excel.")
 
-    # Widget Upload File Excel untuk Penjual
     file_excel = st.file_uploader("Upload File Katalog Toko (.xlsx)", type=["xlsx"])
     
     if file_excel is not None:
         st.success("File Excel berhasil diunggah! Sistem membaca data baru.")
     
     st.subheader("📋 Data Stok Gudang Saat Ini (Real-time)")
-    # Menampilkan tabel data yang ada di Pandas DataFrame (Excel)
     st.dataframe(df_stok, use_container_width=True)
     
     st.subheader("💡 AI Driven Insights (Rekomendasi Kemajuan)")
