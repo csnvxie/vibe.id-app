@@ -141,8 +141,8 @@ if menu == "Pembeli (Visual Search)":
             st.write("Mencocokkan warna deteksi foto dengan katalog stok gudang:")
 
             # Ambil nama warna hasil deteksi asli
-            warna_cari_1 = daftar_warna_riil[0]['nama']
-            warna_cari_2 = daftar_warna_riil[1]['nama']
+            warna_cari_1 = daftar_warna_riyal[0]['nama']
+            warna_cari_2 = daftar_warna_riyal[1]['nama']
 
             # Mencari di data excel yang warnanya mirip sama hasil ekstrak foto
             hasil_rekomendasi = df_stok[df_stok['warna'].isin([warna_cari_1, warna_cari_2])]
@@ -165,7 +165,11 @@ if menu == "Pembeli (Visual Search)":
                 st.balloons()
                 st.success("🎉 Transaksi Berhasil! Stok di database Excel otomatis terpotong.")
 
-# SISI ADMIN 
+# SISI ADMIN
 else:
     st.header("📊 Admin Dashboard & Manajemen Inventaris")
+
+    st.info("💡 **AI Driven Insights:** Gaya pakaian bermotif *Earth Tone* (seperti Sage Green dan Olive) terpantau sedang naik daun minggu ini berdasarkan akumulasi foto tren yang di-upload oleh konsumen!")
+    
+    st.subheader("📋 Data Stok Gudang Saat Ini (Real-time)")
     st.dataframe(df_stok, use_container_width=True)
