@@ -131,9 +131,9 @@ if menu == "Pembeli (Visual Search)":
             st.markdown("#### **🎨 Hasil Ekstraksi Warna Riil (K-Means Clustering):**")
             col_w1, col_w2 = st.columns(2)
             with col_w1:
-                st.write(f"🎨 **Warna Dominan 1:** `{daftar_warna_riyal[0]['nama']}` ({daftar_warna_riil[0]['persen']}% Cocok)")
+                st.write(f"🎨 **Warna Dominan 1:** `{daftar_warna_riyal[0]['nama']}` ({daftar_warna_riyal[0]['persen']}% Cocok)")
             with col_w2:
-                st.write(f"🎨 **Warna Dominan 2:** `{daftar_warna_riyal[1]['nama']}` ({daftar_warna_riil[1]['persen']}% Cocok)")
+                st.write(f"🎨 **Warna Dominan 2:** `{daftar_warna_riyal[1]['nama']}` ({daftar_warna_riyal[1]['persen']}% Cocok)")
 
             # REKOMENDASI PRODUK DINAMIS
             st.markdown("---")
