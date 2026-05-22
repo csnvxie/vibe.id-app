@@ -6,10 +6,10 @@ import io
 import numpy as np
 from sklearn.cluster import KMeans
 
-# --- 1. SETTING HALAMAN & STYLE ---
+#  1. SETTING HALAMAN & STYLE
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
-# --- 2. DATABASE REKOMENDASI ---
+# 2. DATABASE REKOMENDASI
 data_gudang = {
     'nama_produk': ['White Linen Shirt', 'Beige Chino Pants', 'Sage Green Outer', 'Olive Cargo Pants'],
     'kategori_baju': ['Atasan', 'Bawahan', 'Atasan', 'Bawahan'],
@@ -20,7 +20,7 @@ data_gudang = {
 }
 df_stok = pd.DataFrame(data_gudang)
 
-# --- 3. URL API YOLOv8 (Hugging Face) ---
+#  3. URL API YOLOv8 (Hugging Face)
 API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
 
 def query_ai_vision(image_bytes):
@@ -30,7 +30,7 @@ def query_ai_vision(image_bytes):
     except:
         return []
 
-# --- 4. FUNGSI RIIL DETEKSI WARNA (K-Means Clustering) ---
+#  4. FUNGSI RIIL DETEKSI WARNA (K-Means Clustering)
 def dapatkan_warna_dominan(pil_image, k=2):
     # Perkecil gambar biar prosesnya cepet gak bikin berat server
     img = pil_image.resize((100, 100))
@@ -42,7 +42,7 @@ def dapatkan_warna_dominan(pil_image, k=2):
         
     piksel = img_np.reshape(-1, 3)
     
-    # Hitung warna terbanyak pakai algoritma K-Means
+    # Hitung warna terbanyak memakai algoritma K-Means
     kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
     kmeans.fit(piksel)
     
@@ -76,13 +76,13 @@ def dapatkan_warna_dominan(pil_image, k=2):
         
     return hasil_deteksi
 
-# --- 5. MENU NAVIGASI ---
+# 5. MENU NAVIGASI 
 st.title("VIBE-ID 🛍️")
 st.caption("AI Smart Bundle & Real Visual Search Platform")
 
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli (Visual Search)", "Admin (Upload Excel)"])
 
-# ==================== SISI PEMBELI ====================
+#  SISI PEMBELI 
 if menu == "Pembeli (Visual Search)":
     st.header("🔍 Cari Gaya Outfit Kamu")
     st.write("Unggah foto inspirasi gaya kamu. AI kami akan mendeteksi jenis pakaian dan warnanya secara ASLI!")
@@ -127,24 +127,24 @@ if menu == "Pembeli (Visual Search)":
                 st.success("Analisis AI Vision Berhasil!")
                 st.write("**👕 Jenis Pakaian Terdeteksi:** Upper Garment (Atasan), Pants (Bawahan)")
 
-            # --- TAMPILKAN HASIL DETEKSI WARNA RIIL ---
+            # TAMPILKAN HASIL DETEKSI WARNA RIYAL
             st.markdown("#### **🎨 Hasil Ekstraksi Warna Riil (K-Means Clustering):**")
             col_w1, col_w2 = st.columns(2)
             with col_w1:
-                st.write(f"🎨 **Warna Dominan 1:** `{daftar_warna_riil[0]['nama']}` ({daftar_warna_riil[0]['persen']}% Cocok)")
+                st.write(f"🎨 **Warna Dominan 1:** `{daftar_warna_riyal[0]['nama']}` ({daftar_warna_riil[0]['persen']}% Cocok)")
             with col_w2:
-                st.write(f"🎨 **Warna Dominan 2:** `{daftar_warna_riil[1]['nama']}` ({daftar_warna_riil[1]['persen']}% Cocok)")
+                st.write(f"🎨 **Warna Dominan 2:** `{daftar_warna_riyal[1]['nama']}` ({daftar_warna_riil[1]['persen']}% Cocok)")
 
-            # --- REKOMENDASI PRODUK DINAMIS ---
+            # REKOMENDASI PRODUK DINAMIS
             st.markdown("---")
             st.subheader("📦 Hasil Rekomendasi Smart Bundle")
             st.write("Mencocokkan warna deteksi foto dengan katalog stok gudang:")
 
-            # Ambil nama warna hasil deteksi asli tadi
+            # Ambil nama warna hasil deteksi asli
             warna_cari_1 = daftar_warna_riil[0]['nama']
             warna_cari_2 = daftar_warna_riil[1]['nama']
 
-            # Cari di data excel yang warnanya mirip sama hasil ekstrak foto
+            # Mencari di data excel yang warnanya mirip sama hasil ekstrak foto
             hasil_rekomendasi = df_stok[df_stok['warna'].isin([warna_cari_1, warna_cari_2])]
             
             # Kalau kebetulan gak ketemu warnanya di gudang, kasih fallback biar gak kosong halaman webnya
@@ -165,7 +165,7 @@ if menu == "Pembeli (Visual Search)":
                 st.balloons()
                 st.success("🎉 Transaksi Berhasil! Stok di database Excel otomatis terpotong.")
 
-# ==================== SISI ADMIN ====================
+# SISI ADMIN 
 else:
     st.header("📊 Admin Dashboard & Manajemen Inventaris")
     st.dataframe(df_stok, use_container_width=True)
