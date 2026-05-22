@@ -60,17 +60,14 @@ def dapatkan_warna_dominan(pil_image, k=2):
         r, g, b = rgb[0], rgb[1], rgb[2]
         
         # Logika mencocokkan kedekatan warna
-        if r > 200 and g > 200 and b > 200:
+        if r > 220 and g > 220 and b > 220:
             nama_warna = "Putih"
-        elif r > 180 and g > 150 and b < 130:
+        elif r > 190 and g > 170 and 110 < b < 160:
             nama_warna = "Krem"
-        elif g > r and g > b and g > 100:
+        elif g > r and g > b and g > 110 and r < 150:
             nama_warna = "Hijau Sage"
-        elif r > 80 and g > 80 and b < 70 and r < 140:
+        elif 70 < r < 130 and 80 < g < 140 and b < 90:
             nama_warna = "Hijau Olive"
-        else:
-            # Jika warnanya di luar itu, acak ke warna terdekat di database biar sistem gak eror
-            nama_warna = np.random.choice(["Krem", "Hijau Sage", "Putih", "Hijau Olive"])
             
         hasil_deteksi.append({"nama": nama_warna, "persen": persentase[i]})
         
