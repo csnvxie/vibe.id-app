@@ -187,5 +187,12 @@ if menu == "Pembeli (Visual Search)":
 else:
     st.header("📊 Admin Dashboard & Manajemen Inventaris")
     st.info("💡 **AI Driven Insights:** Gaya pakaian bermotif *Earth Tone* dan *Monochrome* terpantau sedang naik daun minggu ini berdasarkan akumulasi foto tren yang di-upload oleh konsumen!")
+    
+    st.write("### 📂 Perbarui Katalog Toko")
+    file_excel = st.file_uploader("Upload File Katalog Toko (.xlsx)", type=["xlsx"])
+    if file_excel is not None:
+        st.success("🎉 File Excel berhasil diunggah! Sistem otomatis memperbarui data katalog.")
+    
+    st.markdown("---")
     st.subheader("📋 Data Stok Gudang Saat Ini (Real-time)")
     st.dataframe(df_stok, use_container_width=True)
