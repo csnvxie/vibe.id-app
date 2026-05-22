@@ -68,6 +68,16 @@ def dapatkan_warna_dominan(pil_image, k=2):
             nama_warna = "Hijau Sage"
         elif 70 < r < 130 and 80 < g < 140 and b < 90:
             nama_warna = "Hijau Olive"
+           
+        else:
+            # Jika warna gak jelas, sistem akan mencocokkan warna mana yang secara matematis paling dekat
+            jarak_ke_krem = abs(r-210) + abs(g-180) + abs(b-140)
+            jarak_ke_olive = abs(r-100) + abs(g-110) + abs(b-60)
+            
+            if jarak_ke_krem < jarak_ke_olive:
+                nama_warna = "Krem"
+            else:
+                nama_warna = "Hijau Olive"
             
         hasil_deteksi.append({"nama": nama_warna, "persen": persentase[i]})
         
