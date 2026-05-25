@@ -93,5 +93,4 @@ def dapatkan_warna_all(pil_image, k=2):
     total = len(labels)
     persentase = [round((c / total) * 100) for c in counts]
     
-    hasil_deteksi = []
-    for i, rgb in enumerate(warna
+    for i, rgb in enumerate(warna_pusat):
