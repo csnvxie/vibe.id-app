@@ -198,4 +198,4 @@ if menu == "Pembeli (Visual Search)":
                 st.write(f"Harga: Rp {row['harga']:,} | Stok sisa: {row['stok']}")
                 total_harga += row['harga']
             
-            st.markdown(f"### **Total Harga Paket: Rp {total_harga
+            st.markdown(f"### **Total Harga Paket: Rp {total_harga:,}**")
