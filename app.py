@@ -203,17 +203,8 @@ if menu == "Pembeli (Visual Search)":
 
         if st.session_state.get('tombol_beli_muncul', False):
             if st.button("🛒 BELI SATU PAKET"):
-                html_duit = """
-        <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
-            <marquee direction="down" scrollamount="15" style="height: 100%;"><span style="font-size:90px;">💵 💸 💵 💸</span></marquee>
-            <marquee direction="down" scrollamount="10" style="height: 100%; margin-left: 35%;"><span style="font-size:80px;">💸 💵 💸</span></marquee>
-            <marquee direction="down" scrollamount="18" style="height: 100%; margin-left: 70%;"><span style="font-size:90px;">💵 💸 💵</span></marquee>
-        </div>
-        """
-        st.markdown(html_duit, unsafe_allow_html=True)
-        # -----------------------------------------------------------
-        
-        st.success("🎉 Transaksi Berhasil! Stok di database online otomatis terpotong.")
+                st.balloons()
+                st.success("🎉 Transaksi Berhasil! Stok di database online otomatis terpotong.")
 
 # ==================== SISI ADMIN ====================
 else:
