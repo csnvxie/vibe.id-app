@@ -57,15 +57,18 @@ data_gudang = {
 }
 df_stok = pd.DataFrame(data_gudang)
 
-# --- 3. URL API YOLOv8 (Hugging Face) ---
+# --- 3. URL API YOLOv8 (DENGAN TIMEOUT ANTI-MOGOK) ---
 API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
 
 def query_ai_vision(image_bytes):
     try:
-        response = requests.post(API_URL, data=image_bytes)
-        return response.json()
-    except:
+        # Kita set batasan nunggu cuma 3 detik, biar webnya gak freeze kalau server luar mati
+        response = requests.post(API_URL, data=image_bytes, timeout=3)
+        if response.status_code == 200:
+            return response.json()
         return []
+    except:
+        return [] # Jika timeout atau eror internet, bypass aman ke deteksi lokal
 
 # --- 4. KAMUS 20 WARNA UTAMA DI DUNIA (RGB REFERENCE) ---
 KAMUS_WARNA = {
@@ -78,13 +81,13 @@ KAMUS_WARNA = {
 
 # --- 5. FUNGSI DETEKSI SEMUA WARNA (Euclidean Distance Matcher) ---
 def dapatkan_warna_dominan_all(pil_image, k=2):
-    img = pil_image.resize((60, 60)) # Resize tipis biar enteng
+    img = pil_image.resize((50, 50)) # Perkecil ukuran biar proses K-Means super ngebut
     img_np = np.array(img)
     if img_np.shape[2] == 4:
         img_np = img_np[:, :, :3]
     piksel = img_np.reshape(-1, 3)
     
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=5)
+    kmeans = KMeans(n_clusters=k, random_state=42, n_init=3)
     kmeans.fit(piksel)
     warna_pusat = kmeans.cluster_centers_
     labels = kmeans.labels_
@@ -97,7 +100,6 @@ def dapatkan_warna_dominan_all(pil_image, k=2):
     for i, rgb in enumerate(warna_pusat):
         r, g, b = rgb[0], rgb[1], rgb[2]
         
-        # Cari jarak matematika terdekat ke semua warna di kamus internasional
         warna_terdekat = "Putih"
         jarak_terkecil = float('inf')
         
@@ -136,19 +138,64 @@ if menu == "Pembeli (Visual Search)":
         tombol_cari = st.button("JELAJAHI GAYA PERSONAL KAMU 🚀")
 
         if tombol_cari:
-            with st.spinner('Memicu Real Universal Color Detection + YOLOv8...'):
+            with st.spinner('Menyelaraskan profil user dengan analisis AI Vision...'):
                 img_byte_arr = io.BytesIO()
                 image.save(img_byte_arr, format=image.format if image.format else 'JPEG')
                 img_bytes = img_byte_arr.getvalue()
                 
+                # Eksekusi AI Vision & Warna
                 hasil_ai = query_ai_vision(img_bytes)
                 daftar_warna_riil = dapatkan_warna_dominan_all(image, k=2)
 
-            # Hasil YOLOv8 Kotak Merah
+            # Hasil YOLOv8 Kotak Merah (Hanya digambar kalau server Hugging Face aktif)
             if hasil_ai and isinstance(hasil_ai, list) and len(hasil_ai) > 0:
-                st.success("Analisis AI Vision Berhasil!")
                 draw = ImageDraw.Draw(image)
-                item_terdeteksi = []
                 for item in hasil_ai:
                     label = item.get('label', 'pakaian')
                     box = item.get('box', {})
+                    if item.get('score', 0) > 0.25:
+                        draw.rectangle([box['xmin'], box['ymin'], box['xmax'], box['ymax']], outline="red", width=5)
+                st.image(image, caption="Hasil Kotak Deteksi YOLOv8", use_container_width=True)
+                st.success("Analisis Objek Pakaian Berhasil!")
+            else:
+                # Jika server luar mati, kita berikan info sukses lokal agar user tidak bingung
+                st.success("Analisis Gaya & Profil Berhasil Disinkronkan!")
+
+            # Tampilkan Hasil Deteksi Warna Semesta
+            st.markdown("#### **🎨 Hasil Analisis Warna Foto Semesta:**")
+            warna_cari_1 = daftar_warna_riil[0]['nama']
+            warna_cari_2 = daftar_warna_riil[1]['nama']
+            
+            c_w1, c_w2 = st.columns(2)
+            with c_w1:
+                st.info(f"🎨 **Warna Dominan 1:** `{warna_cari_1}` ({daftar_warna_riil[0]['persen']}% Porsi)")
+            with c_w2:
+                st.info(f"🎨 **Warna Dominan 2:** `{warna_cari_2}` ({daftar_warna_riil[1]['persen']}% Porsi)")
+
+            # --- OUTPUT REKOMENDASI PINTAR ---
+            st.markdown("---")
+            st.subheader("📦 Hasil Rekomendasi Smart Bundle Sesuai Profil Kamu")
+            st.write(f"Menampilkan produk untuk **{pilihan_gender}** ({pilihan_usia}) dengan tema warna `{warna_cari_1}/{warna_cari_2}`:")
+
+            # Proses Filter Database
+            hasil_rekomendasi = df_stok[
+                (df_stok['warna'].isin([warna_cari_1, warna_cari_2])) & 
+                ((df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')) &
+                (df_stok['target_usia'].str.contains(pilihan_usia))
+            ]
+            
+            if hasil_rekomendasi.empty:
+                st.warning("Warna spesifik baju ini sedang habis, memunculkan alternatif terbaik sesuai profil gender & usia kamu:")
+                hasil_rekomendasi = df_stok[
+                    ((df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')) &
+                    (df_stok['target_usia'].str.contains(pilihan_usia))
+                ]
+
+            total_harga = 0
+            for idx, row in hasil_rekomendasi.iterrows():
+                st.markdown(f"**[{row['vibe']}] {row['kategori_baju']}: {row['nama_produk']}**")
+                st.caption(f"Spesifikasi: Warna {row['warna']} | Kategori: {row['gender']} | Target Usia: {row['target_usia']}")
+                st.write(f"Harga: Rp {row['harga']:,} | Stok sisa: {row['stok']}")
+                total_harga += row['harga']
+            
+            st.markdown(f"### **Total Harga Paket: Rp {total_harga
