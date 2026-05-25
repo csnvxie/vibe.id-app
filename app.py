@@ -7,10 +7,14 @@ import numpy as np
 from sklearn.cluster import KMeans
 import time
 
-# --- 1. SETTING HALAMAN MURNI ---
+# ==========================================
+# 1. SETTING HALAMAN & CONFIG UTAMA
+# ==========================================
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
-# --- 2. DATABASE PRODUK LENGKAP ---
+# ==========================================
+# 2. DATABASE PRODUK DENGAN VARIASI WARNA LUAS
+# ==========================================
 data_gudang = {
     'nama_produk': [
         'White Linen Shirt', 'Beige Chino Pants', 'Sage Green Outer', 'Olive Cargo Pants',
@@ -58,39 +62,11 @@ data_gudang = {
 }
 df_stok = pd.DataFrame(data_gudang)
 
-# --- 3. KAMUS WARNA UNIVERSAL UTUH ---
+# ==========================================
+# 3. KAMUS WARNA UNIVERSAL REFERENSI RGB
+# ==========================================
 KAMUS_WARNA = {
     "Putih": (240, 240, 240), "Hitam": (20, 20, 20), "Abu-abu": (128, 128, 128),
     "Merah": (220, 30, 30), "Biru": (30, 30, 220), "Hijau": (30, 150, 30),
     "Kuning": (230, 230, 30), "Krem": (240, 220, 180), "Cokelat": (110, 70, 40),
-    "Pink": (240, 130, 180), "Ungu": (130, 30, 180), "Orange": (240, 130, 30)
-}
-
-# --- 4. FUNGSI UNTUK PROSES AI ---
-def query_ai_vision(image_bytes):
-    try:
-        API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
-        response = requests.post(API_URL, data=image_bytes, timeout=4)
-        if response.status_code == 200:
-            return response.json()
-        return []
-    except:
-        return []
-
-def dapatkan_warna_all(pil_image, k=2):
-    img = pil_image.resize((50, 50))
-    img_np = np.array(img)
-    if img_np.shape[2] == 4:
-        img_np = img_np[:, :, :3]
-    piksel = img_np.reshape(-1, 3)
-    
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=3)
-    kmeans.fit(piksel)
-    warna_pusat = kmeans.cluster_centers_
-    labels = kmeans.labels_
-    
-    counts = np.bincount(labels)
-    total = len(labels)
-    persentase = [round((c / total) * 100) for c in counts]
-    
-    for i, rgb in enumerate(warna_pusat):
+    "Pink": (240, 130, 180), "Ungu": (130, 30, 180), "Orange": (
