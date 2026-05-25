@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
+import io
 import time
 
 # ==========================================
@@ -91,82 +93,25 @@ if menu == "Pembeli":
         )
 
     st.markdown("---")
-    st.header("🎯 Langkah 2: Rekomendasi Gaya")
+    
+    # FITUR UPLOAD FOTO SUDAH KEMBALI DI SINI BRE!
+    st.header("📸 Langkah 2: Upload Foto Inspirasi")
+    file_foto = st.file_uploader(
+        "Pilih foto pakaian...", 
+        type=["jpg", "jpeg", "png"]
+    )
+    
+    if file_foto is not None:
+        img_tampil = Image.open(file_foto)
+        st.image(
+            img_tampil, 
+            caption="Foto Inspirasi Terunggah", 
+            use_container_width=True
+        )
+
+    st.markdown("---")
+    st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
     if 'beli_aktif' not in st.session_state: 
         st.session_state.beli_aktif = False
-    if 'hasil_rekomendasi' not in st.session_state: 
-        st.session_state.hasil_rekomendasi = None
-
-    if st.button("GENERATE SMART BUNDLE KAMU 🚀"):
-        with st.spinner('AI sedang meracik bundle terbaik...'):
-            time.sleep(1)
-            
-            # AMAN: Dipecah kecil-kecil ke bawah biar tidak kepotong lagi!
-            g_user = pilihan_gender
-            u_user = pilihan_usia
-            
-            f_g = (df_stok['gender'] == g_user) | (df_stok['gender'] == 'Unisex')
-            
-            # Pake string query super pendek biar gak ke kanan
-            f_u = df_stok['target_usia'].str.contains(
-                u_user
-            )
-            
-            res = df_stok[f_g & f_u]
-            
-            if res.empty:
-                res = df_stok.head(2)
-                
-            st.session_state.hasil_rekomendasi = res
-            st.session_state.beli_aktif = True
-
-    if st.session_state.beli_aktif:
-        st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID")
-        
-        total_harga = 0
-        df_hasil = st.session_state.hasil_rekomendasi
-        for idx, row in df_hasil.iterrows():
-            st.markdown(f"**[{row['vibe']}] {row['nama_produk']}**")
-            st.caption(f"Kategori: {row['kategori_baju']} | Warna: {row['warna']}")
-            st.write(f"Harga: Rp {row['harga']:,}")
-            total_harga += row['harga']
-            st.markdown("")
-        
-        st.markdown(f"### **Total Harga Bundle: Rp {total_harga:,}**")
-        
-        if st.button("🛒 BELI SATU PAKET INI"):
-            st.balloons()
-            c_duit = st.empty()
-            for _ in range(2):
-                c_duit.markdown("<h1 style='text-align:center;'>💰 💸 💵</h1>", unsafe_allow_html=True)
-                time.sleep(0.3)
-                c_duit.markdown("<h1 style='text-align:center;'>💸 💵 💰</h1>", unsafe_allow_html=True)
-                time.sleep(0.3)
-            c_duit.empty()
-            st.success("🎉 TRANSAKSI BERHASIL! Cuan mengalir deras!")
-            st.session_state.beli_aktif = False
-
-# ==================== SISI ADMIN ====================
-else:
-    st.header("📊 Admin Dashboard")
-    
-    t_ins = (
-        "💡 **AI Driven Insights:** "
-        "Segmen **Gen Z Wanita** minggu ini "
-        "mendominasi tren pasar dengan gaya *Y2K Streetwear*!"
-    )
-    st.info(t_ins)
-    
-    st.write("### 📂 Perbarui Katalog Toko")
-    file_excel = st.file_uploader(
-        "Upload Katalog (.xlsx)", 
-        type=["xlsx"]
-    )
-    if file_excel is not None:
-        st.success("🎉 Berhasil memperbarui katalog gudang!")
-        
-    st.markdown("---")
-    st.subheader("📋 Data Stok Gudang Saat Ini")
-    st.dataframe(df_stok, use_container_width=True)
-    
+    if 'hasil_rekomendasi' not in st.session_state:
