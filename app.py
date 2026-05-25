@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-from PIL import Image
-import io
 import time
 
 # ==========================================
@@ -94,7 +92,6 @@ if menu == "Pembeli":
 
     st.markdown("---")
     
-    # FITUR UPLOAD FOTO SUDAH KEMBALI DI SINI BRE!
     st.header("📸 Langkah 2: Upload Foto Inspirasi")
     file_foto = st.file_uploader(
         "Pilih foto pakaian...", 
@@ -112,6 +109,5 @@ if menu == "Pembeli":
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
-    if 'beli_aktif' not in st.session_state: 
-        st.session_state.beli_aktif = False
-    if 'hasil_rekomendasi' not in st.session_state:
+    # TRIK JITU: Inisialisasi satu baris datar, bebas kutukan IndentationError!
+    if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif
