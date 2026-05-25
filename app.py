@@ -1,7 +1,5 @@
 import streamlit as st
 import pandas as pd
-from PIL import Image
-import io
 import time
 
 # ==========================================
@@ -14,7 +12,7 @@ st.set_page_config(
 )
 
 # ==========================================
-# 2. DATABASE PRODUK (VERSI VERTIKAL)
+# 2. DATABASE PRODUK (VERSI ULTRA AMAN)
 # ==========================================
 data_gudang = {
     'nama_produk': [
@@ -62,25 +60,48 @@ data_gudang = {
         129000, 249000, 279000, 189000,
         159000, 139000, 329000, 229000,
         259000, 299000, 179000, 219000
-    ],
-    'stok': [
-        15, 10, 7, 12, 20, 14, 9, 11, 8, 12, 6, 13, 7, 5, 6, 10
     ]
 }
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. KAMUS WARNA UNIVERSAL
+# 3. MENU NAVIGASI UTAMA APLIKASI
 # ==========================================
-KAMUS_WARNA = {
-    "Putih": (240, 240, 240), "Hitam": (20, 20, 20), 
-    "Abu-abu": (128, 128, 128), "Merah": (220, 30, 30), 
-    "Biru": (30, 30, 220), "Hijau": (30, 150, 30),
-    "Kuning": (230, 230, 30), "Krem": (240, 220, 180), 
-    "Cokelat": (110, 70, 40), "Pink": (240, 130, 180)
-}
+st.title("VIBE-ID 🛍️")
+st.caption("AI Smart Bundle Personalizer")
 
-# ==========================================
-# 4. FUNGSI SAMPLING WARNA AMAN & RINGAN
-# ==========================================
-def dapatkan_warna_all(pil
+menu = st.sidebar.radio(
+    "Pilih Hak Akses:", 
+    ["Pembeli", "Admin"]
+)
+
+# ==================== SISI PEMBELI ====================
+if menu == "Pembeli":
+    st.header("👤 Langkah 1: Profil Gaya Kamu")
+    col1, col2 = st.columns(2)
+    with col1:
+        pilihan_gender = st.selectbox(
+            "Gender Kamu:", 
+            ["Pria", "Wanita"]
+        )
+    with col2:
+        pilihan_usia = st.selectbox(
+            "Target Usia:", 
+            ["Gen Z", "Milenial / Gen Z"]
+        )
+
+    st.markdown("---")
+    st.header("🎯 Langkah 2: Rekomendasi Gaya")
+    
+    if 'beli_aktif' not in st.session_state: 
+        st.session_state.beli_aktif = False
+    if 'hasil_rekomendasi' not in st.session_state: 
+        st.session_state.hasil_rekomendasi = None
+
+    if st.button("GENERATE SMART BUNDLE KAMU 🚀"):
+        with st.spinner('AI sedang meracik bundle terbaik...'):
+            time.sleep(1) # Efek loading AI biar keren
+            
+            # Logic Filter Berbasis Gaya & Profil
+            f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
+            f_u = df_stok['target_usia'].str.contains(pilihan_usia
