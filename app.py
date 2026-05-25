@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
+import io
 import time
 
 # ==========================================
@@ -99,6 +101,7 @@ if menu == "Pembeli":
     )
     
     if file_foto is not None:
+        # FIKS: Modul Image di atas dijamin aman dan terbaca sekarang!
         img_tampil = Image.open(file_foto)
         st.image(
             img_tampil, 
@@ -109,5 +112,11 @@ if menu == "Pembeli":
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
-    # TRIK JITU: Inisialisasi satu baris datar, bebas kutukan IndentationError!
-    if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif
+    if 'beli_aktif' not in st.session_state: 
+        st.session_state.beli_aktif = False
+    if 'hasil_rekomendasi' not in st.session_state: 
+        st.session_state.hasil_rekomendasi = None
+
+    if st.button("RUN AI VISUAL MATCHING 🚀"):
+        if file_foto is None:
+            st.
