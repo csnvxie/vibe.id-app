@@ -3,8 +3,6 @@ import pandas as pd
 import requests
 from PIL import Image
 import io
-import numpy as np
-from sklearn.cluster import KMeans
 import time
 
 # ==========================================
@@ -91,41 +89,8 @@ KAMUS_WARNA = {
 }
 
 # ==========================================
-# 4. FUNGSI DETEKSI AI VISION (STRUKTUR FIKS)
+# 4. FUNGSI DETEKSI AI VISION 
 # ==========================================
 def query_ai_vision(image_bytes):
     try:
-        url_hf = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
-        response = requests.post(url_hf, data=image_bytes, timeout=4)
-        if response.status_code == 200:
-            return response.json()
-        return []
-    except:
-        return []
-
-# ==========================================
-# 5. FUNGSI DETEKSI WARNA
-# ==========================================
-def dapatkan_warna_all(pil_image, k=2):
-    img = pil_image.resize((50, 50))
-    img_np = np.array(img)
-    if img_np.shape[2] == 4:
-        img_np = img_np[:, :, :3]
-    piksel = img_np.reshape(-1, 3)
-    
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=3)
-    kmeans.fit(piksel)
-    warna_pusat = kmeans.cluster_centers_
-    labels = kmeans.labels_
-    
-    counts = np.bincount(labels)
-    total = len(labels)
-    
-    persentase = []
-    for c in counts:
-        p_hitung = (c / total) * 100
-        persentase.append(round(p_hitung))
-    
-    hasil_deteksi = []
-    for i, rgb in enumerate(warna_pusat):
-        r,
+        url_hf = "https
