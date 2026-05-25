@@ -61,4 +61,7 @@ df_stok = pd.DataFrame(data_gudang)
 # --- 3. KAMUS WARNA ---
 KAMUS_WARNA = {
     "Putih": (240, 240, 240), "Hitam": (20, 20, 20), "Abu-abu": (128, 128, 128),
-    "Merah": (220, 30, 30), "Biru": (30, 30, 220), "
+    "Merah": (220, 30, 30), "Biru": (30, 30, 220), "Hijau": (30, 150, 30),
+    "Kuning": (230, 230, 30), "Krem": (240, 220, 180), "Cokelat": (110, 70, 40),
+    "Pink": (240, 130, 180), "Ungu": (130, 30, 180), "Orange": (240, 130, 30)
+}
