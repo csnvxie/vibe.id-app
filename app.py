@@ -179,7 +179,7 @@ if menu == "Pembeli":
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
     # Tombol Analisis
-  if st.button("RUN AI VISUAL MATCHING 🚀"):
+        if st.button("RUN AI VISUAL MATCHING 🚀"):
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
         else:
