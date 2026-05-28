@@ -220,7 +220,7 @@ if menu == "Pembeli":
             elif any(w in label for w in ["white", "cream"]): warna_fix = "Putih"
             elif any(w in label for w in ["black", "gray", "grey"]): warna_fix = "Hitam"
                     
-                st.session_state.warna_terdeteksi = warna_fix
+            st.session_state.warna_terdeteksi = warna_fix
                 
                 # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
                 if warna_fix == "Pink":
