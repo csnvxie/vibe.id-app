@@ -126,16 +126,28 @@ if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
 # 4. MODULAR FUNCTIONS
-def query_ai_vision(image_bytes):
+def get_dominant_color(image_bytes):
     try:
-        response = requests.post(API_URL, data=image_bytes, timeout=10)
-        if response.status_code == 200:
-            hasil = response.json()
-            
-            if isinstance(hasil, list):
-                return sorted(hasil, key=lambda x: x['score'], reverse=True)
-        return []
-    except: return []
+        # Buka gambar dan ubah ke RGB
+        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        # Resize kecil (50x50) agar prosesnya sangat cepat dan tidak bikin aplikasi berat
+        img = img.resize((50, 50))
+        data = np.array(img)
+        
+        # Ambil rata-rata nilai R, G, B
+        r, g, b = np.mean(data, axis=(0, 1))
+        
+        # Logika klasifikasi warna (Threshold sederhana)
+        if r > 180 and g < 150 and b < 150: return "Merah"
+        if r > 200 and g > 150 and b < 150: return "Krem"
+        if r > 180 and g < 150 and b > 180: return "Pink"
+        if r < 100 and g > 150 and b < 100: return "Hijau"
+        if r < 100 and g < 100 and b > 150: return "Biru"
+        if r > 200 and g > 200 and b > 200: return "Putih"
+        if r < 80 and g < 80 and b < 80: return "Hitam"
+        return "Hitam" # Default aman
+    except:
+        return "Hitam"
 
 def extract_color_from_name(filename):
     fn = filename.lower()
@@ -203,24 +215,25 @@ if menu == "Pembeli":
                     img_open.save(img_arr, format='JPEG')
                     img_bytes = img_arr.getvalue()
                 
-                # KIRIM BYTES KE API
-                hasil_ai = query_ai_vision(img_bytes)
-
-                st.write("Hasil Mentah AI:", hasil_ai)
+                # Ganti dengan fungsi baru
+        warna_fix = get_dominant_color(img_bytes)
+        st.session_state.warna_terdeteksi = warna_fix
+        
+        st.success(f"AI Berhasil Mendeteksi Warna Dominan: {warna_fix}")
+        
+        # Logika mapping vibe langsung ke warna_fix
+        if warna_fix == "Pink": 
+            res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
+        elif warna_fix == "Hijau": 
+            res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
+        # ... lanjutin elif untuk warna lainnya ...
+        else:
+            res_final = df_stok[df_stok['vibe'] == 'Basic'].head(2)
                 
                 # LOGIKA DETEKSI WARNA
-        warna_fix = "Hitam" # Default
-        if hasil_ai:
-            label = hasil_ai[0].get('label', '').lower()
-            
-            if any(w in label for w in ["pink", "magenta"]): warna_fix = "Pink"
-            elif any(w in label for w in ["green", "lime"]): warna_fix = "Hijau"
-            elif any(w in label for w in ["blue", "navy"]): warna_fix = "Biru"
-            elif any(w in label for w in ["beige", "tan", "brown"]): warna_fix = "Krem"
-            elif any(w in label for w in ["white", "cream"]): warna_fix = "Putih"
-            elif any(w in label for w in ["black", "gray", "grey"]): warna_fix = "Hitam"
-                    
+            warna_fix = get_dominant_color(img_bytes) 
             st.session_state.warna_terdeteksi = warna_fix
+            st.success(f"AI Berhasil Mendeteksi Warna Dominan: {warna_fix}")
                 
             # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
             if warna_fix == "Pink":
