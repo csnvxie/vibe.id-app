@@ -73,51 +73,51 @@ data_gudang = {
     # BERIKUT ADALAH 40 URL FOTO REALISTIS DAN TETAP (FIXED) SESUAI NAMA PRODUK
     'url_gambar': [
         # Monochrome (1-8)
-        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop', # Black Oversized Tee
-        'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&auto=format&fit=crop', # Dark Charcoal Jeans
-        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500&auto=format&fit=crop', # Gothic Black Hoodie
-        'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500&auto=format&fit=crop', # Acid Wash Denim Shorts
-        'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop', # Black Varsity Jacket
-        'https://images.unsplash.com/photo-1517423568366-8b83523034fd?w=500&auto=format&fit=crop', # Grey Parachute Pants
-        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=500&auto=format&fit=crop', # Chunky Cyberpunk Boot
-        'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&auto=format&fit=crop', # Black Pleated Skirt
+        'https://slatehash.com/cdn/shop/products/VG-SH-46202792.jpg?v=1675584596', # Black Oversized Tee
+        'https://xcdn.next.co.uk/common/items/default/default/itemimages/3_4Ratio/product/lge/U76215s9.jpg?im=Resize', # Dark Charcoal Jeans
+        'https://techwear-division.com/cdn/shop/files/2_6ac4c254-19ef-46b3-91e0-58e15d5cdeb7.png?v=1692032454&width=800', # Gothic Black Hoodie
+        'https://www.beyondretro.com/cdn/shop/files/beyond-retro-label-womens-acid-wash-denim-shorts-1-E00970513_1200x1200.jpg?v=1742573488', # Acid Wash Denim Shorts
+        'https://www.jacketmakers.com/wp-content/uploads/2024/04/mens-chicago-bulls-black-varsity-jacket.jpg', # Black Varsity Jacket
+        'https://turntupfashion.com/cdn/shop/files/ICENGREYPANTS_2x_472d0c04-cc8d-48cc-b54b-aa84e23b47cb.png?v=1690203138', # Grey Parachute Pants
+        'https://i.pinimg.com/736x/a5/a6/cf/a5a6cf14a3e3b7d573cd6c21f5c2a46b.jpg', # Chunky Cyberpunk Boot
+        'https://cdnc.lystit.com/photos/2013/02/28/topshop-black-black-knee-length-pleat-skirt-product-1-6854524-820313209.jpeg', # Black Pleated Skirt
         # Earth Tone (9-16)
-        'https://images.unsplash.com/photo-1616422285623-13ff0162193c?w=500&auto=format&fit=crop', # Sage Green Outer
-        'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=500&auto=format&fit=crop', # Olive Cargo Pants
-        'https://images.unsplash.com/photo-161713798427-85924c800a22?w=500&auto=format&fit=crop', # Khaki Tactical Vest
-        'https://images.unsplash.com/photo-1534215754734-18e55d13ce35?w=500&auto=format&fit=crop', # Beige Corduroy Cap
-        'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=500&auto=format&fit=crop', # Brown Knit Sweater
-        'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop', # Sand Cargo Long Skirt
-        'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=500&auto=format&fit=crop', # Forest Green Windbreaker
-        'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=500&auto=format&fit=crop', # Tan Baggy Chinos
+        'https://down-id.img.susercontent.com/file/id-11134207-7qukz-leumy5on7ikbb1', # Sage Green Outer
+        'https://fabricerie.com/wp-content/uploads/2025/04/cargo-pants-in-olive-minimalist-style-aaaaa-25100.jpg', # Olive Cargo Pants
+        'https://shop.militaryrange.eu/Content/custom/img_products/8567khi.jpg', # Khaki Tactical Vest
+        'https://img.hatshopping.com/Uni-Ellipse-Corduroy-Cap-by-Oakley-beige.72024_rf15.jpg', # Beige Corduroy Cap
+        'https://i.pinimg.com/originals/fc/2e/a6/fc2ea6399e778aad72f98cd82d40a304.jpg', # Brown Knit Sweater
+        'https://cdnimg.emmiol.com/E/202210/img_original-GCI0047BO-25071101229.jpg', # Sand Cargo Long Skirt
+        'https://di2ponv0v5otw.cloudfront.net/posts/2026/01/26/697780bd44ad4d53941651da/m_697780cca951059a01dbd8b0.jpg', # Forest Green Windbreaker
+        'https://paul-smith-products-ressh.cloudinary.com/image/upload/v1743762629/STILL/M2R/M2R-364Z-P21477-61/M2R-364Z-P21477-61_10.jpg', # Tan Baggy Chinos
         # Y2K Streetwear (17-24)
-        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=500&auto=format&fit=crop', # Oversized Crop Varsity
+        'https://i.pinimg.com/originals/29/d0/3d/29d03dc7dc46a750dc0e489af1b52698.jpg', # Oversized Crop Varsity
         'https://images.unsplash.com/photo-1574169208507-84376144848b?w=500&auto=format&fit=crop', # Plated Cargo Skirt
         'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500&auto=format&fit=crop', # Graffiti Graphic Hoodie
         'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=500&auto=format&fit=crop', # Wide-Leg Jorts
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&auto=format&fit=crop', # Cyber Y2K Baby Tee
+        'https://www.cherrykitten.com/cdn/shop/products/2000s-baby-y2k-baby-tee-841182.jpg?v=1689566582&width=1445', # Cyber Y2K Baby Tee
         'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop', # Low Rise Denim Pants
         'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=500&auto=format&fit=crop', # Full-Zip Rhinestone Hoodie
         'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=500&auto=format&fit=crop', # Star Patchwork Jeans
         # Casual (25-32)
-        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop', # White Linen Shirt
-        'https://images.unsplash.com/photo-1621241804687-a613661138a4?w=500&auto=format&fit=crop', # Beige Chino Pants
+        'https://images.squarespace-cdn.com/content/v1/57baef93cd0f68daca6084ae/facc3240-5ebf-41cc-9421-87eaf1221a76/unnamed+(3).png', # White Linen Shirt
+        'https://i.pinimg.com/736x/a9/68/d2/a968d2a203cb0e271d8a9ab7adb10501.jpg', # Beige Chino Pants
         'https://images.unsplash.com/photo-1616422549248-f9909241fc90?w=500&auto=format&fit=crop', # Navy Cable Knit Vest
-        'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&auto=format&fit=crop', # Striped Relaxed Shirt
+        'https://handcmediastorage.blob.core.windows.net/productimages/RL/RLSLZ002-N03-150438-1400px-1820px.jpg', # Striped Relaxed Shirt
         'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500&auto=format&fit=crop', # Black Tailored Trousers
-        'https://images.unsplash.com/photo-1539185441755-769473a23570?w=500&auto=format&fit=crop', # White Classic Loafers
-        'https://images.unsplash.com/photo-1610410052321-df626c9dfeb9?w=500&auto=format&fit=crop', # Polo Knit Sweater
-        'https://images.unsplash.com/photo-1560243563-062bfc001d68?w=500&auto=format&fit=crop', # Cream Linen Shorts
+        'https://cdna.lystit.com/photos/shoppremiumoutlets/8f095f8a/dries-van-noten-white-Penny-Loafers.jpeg', # White Classic Loafers
+        'https://clothbase.s3.amazonaws.com/uploads/99780a6a-c878-4289-a5ad-a374b9b96015/image.jpg', # Polo Knit Sweater
+        'https://www.careofcarl.com/bilder/artiklar/zoom/28911311r_1.jpg?m=1739969887', # Cream Linen Shorts
         # Soft Girl Coquette (33-36)
-        'https://images.unsplash.com/photo-1624206112918-f140f087f9b5?w=500&auto=format&fit=crop', # Pastel Pink Cardigan
-        'https://images.unsplash.com/photo-1509551388413-e18d0ac5d495?w=500&auto=format&fit=crop', # White Tennis Skirt
+        'https://i.pinimg.com/originals/e3/54/28/e35428a6ac29a44488c1c07e9cf7d0e0.jpg', # Pastel Pink Cardigan
+        'https://i.pinimg.com/originals/a3/84/78/a38478da472595ca8687a2fa0d2f2944.jpg', # White Tennis Skirt
         'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?w=500&auto=format&fit=crop', # Ribbon Lace Blouse
-        'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=500&auto=format&fit=crop', # Floral Mini Skirt
+        'https://cdn-img.prettylittlething.com/7/5/8/c/758c304aa8ccc973effb3f480a50982322d8d384_cnj8338_6.jpg?imwidth=600', # Floral Mini Skirt
         # Sporty (37-40)
-        'https://images.unsplash.com/photo-1511406597666-317ec5c1001a?w=500&auto=format&fit=crop', # Vintage Football Jersey
-        'https://images.unsplash.com/photo-1483726234671-611891d1af8b?w=500&auto=format&fit=crop', # Track Nylon Pants
-        'https://images.unsplash.com/photo-1637568136361-b1e16972e73f?w=500&auto=format&fit=crop', # Retro Adidas Samba
-        'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500&auto=format&fit=crop'  # Sporty Zip-Up Tracktop
+        'https://footballshirtunion.com/cdn/shop/collections/IMG_4247_225786a4-66ea-4476-b666-84548f2e56fd.jpg?v=1741495514', # Vintage Football Jersey
+        'https://i.pinimg.com/originals/64/38/bf/6438bf57cc35958f28f62990efa7a89d.jpg', # Track Nylon Pants
+        'https://www.copclub.com.br/cdn/shop/products/adidas-samba-og-white-black_16652247_43006938_2048.jpg', # Retro Adidas Samba
+        'https://cdn-images.farfetch-contents.com/19/52/87/24/19528724_43576108_1000.jpg'  # Sporty Zip-Up Tracktop
     ]
 }
 df_stok = pd.DataFrame(data_gudang)
