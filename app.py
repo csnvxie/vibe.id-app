@@ -275,14 +275,32 @@ if menu == "Pembeli":
                     }
                 </style>
             """
-            # AI Loop generator untuk sebar 50 koin acak di layar
-        import random
-        for _ in range(50):
-            left_pos = random.randint(0, 95)
-            delay = random.uniform(0, 1.5)
-            speed = random.uniform(1.8, 2.8)
-            coin_html += f"<div class='coin' style='left: {left_pos}vw; animation-delay: {delay}s; animation-duration: {speed}s;'>🪙</div>"
-        coin_html += "</div>"
+           # CARA BARU: Jauh lebih simpel dan dijamin bebas eror tanda kutip!
+        coin_html = """
+        <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
+            <style>
+                @keyframes drop {
+                    0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+                    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+                }
+                .coin {
+                    position: absolute;
+                    font-size: 32px;
+                    animation: drop 2.5s linear infinite;
+                }
+            </style>
+            <div class="coin" style="left: 10vw; animation-delay: 0s;">🪙</div>
+            <div class="coin" style="left: 25vw; animation-delay: 0.4s;">🪙</div>
+            <div class="coin" style="left: 40vw; animation-delay: 0.2s;">🪙</div>
+            <div class="coin" style="left: 55vw; animation-delay: 0.6s;">🪙</div>
+            <div class="coin" style="left: 70vw; animation-delay: 0.1s;">🪙</div>
+            <div class="coin" style="left: 85vw; animation-delay: 0.5s;">🪙</div>
+            <div class="coin" style="left: 15vw; animation-delay: 0.8s;">🪙</div>
+            <div class="coin" style="left: 50vw; animation-delay: 0.9s;">🪙</div>
+            <div class="coin" style="left: 75vw; animation-delay: 0.3s;">🪙</div>
+        </div>
+        """
+        st.markdown(coin_html, unsafe_allow_html=True)
         
         # Eksekusi animasinya ke layar Streamlit
         st.markdown(coin_html, unsafe_allow_html=True)
