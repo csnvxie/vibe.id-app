@@ -159,7 +159,7 @@ if menu == "Pembeli":
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
-   tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
+    tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
     nama_file_referensi = ""
@@ -168,14 +168,8 @@ if menu == "Pembeli":
         foto_kamera = st.camera_input("Posisikan baju kamu di depan kamera")
         if foto_kamera is not None:
             img_file_buffer = foto_kamera
-            nama_file_referensi = "live_snapshot.jpg"  # NETRAL: Agar tidak mengunci warna tertentu
+            nama_file_referensi = "live_snapshot.jpg"
             
-    with tab_file:
-        file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
-        if file_foto is not None:
-            img_file_buffer = file_foto
-            nama_file_referensi = file_foto.name
-
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
