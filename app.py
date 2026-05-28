@@ -290,7 +290,7 @@ if menu == "Pembeli":
         st.success(f"🎉 Transaksi Berhasil! Terima Kasih atas Pembelian nya<3")
         st.session_state.beli_aktif = False
             
-            st.markdown(coin_html, unsafe_allow_html=True)
+        st.markdown(coin_html, unsafe_allow_html=True)
             
             st.success(f"🎉 Transaksi Berhasil! Terima Kasih Sudah Beli<3")
             st.session_state.beli_aktif = False
