@@ -201,6 +201,8 @@ if menu == "Pembeli":
                 
                 # KIRIM BYTES KE API
                 hasil_ai = query_ai_vision(img_bytes)
+
+                st.write("Hasil Mentah AI:", hasil_ai)
                 
                 # LOGIKA DETEKSI WARNA (Pastikan hasil_ai ada isinya)
                 warna_fix = None
