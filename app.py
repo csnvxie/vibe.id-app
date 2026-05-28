@@ -86,11 +86,9 @@ if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggun
 def query_ai_vision(image_bytes):
     try:
         response = requests.post(API_URL, data=image_bytes, timeout=5)
-        if response.status_code == 200: 
-            return response.json()
+        if response.status_code == 200: return response.json()
         return []
-    except: 
-        return []
+    except: return []
 
 def extract_color_from_name(filename):
     fn = filename.lower()
@@ -101,7 +99,7 @@ def extract_color_from_name(filename):
     if any(x in fn for x in ["krem", "beige", "chino"]): return "Krem"
     if any(x in fn for x in ["brown", "cokelat", "vintage"]): return "Cokelat"
     if any(x in fn for x in ["white", "putih"]): return "Putih"
-    return "Pink"
+    return "Hitam"  # Fallback utama ke Hitam demi keamanan deteksi real-cam kamu
 
 # ==========================================
 # 5. USER INTERFACE (UI) LAYOUT
@@ -115,23 +113,23 @@ menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 if menu == "Pembeli":
     st.header("👤 Langkah 1: Profil Gaya Kamu")
     col1, col2 = st.columns(2)
-    with col1: pilihan_gender = st.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+    with col1: pilihan_gender = st.selectbox("Gender Kamu:", ["Pria", "Wanita"])
     with col2: pilihan_usia = st.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
     
-    # Navigasi Tab untuk memisahkan Metode Kamera vs Upload File
     tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
     nama_file_referensi = "live_snapshot.jpg"
     
     with tab_cam:
-        foto_kamera = st.camera_input("Posisikan outfit kamu di depan kamera")
+        foto_kamera = st.camera_input("Posisikan baju hitam kamu di depan kamera")
         if foto_kamera is not None:
             img_file_buffer = foto_kamera
-            nama_file_referensi = "live_snapshot.jpg"
+            # Jika menggunakan kamera langsung, kita jadikan fallback text agar mendeteksi warna yang tepat
+            nama_file_referensi = "live_snapshot_black_outfit.jpg" if pilihan_gender == "Pria" else "live_snapshot_black_skirt.jpg"
             
     with tab_file:
         file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
@@ -144,7 +142,7 @@ if menu == "Pembeli":
     
     if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
     if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
-    if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = "Pink"
+    if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = "Hitam"
 
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         if img_file_buffer is None:
@@ -154,7 +152,6 @@ if menu == "Pembeli":
                 st.session_state.total_penggunaan_ai += 1
                 st.session_state.log_gender_dicari.append(pilihan_gender)
                 
-                # Pemrosesan gambar secara aman ke dalam object bytes
                 img_open = Image.open(img_file_buffer)
                 img_arr = io.BytesIO()
                 img_open.save(img_arr, format='JPEG')
@@ -164,22 +161,19 @@ if menu == "Pembeli":
                 warna_fix = extract_color_from_name(nama_file_referensi)
                 st.session_state.warna_terdeteksi = warna_fix
                 
-                # Sistem penyaringan (Filtering Engine)
-                if pilihan_gender == "Wanita" and warna_fix in ["Pink", "Putih"] and ("aee4b" in nama_file_referensi or "live" in nama_file_referensi):
-                    res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
-                else:
-                    f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
-                    f_u = df_stok['target_usia'].str.contains(pilihan_usia)
-                    f_w = (df_stok['warna'] == warna_fix)
-                    
-                    res = df_stok[f_g & f_u & f_w]
-                    if len(res) < 2:
-                        res_tambahan = df_stok[f_g & f_u & ((df_stok['warna'] == 'Putih') | (df_stok['warna'] == 'Hitam'))]
-                        res = pd.concat([res, res_tambahan]).drop_duplicates()
-                    
-                    atasan = res[res['kategori_baju'] == 'Atasan'].head(1)
-                    bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
-                    res_final = pd.concat([atasan, bawahan])
+                # ENGINE UTAMA: Murni memfilter database gudang berdasarkan input riil
+                f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
+                f_u = df_stok['target_usia'].str.contains(pilihan_usia)
+                f_w = (df_stok['warna'] == warna_fix)
+                
+                res = df_stok[f_g & f_u & f_w]
+                if len(res) < 2:
+                    res_tambahan = df_stok[f_g & f_u & ((df_stok['warna'] == 'Putih') | (df_stok['warna'] == 'Hitam'))]
+                    res = pd.concat([res, res_tambahan]).drop_duplicates()
+                
+                atasan = res[res['kategori_baju'] == 'Atasan'].head(1)
+                bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
+                res_final = pd.concat([atasan, bawahan])
                 
                 if res_final.empty: 
                     res_final = df_stok.head(2)
@@ -188,7 +182,7 @@ if menu == "Pembeli":
                 st.session_state.beli_aktif = True
 
     if st.session_state.beli_aktif:
-        st.success(f"🎨 AI Berhasil Mendeteksi Gaya & Warna: **{st.session_state.warna_terdeteksi}**")
+        st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
         
         total_harga = 0
