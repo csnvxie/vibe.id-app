@@ -152,112 +152,60 @@ def query_ai_vision(image_bytes):
             return "Warna Tidak Terdeteksi"
 
 # 5. USER INTERFACE (UI) LAYOUT
-st.title("VIBE-ID 🛍️")
-
-menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
-
-# SISI PEMBELI
 if menu == "Pembeli":
     st.caption("AI Smart Bundle Personalizer")
     st.header("👤 Langkah 1: Profil Gaya Kamu")
     col1, col2 = st.columns(2)
-    with col1: pilihan_gender = st.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-    with col2: pilihan_usia = st.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+    pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+    pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
     tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
-    nama_file_referensi = ""
-    
     with tab_cam:
         foto_kamera = st.camera_input("Posisikan baju kamu di depan kamera")
-        if foto_kamera is not None:
-            img_file_buffer = foto_kamera
-            nama_file_referensi = "live_snapshot.jpg"
-            
+        if foto_kamera: img_file_buffer = foto_kamera
     with tab_file:
         file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
-        if file_foto is not None:
-            img_file_buffer = file_foto
-            nama_file_referensi = file_foto.name
-            
+        if file_foto: img_file_buffer = file_foto
+
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
-    if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
-    if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
-    if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = "Hitam"
-
+    # Tombol Analisis
     if st.button("RUN AI VISUAL MATCHING 🚀"):
-        if img_file_buffer is None:
-            st.warning("⚠️ Ambil foto lewat kamera atau upload file terlebih dahulu!")
+        if not img_file_buffer:
+            st.warning("⚠️ Ambil foto atau upload file dulu!")
         else:
-            with st.spinner('AI sedang menganalisis objek...'):
-                st.session_state.total_penggunaan_ai += 1
-                
-                # Baca Bytes dari buffer
-                if hasattr(img_file_buffer, "getvalue"): 
-                    img_bytes = img_file_buffer.getvalue()
-                else:
-                    img_open = Image.open(img_file_buffer)
-                    img_arr = io.BytesIO()
-                    img_open.save(img_arr, format='JPEG')
-                    img_bytes = img_arr.getvalue()
-                
-                # 1. Panggil API Imagga
-                warna_api = query_ai_vision(img_bytes)
-                
-                # 2. AMANKAN VARIABEL warna_str
-                # Pastikan warna_str selalu punya nilai string meskipun API gagal
-                warna_str = str(warna_api).lower() if warna_api else "hitam"
-                
-                # Debug supaya lu tau apa yang dideteksi AI
-                st.write(f"DEBUG: Warna yang dideteksi API: {warna_str}") 
-                
-                # 3. Mapping warna yang lebih luas
-                if any(x in warna_str for x in ["pink", "magenta", "light_pink"]): warna_fix = "Pink"
-                elif any(x in warna_str for x in ["green", "lime", "olive"]): warna_fix = "Hijau"
-                elif any(x in warna_str for x in ["blue", "navy", "cyan"]): warna_fix = "Biru"
-                elif any(x in warna_str for x in ["beige", "tan", "brown", "cream"]): warna_fix = "Krem"
-                elif any(x in warna_str for x in ["white", "off-white"]): warna_fix = "Putih"
-                else: 
-                    warna_fix = "Monochrome" 
-                
-                st.session_state.warna_terdeteksi = warna_fix
-                
-                # 4. Filter Smart Bundle
-                if warna_fix == "Pink": res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
-                elif warna_fix == "Hijau": res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
-                elif warna_fix == "Biru": res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
-                elif warna_fix in ["Krem", "Cokelat"]: res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
-                elif warna_fix == "Putih": res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
-                else: res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
-                
-                if res_final.empty: res_final = df_stok.head(2)
-                
-                st.session_state.hasil_rekomendasi = res_final
-                st.session_state.beli_aktif = True
-        
-        if st.session_state.beli_aktif:
-            st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
-            st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
-        
-        total_harga = 0
+            # Panggil fungsi AI
+            img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
+            warna_api = query_ai_vision(img_bytes)
+            
+            # Logika penentuan warna & filter
+            warna_str = str(warna_api).lower() if warna_api else "hitam"
+            warna_fix = "Pink" if any(x in warna_str for x in ["pink", "magenta"]) else ("Hijau" if any(x in warna_str for x in ["green", "lime"]) else ("Biru" if any(x in warna_str for x in ["blue", "navy"]) else ("Krem" if any(x in warna_str for x in ["beige", "tan"]) else ("Putih" if any(x in warna_str for x in ["white"]) else "Monochrome"))))
+            
+            st.session_state.warna_terdeteksi = warna_fix
+            st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2) # Contoh logic
+            st.session_state.beli_aktif = True
+            st.rerun() # Paksa update supaya hasil muncul
+
+    # TAMPILKAN HASIL (Gunakan Session State agar tidak hilang saat Rerun)
+    if st.session_state.get('beli_aktif'):
+        st.success(f"🎨 Warna terdeteksi: **{st.session_state.warna_terdeteksi}**")
         df_hasil = st.session_state.hasil_rekomendasi
         
-        cols_pembeli = st.columns(len(df_hasil))
+        cols = st.columns(len(df_hasil))
+        total_harga = 0
         for i, (idx, row) in enumerate(df_hasil.iterrows()):
-            with cols_pembeli[i]:
+            with cols[i]:
                 st.image(row['url_gambar'], use_container_width=True)
-                st.markdown(f"**[{row['vibe']}] {row['nama_produk']}**")
-                st.caption(f"Kategori: {row['kategori_baju']} | Warna: {row['warna']}")
-                st.write(f"Harga: Rp {row['harga']:,}")
+                st.write(f"**{row['nama_produk']}**")
                 total_harga += row['harga']
         
-        st.markdown(f"### **Total Harga Bundle: Rp {total_harga:,}**")
-        st.markdown("---")
+        st.write(f"### Total: Rp {total_harga:,}")
         
         if st.button("🛒 BELI SATU PAKET"):
             st.session_state.total_omzet_toko += total_harga
