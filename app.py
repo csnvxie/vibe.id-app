@@ -183,6 +183,9 @@ if menu == "Pembeli":
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
         else:
+            st.session_state.total_penggunaan_ai += 1
+            st.session_state.log_gender_dicari.append(pilihan_gender)
+            
             img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
             warna_api = query_ai_vision(img_bytes)
             
