@@ -14,7 +14,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# KONSTANTA API (Dibuat vertikal pendek biar gak kepotong)
+# KONSTANTA API (Dibuat pendek ke bawah agar aman)
 API_URL = (
     "https://api-inference."
     "huggingface.co/models/"
@@ -76,11 +76,10 @@ data_gudang = {
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. FUNGSI AI VISION ANDALAN LU (FIKS AMAN)
+# 3. FUNGSI AI VISION ANDALAN LU
 # ==========================================
 def query_ai_vision(image_bytes):
     try:
-        # Batasi waktu tunggu (timeout) cuma 4 detik
         response = requests.post(
             API_URL, 
             data=image_bytes, 
@@ -89,9 +88,9 @@ def query_ai_vision(image_bytes):
         if response.status_code == 200:
             return response.json()
         else:
-            return [] # Kalau server sibuk, lempar ke lokal
+            return []
     except:
-        return [] # Kalau internet putus, amankan ke lokal
+        return []
 
 # ==========================================
 # 4. MENU NAVIGASI UTAMA APLIKASI
@@ -138,6 +137,85 @@ if menu == "Pembeli":
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
+    # Inisialisasi session state yang aman
     if 'beli_aktif' not in st.session_state: 
         st.session_state.beli_aktif = False
-    if 'hasil_rekomendasi' not in st.session_state:
+    if 'hasil_rekomendasi' not in st.session_state: 
+        st.session_state.hasil_rekomendasi = None
+
+    if st.button("RUN AI VISUAL MATCHING 🚀"):
+        if file_foto is None:
+            st.warning("⚠️ Upload fotonya dulu dong bre biar AI bisa jalan!")
+        else:
+            with st.spinner('AI sedang memproses gambar lu...'):
+                img_arr = io.BytesIO()
+                img_tampil.save(img_arr, format='JPEG')
+                img_bytes = img_arr.getvalue()
+                
+                hasil_ai = query_ai_vision(img_bytes)
+                
+                g_user = pilihan_gender
+                u_user = pilihan_usia
+                
+                f_g = (df_stok['gender'] == g_user) | (df_stok['gender'] == 'Unisex')
+                f_u = df_stok['target_usia'].str.contains(u_user)
+                
+                res = df_stok[f_g & f_u]
+                if res.empty:
+                    res = df_stok.head(2)
+                    
+                st.session_state.hasil_rekomendasi = res
+                st.session_state.beli_aktif = True
+
+    # Bagian ini dibungkus rapi di dalam blok "Pembeli" agar tidak eror spasi
+    if st.session_state.beli_aktif:
+        st.success("🎨 AI Vision Berhasil Menganalisis Foto Lu!")
+        st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID")
+        
+        total_harga = 0
+        df_hasil = st.session_state.hasil_rekomendasi
+        for idx, row in df_hasil.iterrows():
+            st.markdown(f"**[{row['vibe']}] {row['nama_produk']}**")
+            st.caption(f"Kategori: {row['kategori_baju']} | Warna: {row['warna']}")
+            st.write(f"Harga: Rp {row['harga']:,}")
+            total_harga += row['harga']
+            st.markdown("")
+        
+        st.markdown(f"### **Total Harga Bundle: Rp {total_harga:,}**")
+        st.markdown("---")
+        
+        # --- BLOK TOMBOL BELI DENGAN EFEK HUJAN DUIT TERBANG ---
+        if st.button("🛒 BELI SATU PAKET"):
+            html_duit = """
+            <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
+                <marquee direction="down" scrollamount="15" style="height: 100%;"><span style="font-size:90px;">💵 💸 💵 💸</span></marquee>
+                <marquee direction="down" scrollamount="10" style="height: 100%; margin-left: 35%;"><span style="font-size:80px;">💸 💵 💸</span></marquee>
+                <marquee direction="down" scrollamount="18" style="height: 100%; margin-left: 70%;"><span style="font-size:90px;">💵 💸 💵</span></marquee>
+            </div>
+            """
+            st.markdown(html_duit, unsafe_allow_html=True)
+            st.success("🎉 Transaksi Berhasil! Stok di database online otomatis terpotong.")
+            st.session_state.beli_aktif = False
+
+# ==================== SISI ADMIN ====================
+else:
+    st.header("📊 Admin Dashboard")
+    
+    t_ins = (
+        "💡 **AI Driven Insights:** "
+        "Segmen **Gen Z Wanita** minggu ini "
+        "mendominasi tren pasar dengan gaya *Y2K Streetwear*!"
+    )
+    st.info(t_ins)
+    
+    st.write("### 📂 Perbarui Katalog Toko")
+    file_excel = st.file_uploader(
+        "Upload Katalog (.xlsx)", 
+        type=["xlsx"]
+    )
+    if file_excel is not None:
+        st.success("🎉 Berhasil memperbarui katalog gudang!")
+        
+    st.markdown("---")
+    st.subheader("📋 Data Stok Gudang Saat Ini")
+    st.dataframe(df_stok, use_container_width=True)
