@@ -204,7 +204,7 @@ if menu == "Pembeli":
             elif any(x in warna_str for x in ["white"]):
                 hasil_warna = "Putih"
             else:
-                hasil_warna = "Monochrome"
+                hasil_warna = "Hitam"
             
             # 3. KUNCI HASIL DI SESSION STATE
             st.session_state.warna_terdeteksi = hasil_warna
