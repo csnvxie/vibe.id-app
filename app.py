@@ -126,23 +126,35 @@ if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
 # 4. MODULAR FUNCTIONS
+from collections import Counter
+
 def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         img = img.resize((50, 50))
-        data = np.array(img)
-        r, g, b = np.mean(data, axis=(0, 1))
+        # Ambil semua pixel
+        pixels = list(img.getdata())
         
-        # --- TAMBAHKAN DEBUG INI ---
-        st.write(f"🔍 DEBUG: R={r:.1f}, G={g:.1f}, B={b:.1f}")
-        # ---------------------------
+        # Buang pixel yang terlalu gelap (bisa jadi bayangan/background hitam)
+        # Kita saring cuma ambil warna yang R, G, atau B > 30
+        bright_pixels = [p for p in pixels if sum(p) > 90]
         
+        # Kalau gambarnya terlalu gelap semua, ya sudah balikin Hitam
+        if not bright_pixels: return "Hitam"
+        
+        # Cari warna yang paling sering muncul
+        most_common = Counter(bright_pixels).most_common(1)[0][0]
+        r, g, b = most_common
+        
+        st.write(f"🔍 DEBUG: R={r}, G={g}, B={b}")
+        
+        # Logika Threshold yang lebih luas
         if r > 200 and g > 200 and b > 200: return "Putih"
-        if r < 80 and g < 80 and b < 80: return "Hitam"
         if r > 180 and g < 150 and b > 180: return "Pink"
-        if r < 100 and g > 150 and b < 100: return "Hijau"
-        if r < 100 and g < 100 and b > 150: return "Biru"
-        if r > 200 and g > 150 and b < 150: return "Krem"
+        if g > r and g > b: return "Hijau"
+        if b > r and b > g: return "Biru"
+        if r > 180 and g > 150 and b < 150: return "Krem"
+        if r > 150 and g < 100 and b < 100: return "Merah"
         return "Hitam"
     except: return "Hitam"
 
