@@ -126,37 +126,25 @@ if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
 # 4. MODULAR FUNCTIONS
-from collections import Counter
-
-def get_dominant_color(image_bytes):
-    try:
-        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        img = img.resize((50, 50))
-        # Ambil semua pixel
-        pixels = list(img.getdata())
-        
-        # Buang pixel yang terlalu gelap (bisa jadi bayangan/background hitam)
-        # Kita saring cuma ambil warna yang R, G, atau B > 30
-        bright_pixels = [p for p in pixels if sum(p) > 90]
-        
-        # Kalau gambarnya terlalu gelap semua, ya sudah balikin Hitam
-        if not bright_pixels: return "Hitam"
-        
-        # Cari warna yang paling sering muncul
-        most_common = Counter(bright_pixels).most_common(1)[0][0]
-        r, g, b = most_common
-        
-        st.write(f"🔍 DEBUG: R={r}, G={g}, B={b}")
-        
-        # Logika Threshold yang lebih luas
-        if r > 200 and g > 200 and b > 200: return "Putih"
-        if r > 180 and g < 150 and b > 180: return "Pink"
-        if g > r and g > b: return "Hijau"
-        if b > r and b > g: return "Biru"
-        if r > 180 and g > 150 and b < 150: return "Krem"
-        if r > 150 and g < 100 and b < 100: return "Merah"
-        return "Hitam"
-    except: return "Hitam"
+def query_ai_vision(image_bytes):
+    api_key = 'acc_d031a6e3c3ee970'
+    api_secret = '6dc4113b118dac5fe001f31232e1852b'
+    
+    # Upload gambar ke Imagga untuk dianalisis
+    files = {'image': image_bytes}
+    response = requests.post(
+        'https://api.imagga.com/v2/colors',
+        auth=(api_key, api_secret),
+        files=files
+    )
+    
+    if response.status_code == 200:
+        data = response.json()
+        # Mengembalikan warna yang paling dominan
+        colors = data['result']['colors']['background_colors']
+        if colors:
+            return colors[0]['label'] # Contoh: "blue", "white"
+    return "Hitam" # Default aman
 
 # 5. USER INTERFACE (UI) LAYOUT
 st.title("VIBE-ID 🛍️")
@@ -228,26 +216,6 @@ if menu == "Pembeli":
                 
                 st.session_state.hasil_rekomendasi = res_final
                 st.session_state.beli_aktif = True
-                
-            # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
-            if warna_fix == "Pink":
-                res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
-            elif warna_fix == "Hijau":
-                res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
-            elif warna_fix == "Biru":
-                res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
-            elif warna_fix in ["Krem", "Cokelat"]:
-                res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
-            elif warna_fix == "Putih":
-                res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
-            else:
-                res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
-                
-            if res_final.empty: 
-                res_final = df_stok.head(2)
-                    
-            st.session_state.hasil_rekomendasi = res_final
-            st.session_state.beli_aktif = True
         
         if st.session_state.beli_aktif:
             st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
