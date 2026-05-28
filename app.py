@@ -213,7 +213,7 @@ if menu == "Pembeli":
                 if isinstance(warna_api, list) and len(warna_api) > 0:
                     warna_str = str(warna_api[0].get('label', 'hitam')).lower()
                 else:
-                warna_str = str(warna_api).lower() 
+                    warna_str = str(warna_api).lower() 
                 
                 # Mapping lebih luas (biar nggak gampang balik ke "Hitam")
                 if "pink" in warna_str or "magenta" in warna_str: warna_fix = "Pink"
