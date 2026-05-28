@@ -206,25 +206,28 @@ if menu == "Pembeli":
                     img_open.save(img_arr, format='JPEG')
                     img_bytes = img_arr.getvalue()
                 
-                # 1. Panggil API Imagga (Fungsi yang sudah Anda buat di baris 129)
+                # 1. Panggil API Imagga
                 warna_api = query_ai_vision(img_bytes)
                 
-                # Pastikan warna_api adalah string (menghindari error jika API mengembalikan list/kosong)
-                if isinstance(warna_api, list) and len(warna_api) > 0:
-                    warna_str = str(warna_api[0].get('label', 'hitam')).lower()
-                else:
-                   st.write(f"DEBUG: API kasih warna: {warna_str}") 
+                # 2. AMANKAN VARIABEL warna_str
+                # Pastikan warna_str selalu punya nilai string meskipun API gagal
+                warna_str = str(warna_api).lower() if warna_api else "hitam"
                 
+                # Debug supaya lu tau apa yang dideteksi AI
+                st.write(f"DEBUG: Warna yang dideteksi API: {warna_str}") 
+                
+                # 3. Mapping warna yang lebih luas
                 if any(x in warna_str for x in ["pink", "magenta", "light_pink"]): warna_fix = "Pink"
                 elif any(x in warna_str for x in ["green", "lime", "olive"]): warna_fix = "Hijau"
                 elif any(x in warna_str for x in ["blue", "navy", "cyan"]): warna_fix = "Biru"
                 elif any(x in warna_str for x in ["beige", "tan", "brown", "cream"]): warna_fix = "Krem"
                 elif any(x in warna_str for x in ["white", "off-white"]): warna_fix = "Putih"
                 else: 
-                    st.write(f"DEBUG: API ngirim warna: {warna_str}") # Liat di web warna apa yang dikirim
-                    warna_fix = "Monochrome" # Default ke Monochrome daripada Hitam
+                    warna_fix = "Monochrome" 
                 
-                # 3. Filter Smart Bundle (Hanya satu kali)
+                st.session_state.warna_terdeteksi = warna_fix
+                
+                # 4. Filter Smart Bundle
                 if warna_fix == "Pink": res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
                 elif warna_fix == "Hijau": res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
                 elif warna_fix == "Biru": res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
