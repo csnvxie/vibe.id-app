@@ -180,7 +180,20 @@ if menu == "Pembeli":
 # ==================== SISI ADMIN ====================
 else:
     st.header("📊 Admin Dashboard")
-    st.info("💡 **AI Driven Insights:** Segmen **Gen Z Wanita** mendominasi pasar minggu ini!")
+    
+    # --- OTOMATISASI INSIGHT DARI DATA GUDANG ---
+    vibe_terbanyak = df_stok['vibe'].value_counts().idxmax()
+    harga_rata = int(df_stok['harga'].mean())
+    gender_dominan = df_stok['gender'].value_counts().idxmax()
+    
+    t_ins = (
+        f"💡 **AI Driven Insights:** "
+        f"Katalog saat ini didominasi oleh gender **{gender_dominan}** "
+        f"dengan tren gaya **{vibe_terbanyak}**! "
+        f"Rata-rata harga produk di gudang adalah **Rp {harga_rata:,}**."
+    )
+    st.info(t_ins)
+    
     st.write("### 📂 Perbarui Katalog Toko")
     file_excel = st.file_uploader("Upload Katalog (.xlsx)", type=["xlsx"])
     if file_excel is not None: st.success("🎉 Berhasil memperbarui katalog gudang!")
