@@ -127,8 +127,8 @@ if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggun
 
 # 4. MODULAR FUNCTIONS
 def query_ai_vision(image_bytes):
-    api_key = 'YOUR_API_KEY' # Pastikan ini key asli Anda
-    api_secret = 'YOUR_API_SECRET' # Pastikan ini secret asli Anda
+    api_key = 'acc_d031a6e3c3ee970' # Pastikan ini key asli Anda
+    api_secret = '6dc4113b118dac5fe001f31232e1852b' # Pastikan ini secret asli Anda
     
     files = {'image': image_bytes}
     response = requests.post(
