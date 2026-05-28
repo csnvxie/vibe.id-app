@@ -270,48 +270,26 @@ if menu == "Pembeli":
                     }
                     .coin {
                         position: absolute;
-                        font-size: 28px;
+                        font-size: 32px;
                         animation: drop 2.5s linear infinite;
                     }
                 </style>
+                <div class="coin" style="left: 10vw; animation-delay: 0s;">🪙</div>
+                <div class="coin" style="left: 25vw; animation-delay: 0.4s;">🪙</div>
+                <div class="coin" style="left: 40vw; animation-delay: 0.2s;">🪙</div>
+                <div class="coin" style="left: 55vw; animation-delay: 0.6s;">🪙</div>
+                <div class="coin" style="left: 70vw; animation-delay: 0.1s;">🪙</div>
+                <div class="coin" style="left: 85vw; animation-delay: 0.5s;">🪙</div>
+                <div class="coin" style="left: 15vw; animation-delay: 0.8s;">🪙</div>
+                <div class="coin" style="left: 50vw; animation-delay: 0.9s;">🪙</div>
+                <div class="coin" style="left: 75vw; animation-delay: 0.3s;">🪙</div>
+            </div>
             """
-           # CARA BARU: Jauh lebih simpel dan dijamin bebas eror tanda kutip!
-        coin_html = """
-        <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
-            <style>
-                @keyframes drop {
-                    0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
-                    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
-                }
-                .coin {
-                    position: absolute;
-                    font-size: 32px;
-                    animation: drop 2.5s linear infinite;
-                }
-            </style>
-            <div class="coin" style="left: 10vw; animation-delay: 0s;">🪙</div>
-            <div class="coin" style="left: 25vw; animation-delay: 0.4s;">🪙</div>
-            <div class="coin" style="left: 40vw; animation-delay: 0.2s;">🪙</div>
-            <div class="coin" style="left: 55vw; animation-delay: 0.6s;">🪙</div>
-            <div class="coin" style="left: 70vw; animation-delay: 0.1s;">🪙</div>
-            <div class="coin" style="left: 85vw; animation-delay: 0.5s;">🪙</div>
-            <div class="coin" style="left: 15vw; animation-delay: 0.8s;">🪙</div>
-            <div class="coin" style="left: 50vw; animation-delay: 0.9s;">🪙</div>
-            <div class="coin" style="left: 75vw; animation-delay: 0.3s;">🪙</div>
-        </div>
-        """
-        st.markdown(coin_html, unsafe_allow_html=True)
-        
-        # Eksekusi animasinya ke layar Streamlit
-        st.markdown(coin_html, unsafe_allow_html=True)
-        
-        st.success(f"🎉 Transaksi Berhasil! Terima Kasih atas Pembelian nya<3")
-        st.session_state.beli_aktif = False
+            # Eksekusi animasi koin ke layar Streamlit (Cukup panggil SEKALI)
+            st.markdown(coin_html, unsafe_allow_html=True)
             
-        st.markdown(coin_html, unsafe_allow_html=True)
-            
-        st.success(f"🎉 Transaksi Berhasil! Terima Kasih Sudah Beli<3")
-        st.session_state.beli_aktif = False
+            st.success("🎉 Transaksi Berhasil! Terima Kasih atas Pembeliannya <3")
+            st.session_state.beli_aktif = False
 
 # ----------------- SISI ADMIN -----------------
 else:
