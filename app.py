@@ -204,7 +204,7 @@ if menu == "Pembeli":
             elif any(x in warna_str for x in ["white"]):
                 hasil_warna = "Putih"
             else:
-                hasil_warna = "Hitam"
+                hasil_warna = "Monochrome"
             
             # 3. KUNCI HASIL DI SESSION STATE
             st.session_state.warna_terdeteksi = hasil_warna
@@ -212,7 +212,7 @@ if menu == "Pembeli":
             
             # Jika tidak ada produk dengan warna itu, ambil yang 'Monochrome' sebagai backup
             if len(st.session_state.hasil_rekomendasi) == 0:
-                st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
+                st.session_state.hasil_rekomendasi = df_stok.head(2)
                 
             st.session_state.beli_aktif = True
             st.rerun()
