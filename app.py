@@ -192,32 +192,46 @@ if menu == "Pembeli":
             with st.spinner('AI sedang menganalisis objek...'):
                 st.session_state.total_penggunaan_ai += 1
                 
-                # Baca Bytes
-                if hasattr(img_file_buffer, "getvalue"): img_bytes = img_file_buffer.getvalue()
+                # Baca Bytes dari buffer
+                if hasattr(img_file_buffer, "getvalue"): 
+                    img_bytes = img_file_buffer.getvalue()
                 else:
                     img_open = Image.open(img_file_buffer)
                     img_arr = io.BytesIO()
                     img_open.save(img_arr, format='JPEG')
                     img_bytes = img_arr.getvalue()
                 
-                # DETEKSI WARNA (Cuma jalan 1 kali di sini)
-                warna_fix = get_dominant_color(img_bytes)
-                st.session_state.warna_terdeteksi = warna_fix
+                # 1. Panggil API Imagga (Fungsi yang sudah Anda buat di baris 129)
+                warna_api = query_ai_vision(img_bytes)
                 
-                # LOGIKA FILTER BUNDLE
-                # PANGGIL API IMAGGA
-                warna_api = query_ai_vision(img_bytes).lower()
+                # Pastikan warna_api adalah string (menghindari error jika API mengembalikan list/kosong)
+                if isinstance(warna_api, list) and len(warna_api) > 0:
+                    warna_str = str(warna_api[0].get('label', 'hitam')).lower()
+                else:
+                    warna_str = "hitam"
                 
-                # MAPPING HASIL API KE WARNA APLIKASI
-                if any(x in warna_api for x in ["pink", "magenta"]): warna_fix = "Pink"
-                elif any(x in warna_api for x in ["green", "lime"]): warna_fix = "Hijau"
-                elif any(x in warna_api for x in ["blue", "navy", "cyan"]): warna_fix = "Biru"
-                elif any(x in warna_api for x in ["beige", "tan", "brown"]): warna_fix = "Krem"
-                elif any(x in warna_api for x in ["white"]): warna_fix = "Putih"
+                # 2. Mapping hasil API ke kategori warna VIBE-ID
+                if any(x in warna_str for x in ["pink", "magenta"]): warna_fix = "Pink"
+                elif any(x in warna_str for x in ["green", "lime"]): warna_fix = "Hijau"
+                elif any(x in warna_str for x in ["blue", "navy"]): warna_fix = "Biru"
+                elif any(x in warna_str for x in ["beige", "tan", "brown"]): warna_fix = "Krem"
+                elif any(x in warna_str for x in ["white"]): warna_fix = "Putih"
                 else: warna_fix = "Hitam"
                 
                 st.session_state.warna_terdeteksi = warna_fix
-                st.write(f"🔍 DEBUG: API mendeteksi warna: {warna_api}")
+                
+                # 3. Filter Smart Bundle (Hanya satu kali)
+                if warna_fix == "Pink": res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
+                elif warna_fix == "Hijau": res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
+                elif warna_fix == "Biru": res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
+                elif warna_fix in ["Krem", "Cokelat"]: res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
+                elif warna_fix == "Putih": res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
+                else: res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
+                
+                if res_final.empty: res_final = df_stok.head(2)
+                
+                st.session_state.hasil_rekomendasi = res_final
+                st.session_state.beli_aktif = True
         
         if st.session_state.beli_aktif:
             st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
