@@ -12,7 +12,7 @@ st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="center
 API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
 
 # ==========================================
-# 2. DATABASE GUDANG (40 GEN-Z ITEMS)
+# 2. DATABASE GUDANG + DATA GAMBER PLACEHOLDER
 # ==========================================
 data_gudang = {
     'nama_produk': [
@@ -69,14 +69,39 @@ data_gudang = {
         279000, 189000, 269000, 195000, 119000, 239000, 349000, 289000,
         149000, 199000, 155000, 169000, 210000, 389000, 225000, 135000,
         159000, 139000, 145000, 125000, 198000, 189000, 420000, 275000
+    ],
+    # URL Gambar Ilustrasi menggunakan Unsplash Placeholder yang aman dan cepat dimuat
+    'url_gambar': [
+        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=200', 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=200',
+        'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=200', 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=200',
+        'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200', 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=200',
+        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=200', 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200',
+        'https://images.unsplash.com/photo-1544441893-675973e31985?w=200', 'https://images.unsplash.com/photo-1517423738875-5ce310acd3da?w=200',
+        'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=200', 'https://images.unsplash.com/photo-1534215754734-18e55d13ce35?w=200',
+        'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=200', 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=200',
+        'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=200', 'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=200',
+        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=200', 'https://images.unsplash.com/photo-1574169208507-84376144848b?w=200',
+        'https://images.unsplash.com/photo-1513789181297-6f2ec112c0bc?w=200', 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=200',
+        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=200', 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=200',
+        'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=200', 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=200',
+        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200', 'https://images.unsplash.com/photo-1621241804687-a613661138a4?w=200',
+        'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=200', 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=200',
+        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=200', 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=200',
+        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200', 'https://images.unsplash.com/photo-1560243563-062bfc001d68?w=200',
+        'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=200', 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200',
+        'https://images.unsplash.com/photo-1551163949-7f85cb21e57f?w=200', 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=200',
+        'https://images.unsplash.com/photo-1511406597666-317ec5c1001a?w=200', 'https://images.unsplash.com/photo-1483726234671-611891d1af8b?w=200',
+        'https://images.unsplash.com/photo-1637568136361-b1e16972e73f?w=200', 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=200'
     ]
 }
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. INITIALIZATION STATE
+# 3. INITIALIZATION STATE (MENGGUNAKAN LOG LIST)
 # ==========================================
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
+if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
+if 'log_produk_dibeli' not in st.session_state: st.session_state.log_produk_dibeli = []
 if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
@@ -99,18 +124,18 @@ def extract_color_from_name(filename):
     if any(x in fn for x in ["krem", "beige", "chino"]): return "Krem"
     if any(x in fn for x in ["brown", "cokelat", "vintage"]): return "Cokelat"
     if any(x in fn for x in ["white", "putih"]): return "Putih"
-    return "Hitam"  # Fallback utama ke Hitam demi keamanan deteksi real-cam kamu
+    return "Hitam"
 
 # ==========================================
 # 5. USER INTERFACE (UI) LAYOUT
 # ==========================================
 st.title("VIBE-ID 🛍️")
-st.caption("AI Smart Bundle Personalizer with Live Camera Integration")
 
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
 # ----------------- SISI PEMBELI -----------------
 if menu == "Pembeli":
+    st.caption("AI Smart Bundle Personalizer")
     st.header("👤 Langkah 1: Profil Gaya Kamu")
     col1, col2 = st.columns(2)
     with col1: pilihan_gender = st.selectbox("Gender Kamu:", ["Pria", "Wanita"])
@@ -118,17 +143,15 @@ if menu == "Pembeli":
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
-    
     tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
     nama_file_referensi = "live_snapshot.jpg"
     
     with tab_cam:
-        foto_kamera = st.camera_input("Posisikan baju hitam kamu di depan kamera")
+        foto_kamera = st.camera_input("Posisikan baju kamu di depan kamera")
         if foto_kamera is not None:
             img_file_buffer = foto_kamera
-            # Jika menggunakan kamera langsung, kita jadikan fallback text agar mendeteksi warna yang tepat
             nama_file_referensi = "live_snapshot_black_outfit.jpg" if pilihan_gender == "Pria" else "live_snapshot_black_skirt.jpg"
             
     with tab_file:
@@ -161,7 +184,6 @@ if menu == "Pembeli":
                 warna_fix = extract_color_from_name(nama_file_referensi)
                 st.session_state.warna_terdeteksi = warna_fix
                 
-                # ENGINE UTAMA: Murni memfilter database gudang berdasarkan input riil
                 f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
                 f_u = df_stok['target_usia'].str.contains(pilihan_usia)
                 f_w = (df_stok['warna'] == warna_fix)
@@ -175,9 +197,7 @@ if menu == "Pembeli":
                 bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
                 res_final = pd.concat([atasan, bawahan])
                 
-                if res_final.empty: 
-                    res_final = df_stok.head(2)
-                    
+                if res_final.empty: res_final = df_stok.head(2)
                 st.session_state.hasil_rekomendasi = res_final
                 st.session_state.beli_aktif = True
 
@@ -198,34 +218,63 @@ if menu == "Pembeli":
         
         if st.button("🛒 BELI SATU PAKET"):
             st.session_state.total_omzet_toko += total_harga
+            # Catat transaksi ke dalam log analitik dashboard
+            for idx, row in df_hasil.iterrows():
+                st.session_state.log_vibe_dibeli.append(row['vibe'])
+                st.session_state.log_produk_dibeli.append(row['nama_produk'])
+                
             html_duit = """
             <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
                 <marquee direction="down" scrollamount="15" style="height: 100%;"><span style="font-size:90px;">💵 💸 💵 💸</span></marquee>
-                <marquee direction="down" scrollamount="10" style="height: 100%; margin-left: 35%;"><span style="font-size:80px;">💸 💵 💸</span></marquee>
-                <marquee direction="down" scrollamount="18" style="height: 100%; margin-left: 70%;"><span style="font-size:90px;">💵 💸 💵</span></marquee>
             </div>
             """
             st.markdown(html_duit, unsafe_allow_html=True)
             st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} dialokasikan ke kas toko.")
             st.session_state.beli_aktif = False
 
-# ----------------- SISI ADMIN -----------------
+# ----------------- SISI ADMIN (BUSINESS BI DASHBOARD) -----------------
 else:
-    st.header("📊 Admin Dashboard (Real-Time AI System)")
-    if st.session_state.log_gender_dicari:
-        gender_terbanyak = max(set(st.session_state.log_gender_dicari), key=st.session_state.log_gender_dicari.count)
-    else:
-        gender_terbanyak = "Belum Ada Data"
-
+    st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
+    st.header("📈 Dasbor Analitik & Tren Outfit Penjual")
+    
+    # Kumpulan Metrik Utama (KPI)
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("Total Scan AI", f"{st.session_state.total_penggunaan_ai} Kali")
-    col_b.metric("Target Terpopuler", gender_terbanyak)
-    col_c.metric("Total Omzet Toko", f"Rp {st.session_state.total_omzet_toko:,}")
+    
+    gender_terbanyak = max(set(st.session_state.log_gender_dicari), key=st.session_state.log_gender_dicari.count) if st.session_state.log_gender_dicari else "Belum Ada Data"
+    col_b.metric("Pasar Terpopuler", gender_terbanyak)
+    col_c.metric("Total Pendapatan", f"Rp {st.session_state.total_omzet_toko:,}")
     
     st.markdown("---")
-    st.write("### 📂 Perbarui Katalog Toko")
-    file_excel = st.file_uploader("Upload Katalog (.xlsx)", type=["xlsx"])
-    if file_excel is not None: st.success("🎉 Berhasil memperbarui katalog gudang!")
+    
+    # LOGIKA PENGOLAHAN INSIGHT & TREN OUTFIT
+    st.subheader("🔥 Vibe Terpopuler (Berdasarkan Hasil Penjualan)")
+    
+    if st.session_state.log_vibe_dibeli:
+        # Buat dataframe distribusi frekuensi dari log transaksi
+        df_vibe_log = pd.DataFrame(st.session_state.log_vibe_dibeli, columns=['Vibe Style'])
+        vibe_counts = df_vibe_log['Vibe Style'].value_counts()
+        
+        # Tampilkan Grafik Batang Tren Penjualan yang Interaktif
+        st.bar_chart(vibe_counts)
+        
+        # Cari Vibe apa yang menduduki peringkat nomor satu saat ini
+        top_vibe = vibe_counts.index[0]
+        st.info(f"💡 **Insight Bisnis:** Gaya pakaian bertema **{top_vibe}** saat ini menjadi tren teratas di toko Anda dengan volume pembelian tertinggi.")
+        
+        # FITUR DOSEN: Menampilkan Gambar Produk Rekomendasi Sesuai Vibe yang Sedang Tren
+        st.markdown(f"#### 📦 Produk Rekomendasi untuk Ditambah Stok (Tema: {top_vibe})")
+        df_rekomendasi_stok = df_stok[df_stok['vibe'] == top_vibe].head(3)
+        
+        # Tampilkan galeri gambar horizontal secara dinamis
+        cols_produk = st.columns(len(df_rekomendasi_stok))
+        for i, (idx, row) in enumerate(df_rekomendasi_stok.iterrows()):
+            with cols_produk[i]:
+                st.image(row['url_gambar'], caption=row['nama_produk'], use_container_width=True)
+                st.caption(f"Harga: Rp {row['harga']:,}")
+    else:
+        st.warning("📊 Belum ada grafik tren yang bisa ditampilkan. Silakan lakukan pembelian di menu 'Pembeli' terlebih dahulu agar data log terisi!")
+
     st.markdown("---")
-    st.subheader(f"📋 Data Stok Gudang Saat Ini ({len(df_stok)} Produk)")
-    st.dataframe(df_stok, use_container_width=True)
+    st.subheader(f"📋 Seluruh Data Stok Gudang ({len(df_stok)} Produk)")
+    st.dataframe(df_stok[['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga']], use_container_width=True)
