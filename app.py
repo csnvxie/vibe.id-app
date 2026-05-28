@@ -222,25 +222,25 @@ if menu == "Pembeli":
                     
             st.session_state.warna_terdeteksi = warna_fix
                 
-                # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
-                if warna_fix == "Pink":
-                    res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
-                elif warna_fix == "Hijau":
-                    res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
-                elif warna_fix == "Biru":
-                    res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
-                elif warna_fix in ["Krem", "Cokelat"]:
-                    res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
-                elif warna_fix == "Putih":
-                    res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
-                else:
-                    res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
+            # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
+            if warna_fix == "Pink":
+                res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
+            elif warna_fix == "Hijau":
+                res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
+            elif warna_fix == "Biru":
+                res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
+            elif warna_fix in ["Krem", "Cokelat"]:
+                res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
+            elif warna_fix == "Putih":
+                res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
+            else:
+                res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
                 
-                if res_final.empty: 
-                    res_final = df_stok.head(2)
+            if res_final.empty: 
+                res_final = df_stok.head(2)
                     
-                st.session_state.hasil_rekomendasi = res_final
-                st.session_state.beli_aktif = True
+            st.session_state.hasil_rekomendasi = res_final
+            st.session_state.beli_aktif = True
     if st.session_state.beli_aktif:
         st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
