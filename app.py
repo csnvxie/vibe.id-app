@@ -7,7 +7,7 @@ import io
 # 1. CONFIG & KONSTANTA UTAMA
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
-API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
+API_URL = "https://api-inference.huggingface.co/models/apoorvv/color-classification"
 
 # 2. DATABASE GUDANG (40 PRODUK SINKRON)
 data_gudang = {
@@ -128,8 +128,12 @@ if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggun
 # 4. MODULAR FUNCTIONS
 def query_ai_vision(image_bytes):
     try:
-        response = requests.post(API_URL, data=image_bytes, timeout=5)
-        if response.status_code == 200: return response.json()
+        response = requests.post(API_URL, data=image_bytes, timeout=10)
+        if response.status_code == 200:
+            hasil = response.json()
+            
+            if isinstance(hasil, list):
+                return sorted(hasil, key=lambda x: x['score'], reverse=True)
         return []
     except: return []
 
@@ -204,21 +208,17 @@ if menu == "Pembeli":
 
                 st.write("Hasil Mentah AI:", hasil_ai)
                 
-                # LOGIKA DETEKSI WARNA (Pastikan hasil_ai ada isinya)
-                warna_fix = None
-                if hasil_ai:
-                    # Logika deteksi dari label AI
-                    for item in hasil_ai:
-                        if isinstance(item, dict) and 'label' in item:
-                            label = item['label'].lower()
-                            if any(w in label for w in ["pink", "coquette"]): warna_fix = "Pink"
-                            elif any(w in label for w in ["green", "sage"]): warna_fix = "Hijau"
-                            elif any(w in label for w in ["blue", "denim"]): warna_fix = "Biru"
-                            # ... (tambahkan sisanya di sini)
-                
-                # FALLBACK jika AI tidak mendeteksi warna
-                if not warna_fix:
-                    warna_fix = extract_color_from_name(nama_file_referensi)
+                # LOGIKA DETEKSI WARNA
+        warna_fix = "Hitam" # Default
+        if hasil_ai:
+            label = hasil_ai[0].get('label', '').lower()
+            
+            if any(w in label for w in ["pink", "magenta"]): warna_fix = "Pink"
+            elif any(w in label for w in ["green", "lime"]): warna_fix = "Hijau"
+            elif any(w in label for w in ["blue", "navy"]): warna_fix = "Biru"
+            elif any(w in label for w in ["beige", "tan", "brown"]): warna_fix = "Krem"
+            elif any(w in label for w in ["white", "cream"]): warna_fix = "Putih"
+            elif any(w in label for w in ["black", "gray", "grey"]): warna_fix = "Hitam"
                     
                 st.session_state.warna_terdeteksi = warna_fix
                 
