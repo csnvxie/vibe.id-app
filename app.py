@@ -159,7 +159,7 @@ if menu == "Pembeli":
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
-   tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
+    tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
     nama_file_referensi = ""
