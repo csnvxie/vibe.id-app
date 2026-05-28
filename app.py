@@ -4,16 +4,12 @@ from PIL import Image
 import requests
 import io
 
-# ==========================================
 # 1. CONFIG & KONSTANTA UTAMA
-# ==========================================
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
 API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
 
-# ==========================================
-# 2. DATABASE GUDANG + 100% REAL & FIXED IMAGES (40 PRODUK SINKRON)
-# ==========================================
+# 2. DATABASE GUDANG (40 PRODUK SINKRON)
 data_gudang = {
     'nama_produk': [
         'Black Oversized Tee', 'Dark Charcoal Jeans', 'Gothic Black Hoodie', 'Acid Wash Denim Shorts',
@@ -70,7 +66,7 @@ data_gudang = {
         149000, 199000, 155000, 169000, 210000, 389000, 225000, 135000,
         159000, 139000, 145000, 125000, 198000, 189000, 420000, 275000
     ],
-    # BERIKUT ADALAH 40 URL FOTO REALISTIS DAN TETAP (FIXED) SESUAI NAMA PRODUK
+    # URL PICT
     'url_gambar': [
         # Monochrome (1-8)
         'https://slatehash.com/cdn/shop/products/VG-SH-46202792.jpg?v=1675584596', # Black Oversized Tee
@@ -111,7 +107,7 @@ data_gudang = {
         # Soft Girl Coquette (33-36)
         'https://i.pinimg.com/originals/e3/54/28/e35428a6ac29a44488c1c07e9cf7d0e0.jpg', # Pastel Pink Cardigan
         'https://i.pinimg.com/originals/a3/84/78/a38478da472595ca8687a2fa0d2f2944.jpg', # White Tennis Skirt
-        'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?w=500&auto=format&fit=crop', # Ribbon Lace Blouse
+        'https://i.etsystatic.com/8409202/r/il/d06880/1940817966/il_fullxfull.1940817966_gr1x.jpg', # Ribbon Lace Blouse
         'https://cdn-img.prettylittlething.com/7/5/8/c/758c304aa8ccc973effb3f480a50982322d8d384_cnj8338_6.jpg?imwidth=600', # Floral Mini Skirt
         # Sporty (37-40)
         'https://footballshirtunion.com/cdn/shop/collections/IMG_4247_225786a4-66ea-4476-b666-84548f2e56fd.jpg?v=1741495514', # Vintage Football Jersey
@@ -122,18 +118,14 @@ data_gudang = {
 }
 df_stok = pd.DataFrame(data_gudang)
 
-# ==========================================
 # 3. INITIALIZATION STATE
-# ==========================================
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
 if 'log_produk_dibeli' not in st.session_state: st.session_state.log_produk_dibeli = []
 if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
-# ==========================================
 # 4. MODULAR FUNCTIONS
-# ==========================================
 def query_ai_vision(image_bytes):
     try:
         response = requests.post(API_URL, data=image_bytes, timeout=5)
@@ -152,14 +144,12 @@ def extract_color_from_name(filename):
     if any(x in fn for x in ["white", "putih"]): return "Putih"
     return "Hitam"
 
-# ==========================================
 # 5. USER INTERFACE (UI) LAYOUT
-# ==========================================
 st.title("VIBE-ID 🛍️")
 
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
-# ----------------- SISI PEMBELI -----------------
+# SISI PEMBELI
 if menu == "Pembeli":
     st.caption("AI Smart Bundle Personalizer")
     st.header("👤 Langkah 1: Profil Gaya Kamu")
@@ -260,7 +250,7 @@ if menu == "Pembeli":
                 st.session_state.log_vibe_dibeli.append(row['vibe'])
                 st.session_state.log_produk_dibeli.append(row['nama_produk'])
                 
-            # === TRIK CONFIG EFFECT: Koin Emas Berhamburan Banyak ===
+            # CONFIG EFFECT
             coin_html = """
             <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
                 <style>
@@ -285,16 +275,16 @@ if menu == "Pembeli":
                 <div class="coin" style="left: 75vw; animation-delay: 0.3s;">🪙</div>
             </div>
             """
-            # Eksekusi animasi koin ke layar Streamlit (Cukup panggil SEKALI)
+            # Eksekusi animasi koin ke layar Streamlit
             st.markdown(coin_html, unsafe_allow_html=True)
             
             st.success("🎉 Transaksi Berhasil! Terima Kasih atas Pembeliannya <3")
             st.session_state.beli_aktif = False
 
-# ----------------- SISI ADMIN -----------------
+# SISI ADMIN
 else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
-    st.header("📈 Dasbor Analitik & Tren Outfit Penjual")
+    st.header("📈 Dasbor Analitik & Tren Outfit Penjualan")
     
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("Total Scan AI", f"{st.session_state.total_penggunaan_ai} Kali")
