@@ -232,7 +232,9 @@ if menu == "Pembeli":
                     
             st.session_state.hasil_rekomendasi = res_final
             st.session_state.beli_aktif = True
-   if st.session_state.beli_aktif:
+        
+        if st.session_state.beli_aktif:
+        
         st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
         
