@@ -147,10 +147,9 @@ def query_ai_vision(image_bytes):
             colors = data['result']['colors']['image_colors']
             if colors and len(colors) > 0:
                 return colors[0]['closest_palette_color']
-        except KeyError:
-            return "hitam"
-            
-    return "hitam"
+        except Exception as e:
+            st.error(f"DEBUG: Error API: {e}") # Munculin error-nya di layar
+            return "Warna Tidak Terdeteksi"
 
 # 5. USER INTERFACE (UI) LAYOUT
 st.title("VIBE-ID 🛍️")
