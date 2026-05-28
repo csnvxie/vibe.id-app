@@ -7,7 +7,7 @@ import io
 # 1. CONFIG & KONSTANTA UTAMA
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
-API_URL = "https://api-inference.huggingface.co/models/apoorvv/color-classification"
+API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 
 # 2. DATABASE GUDANG (40 PRODUK SINKRON)
 data_gudang = {
