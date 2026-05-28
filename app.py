@@ -133,6 +133,10 @@ def get_dominant_color(image_bytes):
         data = np.array(img)
         r, g, b = np.mean(data, axis=(0, 1))
         
+        # --- TAMBAHKAN DEBUG INI ---
+        st.write(f"🔍 DEBUG: R={r:.1f}, G={g:.1f}, B={b:.1f}")
+        # ---------------------------
+        
         if r > 200 and g > 200 and b > 200: return "Putih"
         if r < 80 and g < 80 and b < 80: return "Hitam"
         if r > 180 and g < 150 and b > 180: return "Pink"
