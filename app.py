@@ -213,17 +213,17 @@ if menu == "Pembeli":
                 if isinstance(warna_api, list) and len(warna_api) > 0:
                     warna_str = str(warna_api[0].get('label', 'hitam')).lower()
                 else:
-                    warna_str = "hitam"
+                warna_str = str(warna_api).lower() 
                 
-                # 2. Mapping hasil API ke kategori warna VIBE-ID
-                if any(x in warna_str for x in ["pink", "magenta"]): warna_fix = "Pink"
-                elif any(x in warna_str for x in ["green", "lime"]): warna_fix = "Hijau"
-                elif any(x in warna_str for x in ["blue", "navy"]): warna_fix = "Biru"
-                elif any(x in warna_str for x in ["beige", "tan", "brown"]): warna_fix = "Krem"
-                elif any(x in warna_str for x in ["white"]): warna_fix = "Putih"
-                else: warna_fix = "Hitam"
-                
-                st.session_state.warna_terdeteksi = warna_fix
+                # Mapping lebih luas (biar nggak gampang balik ke "Hitam")
+                if "pink" in warna_str or "magenta" in warna_str: warna_fix = "Pink"
+                elif "green" in warna_str or "lime" in warna_str or "olive" in warna_str: warna_fix = "Hijau"
+                elif "blue" in warna_str or "navy" in warna_str or "cyan" in warna_str: warna_fix = "Biru"
+                elif "beige" in warna_str or "tan" in warna_str or "brown" in warna_str or "camel" in warna_str: warna_fix = "Krem"
+                elif "white" in warna_str: warna_fix = "Putih"
+                else: 
+                    st.write(f"DEBUG: API ngirim warna: {warna_str}") # Liat di web warna apa yang dikirim
+                    warna_fix = "Monochrome" # Default ke Monochrome daripada Hitam
                 
                 # 3. Filter Smart Bundle (Hanya satu kali)
                 if warna_fix == "Pink": res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
