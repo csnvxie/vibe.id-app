@@ -127,10 +127,9 @@ if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggun
 
 # 4. MODULAR FUNCTIONS
 def query_ai_vision(image_bytes):
-    api_key = 'acc_d031a6e3c3ee970'
-    api_secret = '6dc4113b118dac5fe001f31232e1852b'
+    api_key = 'YOUR_API_KEY' # Pastikan ini key asli Anda
+    api_secret = 'YOUR_API_SECRET' # Pastikan ini secret asli Anda
     
-    # Upload gambar ke Imagga untuk dianalisis
     files = {'image': image_bytes}
     response = requests.post(
         'https://api.imagga.com/v2/colors',
@@ -140,11 +139,18 @@ def query_ai_vision(image_bytes):
     
     if response.status_code == 200:
         data = response.json()
-        # Mengembalikan warna yang paling dominan
-        colors = data['result']['colors']['background_colors']
-        if colors:
-            return colors[0]['label'] # Contoh: "blue", "white"
-    return "Hitam" # Default aman
+        # DEBUG: Print data ke terminal/logs untuk melihat struktur asli
+        print(data) 
+        
+        try:
+            # Mengakses struktur yang benar untuk colors
+            colors = data['result']['colors']['image_colors']
+            if colors and len(colors) > 0:
+                return colors[0]['closest_palette_color']
+        except KeyError:
+            return "hitam"
+            
+    return "hitam"
 
 # 5. USER INTERFACE (UI) LAYOUT
 st.title("VIBE-ID 🛍️")
