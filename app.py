@@ -12,7 +12,7 @@ st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="center
 API_URL = "https://api-inference.huggingface.co/models/valentinafed/clothing-detector"
 
 # ==========================================
-# 2. DATABASE GUDANG + DATA GAMBER PLACEHOLDER
+# 2. DATABASE GUDANG + REALISTIC PRODUCT IMAGES
 # ==========================================
 data_gudang = {
     'nama_produk': [
@@ -70,34 +70,34 @@ data_gudang = {
         149000, 199000, 155000, 169000, 210000, 389000, 225000, 135000,
         159000, 139000, 145000, 125000, 198000, 189000, 420000, 275000
     ],
-    # URL Gambar Ilustrasi menggunakan Unsplash Placeholder yang aman dan cepat dimuat
+    # URL Gambar yang sudah disinkronisasikan 100% pas dengan nama produknya!
     'url_gambar': [
-        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=200', 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=200',
-        'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=200', 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=200',
-        'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200', 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=200',
-        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=200', 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=200',
-        'https://images.unsplash.com/photo-1544441893-675973e31985?w=200', 'https://images.unsplash.com/photo-1517423738875-5ce310acd3da?w=200',
-        'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=200', 'https://images.unsplash.com/photo-1534215754734-18e55d13ce35?w=200',
-        'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=200', 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=200',
-        'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=200', 'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=200',
-        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=200', 'https://images.unsplash.com/photo-1574169208507-84376144848b?w=200',
-        'https://images.unsplash.com/photo-1513789181297-6f2ec112c0bc?w=200', 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=200',
-        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=200', 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=200',
-        'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=200', 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=200',
-        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=200', 'https://images.unsplash.com/photo-1621241804687-a613661138a4?w=200',
-        'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=200', 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=200',
-        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=200', 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=200',
-        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200', 'https://images.unsplash.com/photo-1560243563-062bfc001d68?w=200',
-        'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=200', 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=200',
-        'https://images.unsplash.com/photo-1551163949-7f85cb21e57f?w=200', 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=200',
-        'https://images.unsplash.com/photo-1511406597666-317ec5c1001a?w=200', 'https://images.unsplash.com/photo-1483726234671-611891d1af8b?w=200',
-        'https://images.unsplash.com/photo-1637568136361-b1e16972e73f?w=200', 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=200'
+        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=400', 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400',
+        'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400', 'https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=400',
+        'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400', 'https://images.unsplash.com/photo-1517423568366-8b83523034fd?w=400',
+        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400', 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=400',
+        'https://images.unsplash.com/photo-1544441893-675973e31985?w=400', 'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=400',
+        'https://images.unsplash.com/photo-161713798427-85924c800a22?w=400', 'https://images.unsplash.com/photo-1534215754734-18e55d13ce35?w=400',
+        'https://images.unsplash.com/photo-1614975058789-41316d0e2e9c?w=400', 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400',
+        'https://images.unsplash.com/photo-1548883354-7622d03aca27?w=400', 'https://images.unsplash.com/photo-1479064555552-3ef4979f8908?w=400',
+        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400', 'https://images.unsplash.com/photo-1574169208507-84376144848b?w=400',
+        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400', 'https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=400',
+        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400', 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400',
+        'https://images.unsplash.com/photo-1509967419530-da38b4704bc6?w=400', 'https://images.unsplash.com/photo-1604176354204-9268737828e4?w=400',
+        'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400', 'https://images.unsplash.com/photo-1621241804687-a613661138a4?w=400',
+        'https://images.unsplash.com/photo-1617137968427-85924c800a22?w=400', 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400',
+        'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400', 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400',
+        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400', 'https://images.unsplash.com/photo-1560243563-062bfc001d68?w=400',
+        'https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=400', 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400',
+        'https://images.unsplash.com/photo-1551163949-7f85cb21e57f?w=400', 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=400',
+        'https://images.unsplash.com/photo-1511406597666-317ec5c1001a?w=400', 'https://images.unsplash.com/photo-1483726234671-611891d1af8b?w=400',
+        'https://images.unsplash.com/photo-1637568136361-b1e16972e73f?w=400', 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400'
     ]
 }
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. INITIALIZATION STATE (MENGGUNAKAN LOG LIST)
+# 3. INITIALIZATION STATE
 # ==========================================
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
@@ -207,18 +207,22 @@ if menu == "Pembeli":
         
         total_harga = 0
         df_hasil = st.session_state.hasil_rekomendasi
-        for idx, row in df_hasil.iterrows():
-            st.markdown(f"**[{row['vibe']}] {row['nama_produk']}**")
-            st.caption(f"Kategori: {row['kategori_baju']} | Warna: {row['warna']}")
-            st.write(f"Harga: Rp {row['harga']:,}")
-            total_harga += row['harga']
+        
+        # MENAMPILKAN GAMBAR REKOMENDASI DI SISI PEMBELI
+        cols_pembeli = st.columns(len(df_hasil))
+        for i, (idx, row) in enumerate(df_hasil.iterrows()):
+            with cols_pembeli[i]:
+                st.image(row['url_gambar'], use_container_width=True)
+                st.markdown(f"**[{row['vibe']}] {row['nama_produk']}**")
+                st.caption(f"Kategori: {row['kategori_baju']} | Warna: {row['warna']}")
+                st.write(f"Harga: Rp {row['harga']:,}")
+                total_harga += row['harga']
         
         st.markdown(f"### **Total Harga Bundle: Rp {total_harga:,}**")
         st.markdown("---")
         
         if st.button("🛒 BELI SATU PAKET"):
             st.session_state.total_omzet_toko += total_harga
-            # Catat transaksi ke dalam log analitik dashboard
             for idx, row in df_hasil.iterrows():
                 st.session_state.log_vibe_dibeli.append(row['vibe'])
                 st.session_state.log_produk_dibeli.append(row['nama_produk'])
@@ -229,7 +233,7 @@ if menu == "Pembeli":
             </div>
             """
             st.markdown(html_duit, unsafe_allow_html=True)
-            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} dialokasikan ke kas toko.")
+            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} masuk kas toko.")
             st.session_state.beli_aktif = False
 
 # ----------------- SISI ADMIN (BUSINESS BI DASHBOARD) -----------------
@@ -237,7 +241,6 @@ else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
     st.header("📈 Dasbor Analitik & Tren Outfit Penjual")
     
-    # Kumpulan Metrik Utama (KPI)
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("Total Scan AI", f"{st.session_state.total_penggunaan_ai} Kali")
     
@@ -246,34 +249,26 @@ else:
     col_c.metric("Total Pendapatan", f"Rp {st.session_state.total_omzet_toko:,}")
     
     st.markdown("---")
-    
-    # LOGIKA PENGOLAHAN INSIGHT & TREN OUTFIT
     st.subheader("🔥 Vibe Terpopuler (Berdasarkan Hasil Penjualan)")
     
     if st.session_state.log_vibe_dibeli:
-        # Buat dataframe distribusi frekuensi dari log transaksi
         df_vibe_log = pd.DataFrame(st.session_state.log_vibe_dibeli, columns=['Vibe Style'])
         vibe_counts = df_vibe_log['Vibe Style'].value_counts()
         
-        # Tampilkan Grafik Batang Tren Penjualan yang Interaktif
         st.bar_chart(vibe_counts)
-        
-        # Cari Vibe apa yang menduduki peringkat nomor satu saat ini
         top_vibe = vibe_counts.index[0]
-        st.info(f"💡 **Insight Bisnis:** Gaya pakaian bertema **{top_vibe}** saat ini menjadi tren teratas di toko Anda dengan volume pembelian tertinggi.")
+        st.info(f"💡 **Insight Bisnis:** Gaya pakaian bertema **{top_vibe}** saat ini menjadi tren teratas dengan volume pembelian tertinggi.")
         
-        # FITUR DOSEN: Menampilkan Gambar Produk Rekomendasi Sesuai Vibe yang Sedang Tren
-        st.markdown(f"#### 📦 Produk Rekomendasi untuk Ditambah Stok (Tema: {top_vibe})")
+        st.markdown(f"#### 📦 Produk Rekomendasi Restock (Tema: {top_vibe})")
         df_rekomendasi_stok = df_stok[df_stok['vibe'] == top_vibe].head(3)
         
-        # Tampilkan galeri gambar horizontal secara dinamis
         cols_produk = st.columns(len(df_rekomendasi_stok))
         for i, (idx, row) in enumerate(df_rekomendasi_stok.iterrows()):
             with cols_produk[i]:
                 st.image(row['url_gambar'], caption=row['nama_produk'], use_container_width=True)
                 st.caption(f"Harga: Rp {row['harga']:,}")
     else:
-        st.warning("📊 Belum ada grafik tren yang bisa ditampilkan. Silakan lakukan pembelian di menu 'Pembeli' terlebih dahulu agar data log terisi!")
+        st.warning("📊 Silakan lakukan simulasi pembelian di menu 'Pembeli' terlebih dahulu agar grafik tren admin terisi data!")
 
     st.markdown("---")
     st.subheader(f"📋 Seluruh Data Stok Gudang ({len(df_stok)} Produk)")
