@@ -6,6 +6,7 @@ import io
 
 # 1. CONFIG & KONSTANTA UTAMA
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
+menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 
@@ -124,6 +125,9 @@ if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli =
 if 'log_produk_dibeli' not in st.session_state: st.session_state.log_produk_dibeli = []
 if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
+if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = None
+if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
+if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 
 # 4. MODULAR FUNCTIONS
 def query_ai_vision(image_bytes):
@@ -175,22 +179,24 @@ if menu == "Pembeli":
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
     # Tombol Analisis
-    if st.button("RUN AI VISUAL MATCHING 🚀"):
-        if not img_file_buffer:
+  if st.button("RUN AI VISUAL MATCHING 🚀"):
+        if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
         else:
             # Panggil fungsi AI
             img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
             warna_api = query_ai_vision(img_bytes)
             
-            # Logika penentuan warna & filter
+            # Logika penentuan warna
             warna_str = str(warna_api).lower() if warna_api else "hitam"
             warna_fix = "Pink" if any(x in warna_str for x in ["pink", "magenta"]) else ("Hijau" if any(x in warna_str for x in ["green", "lime"]) else ("Biru" if any(x in warna_str for x in ["blue", "navy"]) else ("Krem" if any(x in warna_str for x in ["beige", "tan"]) else ("Putih" if any(x in warna_str for x in ["white"]) else "Monochrome"))))
             
+            # SIMPAN KE SESSION STATE (Supaya tidak hilang saat rerun)
             st.session_state.warna_terdeteksi = warna_fix
-            st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2) # Contoh logic
+            st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2) # Ganti sesuai logika vibe kamu
             st.session_state.beli_aktif = True
-            st.rerun() # Paksa update supaya hasil muncul
+            st.session_state.total_penggunaan_ai += 1 # Tambah counter
+            st.rerun()
 
     # TAMPILKAN HASIL (Gunakan Session State agar tidak hilang saat Rerun)
     if st.session_state.get('beli_aktif'):
