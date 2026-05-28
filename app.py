@@ -183,19 +183,35 @@ if menu == "Pembeli":
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
         else:
-            # Panggil fungsi AI
             img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
             warna_api = query_ai_vision(img_bytes)
             
-            # Logika penentuan warna
+            # 1. Simpan hasil mentah dari AI
             warna_str = str(warna_api).lower() if warna_api else "hitam"
-            warna_fix = "Pink" if any(x in warna_str for x in ["pink", "magenta"]) else ("Hijau" if any(x in warna_str for x in ["green", "lime"]) else ("Biru" if any(x in warna_str for x in ["blue", "navy"]) else ("Krem" if any(x in warna_str for x in ["beige", "tan"]) else ("Putih" if any(x in warna_str for x in ["white"]) else "Monochrome"))))
             
-            # SIMPAN KE SESSION STATE (Supaya tidak hilang saat rerun)
-            st.session_state.warna_terdeteksi = warna_fix
-            st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2) # Ganti sesuai logika vibe kamu
+            # 2. Logika Penentuan Warna (Gunakan if-elif yang jelas)
+            if any(x in warna_str for x in ["pink", "magenta"]):
+                hasil_warna = "Pink"
+            elif any(x in warna_str for x in ["green", "lime"]):
+                hasil_warna = "Hijau"
+            elif any(x in warna_str for x in ["blue", "navy"]):
+                hasil_warna = "Biru"
+            elif any(x in warna_str for x in ["beige", "tan"]):
+                hasil_warna = "Krem"
+            elif any(x in warna_str for x in ["white"]):
+                hasil_warna = "Putih"
+            else:
+                hasil_warna = "Monochrome"
+            
+            # 3. KUNCI HASIL DI SESSION STATE
+            st.session_state.warna_terdeteksi = hasil_warna
+            st.session_state.hasil_rekomendasi = df_stok[df_stok['warna'] == hasil_warna]
+            
+            # Jika tidak ada produk dengan warna itu, ambil yang 'Monochrome' sebagai backup
+            if len(st.session_state.hasil_rekomendasi) == 0:
+                st.session_state.hasil_rekomendasi = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
+                
             st.session_state.beli_aktif = True
-            st.session_state.total_penggunaan_ai += 1 # Tambah counter
             st.rerun()
 
     # TAMPILKAN HASIL (Gunakan Session State agar tidak hilang saat Rerun)
