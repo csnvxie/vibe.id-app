@@ -183,4 +183,31 @@ if menu == "Pembeli":
             html_duit = """
             <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
                 <marquee direction="down" scrollamount="15" style="height: 100%;"><span style="font-size:90px;">💵 💸 💵 💸</span></marquee>
-                <marquee direction="down"
+                <marquee direction="down" scrollamount="10" style="height: 100%; margin-left: 35%;"><span style="font-size:80px;">💸 💵 💸</span></marquee>
+                <marquee direction="down" scrollamount="18" style="height: 100%; margin-left: 70%;"><span style="font-size:90px;">💵 💸 💵</span></marquee>
+            </div>
+            """
+            st.markdown(html_duit, unsafe_allow_html=True)
+            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} masuk ke kas!")
+            st.session_state.beli_aktif = False
+
+# ==================== SISI ADMIN ====================
+else:
+    st.header("📊 Admin Dashboard (Real-Time AI System)")
+    if st.session_state.log_gender_dicari:
+        gender_terbanyak = max(set(st.session_state.log_gender_dicari), key=st.session_state.log_gender_dicari.count)
+    else:
+        gender_terbanyak = "Belum Ada Data"
+
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Total Scan AI", f"{st.session_state.total_penggunaan_ai} Kali")
+    col_b.metric("Target Terpopuler", gender_terbanyak)
+    col_c.metric("Total Omzet Toko", f"Rp {st.session_state.total_omzet_toko:,}")
+    
+    st.markdown("---")
+    st.write("### 📂 Perbarui Katalog Toko")
+    file_excel = st.file_uploader("Upload Katalog (.xlsx)", type=["xlsx"])
+    if file_excel is not None: st.success("🎉 Berhasil memperbarui katalog gudang!")
+    st.markdown("---")
+    st.subheader(f"📋 Data Stok Gudang Saat Ini ({len(df_stok)} Produk)")
+    st.dataframe(df_stok, use_container_width=True)
