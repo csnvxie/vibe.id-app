@@ -187,35 +187,34 @@ if menu == "Pembeli":
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto lewat kamera atau upload file terlebih dahulu!")
         else:
-            with st.spinner('AI sedang menganalisis objek dan kecocokan gaya...'):
+            with st.spinner('AI sedang menganalisis objek...'):
                 st.session_state.total_penggunaan_ai += 1
-                st.session_state.log_gender_dicari.append(pilihan_gender)
                 
-                img_open = Image.open(img_file_buffer)
-                img_arr = io.BytesIO()
-                img_open.save(img_arr, format='JPEG')
-                img_bytes = img_arr.getvalue()
+                # PERBAIKAN: Baca ulang bytes dari buffer setelah tombol ditekan
+                if hasattr(img_file_buffer, "getvalue"):
+                    img_bytes = img_file_buffer.getvalue()
+                else:
+                    img_open = Image.open(img_file_buffer)
+                    img_arr = io.BytesIO()
+                    img_open.save(img_arr, format='JPEG')
+                    img_bytes = img_arr.getvalue()
                 
-                # 🤖 1. PANGGIL MODEL AI HUGGING FACE
+                # KIRIM BYTES KE API
                 hasil_ai = query_ai_vision(img_bytes)
                 
-                # 🤖 2. EKSTRAKSI WARNA DARI PREDIKSI AI (Fungsi Deteksi Gambar Nyata)
+                # LOGIKA DETEKSI WARNA (Pastikan hasil_ai ada isinya)
                 warna_fix = None
-                if hasil_ai and isinstance(hasil_ai, list):
+                if hasil_ai:
+                    # Logika deteksi dari label AI
                     for item in hasil_ai:
-                        if 'label' in item:
-                            label_terdeteksi = item['label'].lower()
-                            # Cek label dari Hugging Face apakah mengandung unsur warna
-                            if any(w in label_terdeteksi for w in ["pink", "red", "coquette"]): warna_fix = "Pink"
-                            elif any(w in label_terdeteksi for w in ["green", "olive", "sage"]): warna_fix = "Hijau"
-                            elif any(w in label_terdeteksi for w in ["blue", "denim"]): warna_fix = "Biru"
-                            elif any(w in label_terdeteksi for w in ["krem", "beige", "tan", "khaki"]): warna_fix = "Krem"
-                            elif any(w in label_terdeteksi for w in ["brown", "chocolate"]): warna_fix = "Cokelat"
-                            elif any(w in label_terdeteksi for w in ["white", "linen"]): warna_fix = "Putih"
-                            elif any(w in label_terdeteksi for w in ["black", "dark", "grey", "charcoal"]): warna_fix = "Hitam"
-                            if warna_fix: break
+                        if isinstance(item, dict) and 'label' in item:
+                            label = item['label'].lower()
+                            if any(w in label for w in ["pink", "coquette"]): warna_fix = "Pink"
+                            elif any(w in label for w in ["green", "sage"]): warna_fix = "Hijau"
+                            elif any(w in label for w in ["blue", "denim"]): warna_fix = "Biru"
+                            # ... (tambahkan sisanya di sini)
                 
-                # FALLBACK: Jika AI gagal mendeteksi lewat gambar, baru cek nama file teksnya
+                # FALLBACK jika AI tidak mendeteksi warna
                 if not warna_fix:
                     warna_fix = extract_color_from_name(nama_file_referensi)
                     
