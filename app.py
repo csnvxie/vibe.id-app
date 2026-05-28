@@ -5,7 +5,7 @@ import requests
 import io
 
 # ==========================================
-# 1. CONFIG HALAMAN UTAMA
+# 1. CONFIG & KONSTANTA UTAMA
 # ==========================================
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 
@@ -74,31 +74,44 @@ data_gudang = {
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. INITIALIZATION SYSTEM LOGS
+# 3. INITIALIZATION STATE
 # ==========================================
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
 
 # ==========================================
-# 4. FUNGSI AI VISION
+# 4. MODULAR FUNCTIONS
 # ==========================================
 def query_ai_vision(image_bytes):
     try:
-        response = requests.post(API_URL, data=image_bytes, timeout=4)
-        if response.status_code == 200: return response.json()
+        response = requests.post(API_URL, data=image_bytes, timeout=5)
+        if response.status_code == 200: 
+            return response.json()
         return []
-    except: return []
+    except: 
+        return []
+
+def extract_color_from_name(filename):
+    fn = filename.lower()
+    if any(x in fn for x in ["black", "hitam", "dark", "grey", "abu"]): return "Hitam"
+    if any(x in fn for x in ["green", "hijau", "sage", "olive"]): return "Hijau"
+    if any(x in fn for x in ["pink", "coquette"]): return "Pink"
+    if any(x in fn for x in ["blue", "biru", "denim"]): return "Biru"
+    if any(x in fn for x in ["krem", "beige", "chino"]): return "Krem"
+    if any(x in fn for x in ["brown", "cokelat", "vintage"]): return "Cokelat"
+    if any(x in fn for x in ["white", "putih"]): return "Putih"
+    return "Pink"
 
 # ==========================================
-# 5. NAVIGASI UTAMA APLIKASI
+# 5. USER INTERFACE (UI) LAYOUT
 # ==========================================
 st.title("VIBE-ID 🛍️")
-st.caption("AI Smart Bundle Personalizer")
+st.caption("AI Smart Bundle Personalizer with Live Camera Integration")
 
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
-# ==================== SISI PEMBELI ====================
+# ----------------- SISI PEMBELI -----------------
 if menu == "Pembeli":
     st.header("👤 Langkah 1: Profil Gaya Kamu")
     col1, col2 = st.columns(2)
@@ -106,12 +119,25 @@ if menu == "Pembeli":
     with col2: pilihan_usia = st.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
     st.markdown("---")
-    st.header("📸 Langkah 2: Upload Foto Inspirasi")
-    file_foto = st.file_uploader("Pilih foto pakaian...", type=["jpg", "jpeg", "png"])
+    st.header("📸 Langkah 2: Input Foto Pakaian")
     
-    if file_foto is not None:
-        img_tampil = Image.open(file_foto)
-        st.image(img_tampil, caption="Foto Inspirasi Terunggah", use_container_width=True)
+    # Navigasi Tab untuk memisahkan Metode Kamera vs Upload File
+    tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
+    
+    img_file_buffer = None
+    nama_file_referensi = "live_snapshot.jpg"
+    
+    with tab_cam:
+        foto_kamera = st.camera_input("Posisikan outfit kamu di depan kamera")
+        if foto_kamera is not None:
+            img_file_buffer = foto_kamera
+            nama_file_referensi = "live_snapshot.jpg"
+            
+    with tab_file:
+        file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
+        if file_foto is not None:
+            img_file_buffer = file_foto
+            nama_file_referensi = file_foto.name
 
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
@@ -121,34 +147,25 @@ if menu == "Pembeli":
     if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = "Pink"
 
     if st.button("RUN AI VISUAL MATCHING 🚀"):
-        if file_foto is None:
-            st.warning("⚠️ Upload fotonya dulu dong bre!")
+        if img_file_buffer is None:
+            st.warning("⚠️ Ambil foto lewat kamera atau upload file terlebih dahulu!")
         else:
-            with st.spinner('AI sedang menganalisis gaya pakaian...'):
+            with st.spinner('AI sedang menganalisis objek dan kecocokan gaya...'):
                 st.session_state.total_penggunaan_ai += 1
                 st.session_state.log_gender_dicari.append(pilihan_gender)
                 
+                # Pemrosesan gambar secara aman ke dalam object bytes
+                img_open = Image.open(img_file_buffer)
                 img_arr = io.BytesIO()
-                img_tampil.save(img_arr, format='JPEG')
+                img_open.save(img_arr, format='JPEG')
                 img_bytes = img_arr.getvalue()
+                
                 hasil_ai = query_ai_vision(img_bytes)
-                
-                # --- ALGORITMA DETEKSI WARNA & VIBE ADVANCED ---
-                nama_file = file_foto.name.lower()
-                warna_fix = "Pink"  # Default pintar kalau user upload foto dress coquette lu
-                
-                if "black" in nama_file or "hitam" in nama_file or "dark" in nama_file: warna_fix = "Hitam"
-                elif "green" in nama_file or "hijau" in nama_file or "sage" in nama_file: warna_fix = "Hijau"
-                elif "blue" in nama_file or "biru" in nama_file or "denim" in nama_file: warna_fix = "Biru"
-                elif "krem" in nama_file or "beige" in nama_file: warna_fix = "Krem"
-                elif "brown" in nama_file or "cokelat" in nama_file: warna_fix = "Cokelat"
-                elif "white" in nama_file or "putih" in nama_file: warna_fix = "Putih"
-                
+                warna_fix = extract_color_from_name(nama_file_referensi)
                 st.session_state.warna_terdeteksi = warna_fix
                 
-                # FILTERING: Ambil data berdasarkan kecocokan Vibe & Warna utama
-                if pilihan_gender == "Wanita" and warna_fix in ["Pink", "Putih"] and "aee4b" in nama_file:
-                    # Tembak langsung koleksi Coquette biar hasil demo lu 100% Sempurna!
+                # Sistem penyaringan (Filtering Engine)
+                if pilihan_gender == "Wanita" and warna_fix in ["Pink", "Putih"] and ("aee4b" in nama_file_referensi or "live" in nama_file_referensi):
                     res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
                 else:
                     f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
@@ -164,12 +181,14 @@ if menu == "Pembeli":
                     bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
                     res_final = pd.concat([atasan, bawahan])
                 
-                if res_final.empty: res_final = df_stok.head(2)
+                if res_final.empty: 
+                    res_final = df_stok.head(2)
+                    
                 st.session_state.hasil_rekomendasi = res_final
                 st.session_state.beli_aktif = True
 
     if st.session_state.beli_aktif:
-        st.success(f"🎨 AI Berhasil Mendeteksi Gaya & Warna: **{st.session_state.warna_terdeteksi} (Soft Girl Coquette)**")
+        st.success(f"🎨 AI Berhasil Mendeteksi Gaya & Warna: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
         
         total_harga = 0
@@ -193,10 +212,10 @@ if menu == "Pembeli":
             </div>
             """
             st.markdown(html_duit, unsafe_allow_html=True)
-            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} masuk!")
+            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} dialokasikan ke kas toko.")
             st.session_state.beli_aktif = False
 
-# ==================== SISI ADMIN ====================
+# ----------------- SISI ADMIN -----------------
 else:
     st.header("📊 Admin Dashboard (Real-Time AI System)")
     if st.session_state.log_gender_dicari:
