@@ -159,7 +159,7 @@ if menu == "Pembeli":
 
     st.markdown("---")
     st.header("📸 Langkah 2: Input Foto Pakaian")
-    tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
+   tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
     
     img_file_buffer = None
     nama_file_referensi = ""
@@ -168,7 +168,7 @@ if menu == "Pembeli":
         foto_kamera = st.camera_input("Posisikan baju kamu di depan kamera")
         if foto_kamera is not None:
             img_file_buffer = foto_kamera
-            nama_file_referensi = "live_snapshot_black_fit.jpg" if pilihan_gender == "Pria" else "live_snapshot_pink_coquette.jpg"
+            nama_file_referensi = "live_snapshot.jpg"  # NETRAL: Agar tidak mengunci warna tertentu
             
     with tab_file:
         file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
@@ -196,35 +196,50 @@ if menu == "Pembeli":
                 img_open.save(img_arr, format='JPEG')
                 img_bytes = img_arr.getvalue()
                 
+                # 🤖 1. PANGGIL MODEL AI HUGGING FACE
                 hasil_ai = query_ai_vision(img_bytes)
-                warna_fix = extract_color_from_name(nama_file_referensi)
+                
+                # 🤖 2. EKSTRAKSI WARNA DARI PREDIKSI AI (Fungsi Deteksi Gambar Nyata)
+                warna_fix = None
+                if hasil_ai and isinstance(hasil_ai, list):
+                    for item in hasil_ai:
+                        if 'label' in item:
+                            label_terdeteksi = item['label'].lower()
+                            # Cek label dari Hugging Face apakah mengandung unsur warna
+                            if any(w in label_terdeteksi for w in ["pink", "red", "coquette"]): warna_fix = "Pink"
+                            elif any(w in label_terdeteksi for w in ["green", "olive", "sage"]): warna_fix = "Hijau"
+                            elif any(w in label_terdeteksi for w in ["blue", "denim"]): warna_fix = "Biru"
+                            elif any(w in label_terdeteksi for w in ["krem", "beige", "tan", "khaki"]): warna_fix = "Krem"
+                            elif any(w in label_terdeteksi for w in ["brown", "chocolate"]): warna_fix = "Cokelat"
+                            elif any(w in label_terdeteksi for w in ["white", "linen"]): warna_fix = "Putih"
+                            elif any(w in label_terdeteksi for w in ["black", "dark", "grey", "charcoal"]): warna_fix = "Hitam"
+                            if warna_fix: break
+                
+                # FALLBACK: Jika AI gagal mendeteksi lewat gambar, baru cek nama file teksnya
+                if not warna_fix:
+                    warna_fix = extract_color_from_name(nama_file_referensi)
+                    
                 st.session_state.warna_terdeteksi = warna_fix
                 
-                # RE-ENGINE FILTER: Penyesuaian Vibe Otomatis Berdasarkan Warna
-                if warna_fix == "Pink" or "aee4b" in nama_file_referensi.lower():
+                # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
+                if warna_fix == "Pink":
                     res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
                 elif warna_fix == "Hijau":
                     res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
                 elif warna_fix == "Biru":
                     res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
+                elif warna_fix in ["Krem", "Cokelat"]:
+                    res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
+                elif warna_fix == "Putih":
+                    res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
                 else:
-                    f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
-                    f_u = df_stok['target_usia'].str.contains(pilihan_usia)
-                    f_w = (df_stok['warna'] == warna_fix)
-                    
-                    res = df_stok[f_g & f_u & f_w]
-                    if len(res) < 2:
-                        res_tambahan = df_stok[f_g & f_u & ((df_stok['warna'] == 'Putih') | (df_stok['warna'] == 'Hitam'))]
-                        res = pd.concat([res, res_tambahan]).drop_duplicates()
-                    
-                    atasan = res[res['kategori_baju'] == 'Atasan'].head(1)
-                    bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
-                    res_final = pd.concat([atasan, bawahan])
+                    res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
                 
-                if res_final.empty: res_final = df_stok.head(2)
+                if res_final.empty: 
+                    res_final = df_stok.head(2)
+                    
                 st.session_state.hasil_rekomendasi = res_final
                 st.session_state.beli_aktif = True
-
     if st.session_state.beli_aktif:
         st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
