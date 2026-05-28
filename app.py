@@ -260,8 +260,40 @@ if menu == "Pembeli":
                 st.session_state.log_vibe_dibeli.append(row['vibe'])
                 st.session_state.log_produk_dibeli.append(row['nama_produk'])
                 
-            st.balloons()
-            st.success(f"🎉 Transaksi Berhasil! Stok di database online otomatis terpotong.")
+            # === TRIK CONFIG EFFECT: Koin Emas Berhamburan Banyak ===
+            coin_html = """
+            <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
+                <style>
+                    @keyframes drop {
+                        0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+                        100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+                    }
+                    .coin {
+                        position: absolute;
+                        font-size: 28px;
+                        animation: drop 2.5s linear infinite;
+                    }
+                </style>
+            """
+            # AI Loop generator untuk sebar 50 koin acak di layar
+        import random
+        for _ in range(50):
+            left_pos = random.randint(0, 95)
+            delay = random.uniform(0, 1.5)
+            speed = random.uniform(1.8, 2.8)
+            coin_html += f"<div class='coin' style='left: {left_pos}vw; animation-delay: {delay}s; animation-duration: {speed}s;'>🪙</div>"
+        coin_html += "</div>"
+        
+        # Eksekusi animasinya ke layar Streamlit
+        st.markdown(coin_html, unsafe_allow_html=True)
+        
+        st.success(f"🎉 Transaksi Berhasil! Terima Kasih atas Pembelian nya<3")
+        st.session_state.beli_aktif = False
+            
+            # Eksekusi animasinya ke layar Streamlit
+            st.markdown(coin_html, unsafe_allow_html=True)
+            
+            st.success(f"🎉 Transaksi Berhasil! Koin reward cashback berlimpah telah masuk ke akun pembeli.")
             st.session_state.beli_aktif = False
 
 # ----------------- SISI ADMIN -----------------
