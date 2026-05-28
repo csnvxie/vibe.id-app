@@ -292,8 +292,8 @@ if menu == "Pembeli":
             
         st.markdown(coin_html, unsafe_allow_html=True)
             
-            st.success(f"🎉 Transaksi Berhasil! Terima Kasih Sudah Beli<3")
-            st.session_state.beli_aktif = False
+        st.success(f"🎉 Transaksi Berhasil! Terima Kasih Sudah Beli<3")
+        st.session_state.beli_aktif = False
 
 # ----------------- SISI ADMIN -----------------
 else:
