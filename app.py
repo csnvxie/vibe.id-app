@@ -22,7 +22,7 @@ API_URL = (
 )
 
 # ==========================================
-# 2. DATABASE PRODUK (VERSI RINGKAS ANTI-POTONG)
+# 2. DATABASE PRODUK (VERSI RINGKAS)
 # ==========================================
 data_gudang = {
     'nama_produk': [
@@ -64,7 +64,17 @@ data_gudang = {
 df_stok = pd.DataFrame(data_gudang)
 
 # ==========================================
-# 3. FUNGSI AI VISION
+# 3. INITIALIZATION DATABASE TRANSAKSI (SISTEM LOG)
+# ==========================================
+if 'log_gender_dicari' not in st.session_state:
+    st.session_state.log_gender_dicari = []
+if 'total_omzet_toko' not in st.session_state:
+    st.session_state.total_omzet_toko = 0
+if 'total_penggunaan_ai' not in st.session_state:
+    st.session_state.total_penggunaan_ai = 0
+
+# ==========================================
+# 4. FUNGSI AI VISION
 # ==========================================
 def query_ai_vision(image_bytes):
     try:
@@ -76,7 +86,7 @@ def query_ai_vision(image_bytes):
         return []
 
 # ==========================================
-# 4. NAVIGASI UTAMA
+# 5. NAVIGASI UTAMA
 # ==========================================
 st.title("VIBE-ID 🛍️")
 st.caption("AI Smart Bundle Personalizer")
@@ -103,7 +113,6 @@ if menu == "Pembeli":
     st.markdown("---")
     st.header("🎯 Langkah 3: Rekomendasi Gaya")
     
-    # Inisialisasi State yang Aman Pendek
     if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
     if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
     if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = "Putih"
@@ -113,6 +122,10 @@ if menu == "Pembeli":
             st.warning("⚠️ Upload fotonya dulu dong bre biar AI bisa jalan!")
         else:
             with st.spinner('AI sedang menganalisis objek & warna foto...'):
+                # SISTEM REKAM: Hitung penggunaan AI Pembeli
+                st.session_state.total_penggunaan_ai += 1
+                st.session_state.log_gender_dicari.append(pilihan_gender)
+                
                 img_arr = io.BytesIO()
                 img_tampil.save(img_arr, format='JPEG')
                 img_bytes = img_arr.getvalue()
@@ -131,7 +144,6 @@ if menu == "Pembeli":
                 
                 st.session_state.warna_terdeteksi = warna_fix
                 
-                # Filter Cerdas 3 Variabel (Gender + Usia + Warna)
                 f_g = (df_stok['gender'] == pilihan_gender) | (df_stok['gender'] == 'Unisex')
                 f_u = df_stok['target_usia'].str.contains(pilihan_usia)
                 f_w = (df_stok['warna'] == warna_fix)
@@ -141,7 +153,6 @@ if menu == "Pembeli":
                     res_tambahan = df_stok[f_g & f_u & ((df_stok['warna'] == 'Putih') | (df_stok['warna'] == 'Hitam'))]
                     res = pd.concat([res, res_tambahan]).drop_duplicates()
                 
-                # Jaminan Bundle Relevan Maksimal 2 Item (1 Atasan + 1 Bawahan)
                 atasan = res[res['kategori_baju'] == 'Atasan'].head(1)
                 bawahan = res[res['kategori_baju'] == 'Bawahan'].head(1)
                 res_final = pd.concat([atasan, bawahan])
@@ -166,6 +177,9 @@ if menu == "Pembeli":
         st.markdown("---")
         
         if st.button("🛒 BELI SATU PAKET"):
+            # SISTEM REKAM: Tambahkan harga bundle ke omzet admin
+            st.session_state.total_omzet_toko += total_harga
+            
             html_duit = """
             <div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; overflow: hidden;">
                 <marquee direction="down" scrollamount="15" style="height: 100%;"><span style="font-size:90px;">💵 💸 💵 💸</span></marquee>
@@ -174,26 +188,26 @@ if menu == "Pembeli":
             </div>
             """
             st.markdown(html_duit, unsafe_allow_html=True)
-            st.success("🎉 Transaksi Berhasil! Stok di database online otomatis terpotong.")
+            st.success(f"🎉 Transaksi Berhasil! Rp {total_harga:,} masuk ke kas!")
             st.session_state.beli_aktif = False
 
 # ==================== SISI ADMIN ====================
 else:
-    st.header("📊 Admin Dashboard")
+    st.header("📊 Admin Dashboard (Real-Time AI System)")
     
-    # --- OTOMATISASI INSIGHT DARI DATA GUDANG ---
-    vibe_terbanyak = df_stok['vibe'].value_counts().idxmax()
-    harga_rata = int(df_stok['harga'].mean())
-    gender_dominan = df_stok['gender'].value_counts().idxmax()
+    # LOGIKA PINTAR: Hitung preferensi pembeli asli secara live
+    if st.session_state.log_gender_dicari:
+        gender_terbanyak = max(set(st.session_state.log_gender_dicari), key=st.session_state.log_gender_dicari.count)
+    else:
+        gender_terbanyak = "Belum Ada Data"
+
+    # TAMPILAN INSIGHT DRIVEN AKURAT & DINAMIS
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("Total Scan AI", f"{st.session_state.total_penggunaan_ai} Kali")
+    col_b.metric("Target Terpopuler", gender_terbanyak)
+    col_c.metric("Total Omzet Toko", f"Rp {st.session_state.total_omzet_toko:,}")
     
-    t_ins = (
-        f"💡 **AI Driven Insights:** "
-        f"Katalog saat ini didominasi oleh gender **{gender_dominan}** "
-        f"dengan tren gaya **{vibe_terbanyak}**! "
-        f"Rata-rata harga produk di gudang adalah **Rp {harga_rata:,}**."
-    )
-    st.info(t_ins)
-    
+    st.markdown("---")
     st.write("### 📂 Perbarui Katalog Toko")
     file_excel = st.file_uploader("Upload Katalog (.xlsx)", type=["xlsx"])
     if file_excel is not None: st.success("🎉 Berhasil memperbarui katalog gudang!")
