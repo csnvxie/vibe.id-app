@@ -128,37 +128,19 @@ if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggun
 # 4. MODULAR FUNCTIONS
 def get_dominant_color(image_bytes):
     try:
-        # Buka gambar dan ubah ke RGB
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        # Resize kecil (50x50) agar prosesnya sangat cepat dan tidak bikin aplikasi berat
         img = img.resize((50, 50))
         data = np.array(img)
-        
-        # Ambil rata-rata nilai R, G, B
         r, g, b = np.mean(data, axis=(0, 1))
         
-        # Logika klasifikasi warna (Threshold sederhana)
-        if r > 180 and g < 150 and b < 150: return "Merah"
-        if r > 200 and g > 150 and b < 150: return "Krem"
+        if r > 200 and g > 200 and b > 200: return "Putih"
+        if r < 80 and g < 80 and b < 80: return "Hitam"
         if r > 180 and g < 150 and b > 180: return "Pink"
         if r < 100 and g > 150 and b < 100: return "Hijau"
         if r < 100 and g < 100 and b > 150: return "Biru"
-        if r > 200 and g > 200 and b > 200: return "Putih"
-        if r < 80 and g < 80 and b < 80: return "Hitam"
-        return "Hitam" # Default aman
-    except:
+        if r > 200 and g > 150 and b < 150: return "Krem"
         return "Hitam"
-
-def extract_color_from_name(filename):
-    fn = filename.lower()
-    if any(x in fn for x in ["pink", "coquette", "aee4b"]): return "Pink"
-    if any(x in fn for x in ["black", "hitam", "dark", "grey", "abu"]): return "Hitam"
-    if any(x in fn for x in ["green", "hijau", "sage", "olive"]): return "Hijau"
-    if any(x in fn for x in ["blue", "biru", "denim"]): return "Biru"
-    if any(x in fn for x in ["krem", "beige", "chino"]): return "Krem"
-    if any(x in fn for x in ["brown", "cokelat", "vintage"]): return "Cokelat"
-    if any(x in fn for x in ["white", "putih"]): return "Putih"
-    return "Hitam"
+    except: return "Hitam"
 
 # 5. USER INTERFACE (UI) LAYOUT
 st.title("VIBE-ID 🛍️")
@@ -206,34 +188,30 @@ if menu == "Pembeli":
             with st.spinner('AI sedang menganalisis objek...'):
                 st.session_state.total_penggunaan_ai += 1
                 
-                # PERBAIKAN: Baca ulang bytes dari buffer setelah tombol ditekan
-                if hasattr(img_file_buffer, "getvalue"):
-                    img_bytes = img_file_buffer.getvalue()
+                # Baca Bytes
+                if hasattr(img_file_buffer, "getvalue"): img_bytes = img_file_buffer.getvalue()
                 else:
                     img_open = Image.open(img_file_buffer)
                     img_arr = io.BytesIO()
                     img_open.save(img_arr, format='JPEG')
                     img_bytes = img_arr.getvalue()
                 
-                # Ganti dengan fungsi baru
-        warna_fix = get_dominant_color(img_bytes)
-        st.session_state.warna_terdeteksi = warna_fix
-        
-        st.success(f"AI Berhasil Mendeteksi Warna Dominan: {warna_fix}")
-        
-        # Logika mapping vibe langsung ke warna_fix
-        if warna_fix == "Pink": 
-            res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
-        elif warna_fix == "Hijau": 
-            res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
-        # ... lanjutin elif untuk warna lainnya ...
-        else:
-            res_final = df_stok[df_stok['vibe'] == 'Basic'].head(2)
+                # DETEKSI WARNA (Cuma jalan 1 kali di sini)
+                warna_fix = get_dominant_color(img_bytes)
+                st.session_state.warna_terdeteksi = warna_fix
                 
-                # LOGIKA DETEKSI WARNA
-            warna_fix = get_dominant_color(img_bytes) 
-            st.session_state.warna_terdeteksi = warna_fix
-            st.success(f"AI Berhasil Mendeteksi Warna Dominan: {warna_fix}")
+                # LOGIKA FILTER BUNDLE
+                if warna_fix == "Pink": res_final = df_stok[df_stok['vibe'] == 'Soft Girl Coquette'].head(2)
+                elif warna_fix == "Hijau": res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].head(2)
+                elif warna_fix == "Biru": res_final = df_stok[df_stok['vibe'] == 'Y2K Streetwear'].tail(2)
+                elif warna_fix in ["Krem", "Cokelat"]: res_final = df_stok[df_stok['vibe'] == 'Earth Tone'].tail(2)
+                elif warna_fix == "Putih": res_final = df_stok[df_stok['vibe'] == 'Casual'].head(2)
+                else: res_final = df_stok[df_stok['vibe'] == 'Monochrome'].head(2)
+                
+                if res_final.empty: res_final = df_stok.head(2)
+                
+                st.session_state.hasil_rekomendasi = res_final
+                st.session_state.beli_aktif = True
                 
             # 🎯 3. FILTER SMART BUNDLE OLEH AI BERDASARKAN WARNA HASIL DETEKSI
             if warna_fix == "Pink":
@@ -254,7 +232,7 @@ if menu == "Pembeli":
                     
             st.session_state.hasil_rekomendasi = res_final
             st.session_state.beli_aktif = True
-    if st.session_state.beli_aktif:
+   if st.session_state.beli_aktif:
         st.success(f"🎨 AI Berhasil Mendeteksi Warna Dominan: **{st.session_state.warna_terdeteksi}**")
         st.subheader("📦 Hasil Paket Rekomendasi VIBE-ID (Smart Bundle)")
         
