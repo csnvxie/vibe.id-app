@@ -20,28 +20,37 @@ N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" 
 def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        img = img.resize((1, 1))
+        # Gunakan metode 'box' agar lebih akurat mengambil rata-rata warna
+        img = img.resize((1, 1), resample=Image.BOX) 
         color = img.getpixel((0, 0))
         
-        # Bersihkan memori setelah proses
-        del raw_data 
-        gc.collect() 
+        del img 
+        gc.collect()
         
         return color
     except Exception:
-        return (0, 0, 0)
+        return (255, 255, 255)
 
 def get_color_name(rgb):
-    # Logika sederhana untuk menentukan nama warna berdasarkan koordinat RGB
     r, g, b = rgb
-    if r > 200 and g < 100 and b < 100: return "Merah"
-    if r < 100 and g > 200 and b < 100: return "Hijau"
-    if r < 100 and g < 100 and b > 200: return "Biru"
-    if r > 200 and g > 200 and b < 100: return "Kuning"
-    if r > 200 and g < 100 and b > 200: return "Ungu"
-    if r > 100 and g > 100 and b > 100 and r < 200: return "Abu-abu"
-    if r < 50 and g < 50 and b < 50: return "Hitam"
-    if r > 240 and g > 240 and b > 240: return "Putih"
+    
+    # Deteksi Hitam yang lebih akurat (hanya jika benar-benar gelap)
+    if r < 40 and g < 40 and b < 40: return "Hitam"
+    
+    # Deteksi Putih
+    if r > 220 and g > 220 and b > 220: return "Putih"
+    
+    # Deteksi Warna Utama
+    if r > 180 and g < 100 and b < 100: return "Merah"
+    if r < 100 and g > 180 and b < 100: return "Hijau"
+    if r < 100 and g < 100 and b > 180: return "Biru"
+    if r > 180 and g > 180 and b < 100: return "Kuning"
+    if r > 180 and g < 100 and b > 180: return "Ungu"
+    
+    # Abu-abu (selisih RGB tidak jauh)
+    if abs(r - g) < 30 and abs(g - b) < 30 and abs(r - b) < 30:
+        return "Abu-abu"
+        
     return "Warna Campuran"
 
 # =====================================================================
