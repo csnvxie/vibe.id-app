@@ -12,7 +12,7 @@ menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
 # URL API Model & Webhook n8n
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
 # =====================================================================
@@ -232,11 +232,11 @@ else:
         st.warning("📊 Silakan lakukan simulasi pembelian di menu 'Pembeli' terlebih dahulu!")
     
     st.markdown("---")
-    jumlah_stok = len(df_stok) if df_stok is not None else 0
-    st.subheader(f"📋 Seluruh Data Stok Gudang Ditarik dari Google Sheets ({jumlah_stok} Produk)")
-    
-    if df_stok is not None and not df_stok.empty:
-        kolom_tampil = [col for col in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga'] if col in df_stok.columns]
-        st.dataframe(df_stok[kolom_tampil], use_container_width=True)
-    else:
-        st.info("Belum ada data stok yang terload dari database.")
+   jumlah_stok = len(df_stok) if df_stok is not None else 0
+st.subheader(f"📋 Seluruh Data Stok Gudang Ditarik dari Google Sheets ({jumlah_stok} Produk)")
+
+if df_stok is not None and not df_stok.empty:
+    kolom_tampil = [col for col in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga'] if col in df_stok.columns]
+    st.dataframe(df_stok[kolom_tampil], use_container_width=True)
+else:
+    st.info("Belum ada data stok yang terload dari database.")"Belum ada data stok yang terload dari database.")
