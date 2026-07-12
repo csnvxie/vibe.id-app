@@ -191,8 +191,7 @@ if menu == "Pembeli":
             img_bytes = img_file_buffer.getvalue() 
 if len(img_bytes) > 2 * 1024 * 1024: # Batasi maksimal 2MB
     st.error("Foto terlalu besar! Gunakan foto di bawah 2MB.")
-else:
-            
+else:   
             # 1. Deteksi Warna Dominan
             rgb_dominan = get_dominant_color(img_bytes)
             nama_warna = get_color_name(rgb_dominan)
@@ -215,11 +214,11 @@ else:
             st.rerun()
 
     # Blok untuk menampilkan hasil setelah button ditekan
-    if st.session_state.get('beli_aktif'):
-        st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
-        df_hasil = st.session_state.get('hasil_rekomendasi')
+            if st.session_state.get('beli_aktif'):
+            st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
+            df_hasil = st.session_state.get('hasil_rekomendasi')
         
-        if df_hasil is not None and not df_hasil.empty:
+            if df_hasil is not None and not df_hasil.empty:
             # Gunakan min(len(df_hasil), 3) agar tidak error jika kolom terlalu banyak
             cols = st.columns(min(len(df_hasil), 3))
             total_harga = 0
