@@ -244,8 +244,8 @@ else:
                 
                 st.success("🎉 Transaksi Berhasil! Terima Kasih <3")
                 st.session_state.beli_aktif = False
-        else:
-            st.warning("Tidak ada rekomendasi pakaian yang cocok untuk saat ini.")
+            else:
+                st.warning("Tidak ada rekomendasi pakaian yang cocok untuk saat ini.")
     # =====================================================================
     # 🤖 LIVE CHATBOT INTERAKTIF VIA N8N 
     # =====================================================================
