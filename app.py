@@ -71,13 +71,26 @@ if menu == "Pembeli":
     pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
     pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial"])
 
-    st.header("📸 Langkah 2: Input Foto")
-    foto = st.file_uploader("Upload foto baju...", type=["jpg", "png"])
+    st.header("📸 Langkah 2: Input Foto Pakaian")
+    tab_cam, tab_file = st.tabs(["📷 Gunakan Real Cam", "📁 Upload File Foto"])
+    
+    img_file_buffer = None
+    
+    with tab_cam:
+        foto_kamera = st.camera_input("Posisikan baju kamu di depan kamera")
+        if foto_kamera: img_file_buffer = foto_kamera
+            
+    with tab_file:
+        file_foto = st.file_uploader("Pilih file foto dari penyimpanan...", type=["jpg", "jpeg", "png"])
+        if file_foto: img_file_buffer = file_foto
+
+    # Pastikan variabel img_file_buffer ini nanti dipakai di tombol RUN AI
     
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         st.session_state.total_penggunaan_ai += 1
         st.session_state.log_gender_dicari.append(pilihan_gender)
-        img_bytes = foto.getvalue()
+        if img_file_buffer is not None:
+    img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
         tebakan = query_ai_vision(img_bytes)
         st.session_state.warna_terdeteksi = "Merah" if any(x in tebakan for x in ["shirt", "jersey"]) else "Biru"
         st.session_state.hasil_rekomendasi = df_stok.head(2)
