@@ -4,6 +4,7 @@ import pandas as pd
 from PIL import Image
 import requests
 import io
+import gc
 
 # =====================================================================
 # 1. CONFIG & KONSTANTA UTAMA
@@ -18,17 +19,16 @@ N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" 
 
 def get_dominant_color(image_bytes):
     try:
-        # Gunakan PIL untuk load gambar
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        
-        # Resize ke 1x1 untuk mendapatkan warna rata-rata secara instan
         img = img.resize((1, 1))
-        
-        # Ambil warna pixel tunggal tersebut
         color = img.getpixel((0, 0))
         
-        return color # Mengembalikan tuple (R, G, B)
-    except Exception as e:
+        # Bersihkan memori setelah proses
+        del img 
+        gc.collect() 
+        
+        return color
+    except Exception:
         return (0, 0, 0)
 
 def get_color_name(rgb):
@@ -47,7 +47,7 @@ def get_color_name(rgb):
 # =====================================================================
 # 2. DATABASE GUDANG (AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-@st.cache_data(ttl=5)
+@st.cache_resource
 def load_data_from_n8n():
     try:
         response = requests.get(N8N_DATA_URL)
@@ -188,7 +188,10 @@ if menu == "Pembeli":
             # Pastikan state log tetap jalan
             st.session_state.total_penggunaan_ai += 1
             
-            img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
+            img_bytes = img_file_buffer.getvalue() 
+if len(img_bytes) > 2 * 1024 * 1024: # Batasi maksimal 2MB
+    st.error("Foto terlalu besar! Gunakan foto di bawah 2MB.")
+else:
             
             # 1. Deteksi Warna Dominan
             rgb_dominan = get_dominant_color(img_bytes)
