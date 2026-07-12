@@ -147,13 +147,17 @@ if menu == "Pembeli":
             warna_str = str(warna_api).lower() if warna_api else "hitam"
             
             # Logika Filter Warna
-            if any(x in warna_str for x in ["pink", "magenta"]): hasil_warna = "Pink"
-            elif any(x in warna_str for x in ["green", "lime"]): hasil_warna = "Hijau"
-            elif any(x in warna_str for x in ["blue", "navy"]): hasil_warna = "Biru"
-            elif any(x in warna_str for x in ["beige", "tan", "khaki", "cream"]): hasil_warna = "Krem"
-            elif any(x in warna_str for x in ["white"]): hasil_warna = "Putih"
-            elif any(x in warna_str for x in ["brown", "chocolate"]): hasil_warna = "Cokelat"
-            elif any(x in warna_str for x in ["black", "grey", "charcoal", "moss", "claret"]): hasil_warna = "Hitam"
+            # Logika Filter Warna (Kamus Diperluas & Lebih Sensitif)
+            if any(x in warna_str for x in ["red", "crimson", "maroon", "scarlet", "ruby"]): hasil_warna = "Merah"
+            elif any(x in warna_str for x in ["pink", "magenta", "rose"]): hasil_warna = "Pink"
+            elif any(x in warna_str for x in ["green", "lime", "emerald", "olive", "mint"]): hasil_warna = "Hijau"
+            elif any(x in warna_str for x in ["blue", "navy", "cyan", "indigo", "sky"]): hasil_warna = "Biru"
+            elif any(x in warna_str for x in ["yellow", "gold", "amber", "mustard"]): hasil_warna = "Kuning"
+            elif any(x in warna_str for x in ["orange", "tangerine", "peach"]): hasil_warna = "Oranye"
+            elif any(x in warna_str for x in ["beige", "tan", "khaki", "cream", "wheat"]): hasil_warna = "Krem"
+            elif any(x in warna_str for x in ["white", "ivory"]): hasil_warna = "Putih"
+            elif any(x in warna_str for x in ["brown", "chocolate", "coffee"]): hasil_warna = "Cokelat"
+            elif any(x in warna_str for x in ["black", "grey", "gray", "charcoal", "shadow"]): hasil_warna = "Hitam"
             else: hasil_warna = "Monochrome"
             
             st.session_state.warna_terdeteksi = hasil_warna
