@@ -14,7 +14,7 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
 # ⚠️ GANTI LINK DI BAWAH INI DENGAN PRODUCTION URL WEBHOOK N8N KAMU YANG BARU BIKIN
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/Ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 
 @st.cache_data(ttl=30) # Cache data selama 30 detik agar web cepat di-load
 def load_data_from_n8n():
