@@ -13,30 +13,52 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 # =====================================================================
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-# ⚠️ GANTI LINK DI BAWAH INI DENGAN PRODUCTION URL WEBHOOK N8N KAMU YANG BARU BIKIN
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
 
-@st.cache_data(ttl=30) # Cache data selama 30 detik agar web cepat di-load
+@st.cache_data(ttl=30)
 def load_data_from_n8n():
     try:
         response = requests.get(N8N_DATA_URL)
         if response.status_code == 200:
             df = pd.DataFrame(response.json())
             
-            df.columns = [str(col).strip().lower() for col in df.columns]
-            # Mengubah response data dari Google Sheets menjadi DataFrame
-            return pd.DataFrame(response.json())
+            # 1. Bersihkan spasi di nama kolom bawaan Google Sheets
+            df.columns = [str(col).strip() for col in df.columns]
+            
+            # 2. Buang baris header duplikat yang ikutan ke-load di baris tengah (baris 13 di sheet)
+            if 'Item ID' in df.columns:
+                df = df[df['Item ID'] != 'Item ID']
+            
+            # 3. MAPPING (Penerjemah dari nama kolomu ke nama yang dicari kodingan)
+            mapping_kolom = {
+                'Nama Barang': 'nama_produk',
+                'Kategori': 'kategori_baju',
+                'Gaya (Style)': 'vibe',
+                'Warna': 'warna',
+                'Gender': 'gender',
+                'Harga': 'harga'
+            }
+            df = df.rename(columns=mapping_kolom)
+            
+            # 4. Tambahkan kolom tiruan yang ga ada di sheet biar kodingan bawah ga error
+            if 'target_usia' not in df.columns:
+                df['target_usia'] = 'Gen Z'
+            if 'url_gambar' not in df.columns:
+                # Karena di Sheets belum ada kolom URL foto, kita kasih gambar placeholder baju polos biar aman pas demo
+                df['url_gambar'] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
+                
+            return df
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
-    # Backup data kosong jika n8n atau Google Sheets tidak merespon
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
 
 # Memanggil fungsi untuk mengambil data pakaian secara real-time
 df_stok = load_data_from_n8n()
 
-# Memastikan kolom harga terbaca sebagai angka untuk keperluan math/total belanja
+# Bersihkan format harga (buang "Rp" dan titik) agar bisa dihitung matematika
 if not df_stok.empty and 'harga' in df_stok.columns:
+    df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
 # =====================================================================
 
