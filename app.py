@@ -185,67 +185,66 @@ if menu == "Pembeli":
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
-        elif df_stok.empty:
-            st.error("⚠️ Data produk kosong, periksa kembali koneksi Webhook n8n Anda!")
         else:
+            # Pastikan state log tetap jalan
             st.session_state.total_penggunaan_ai += 1
-            st.session_state.log_gender_dicari.append(pilihan_gender)
             
             img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
-            tebakan_ai = query_ai_vision(img_bytes)
             
-            st.info(f"🔮 AI Mendeteksi Jenis Pakaian: `{tebakan_ai}`")
+            # 1. Deteksi Warna Dominan
+            rgb_dominan = get_dominant_color(img_bytes)
+            nama_warna = get_color_name(rgb_dominan)
             
-            if any(x in tebakan_ai for x in ["jersey", "t-shirt", "shirt", "sportswear", "uniform"]):
-                hasil_warna = "Merah"
-            elif any(x in tebakan_ai for x in ["suit", "jacket", "coat"]):
-                hasil_warna = "Hitam"
-            elif any(x in tebakan_ai for x in ["jean", "skirt", "dress"]):
-                hasil_warna = "Biru"
-            else:
-                hasil_warna = "Merah"
+            st.info(f"🎨 Warna Dominan Terdeteksi: `{nama_warna}` (RGB: {rgb_dominan})")
             
-            st.session_state.warna_terdeteksi = hasil_warna
+            # 2. Filter Produk berdasarkan warna (Diberi pengaman jika df_stok kosong)
+            matching_products = pd.DataFrame() # Inisialisasi awal agar tidak error
+            if df_stok is not None and 'warna' in df_stok.columns:
+                matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(nama_warna.lower(), na=False)]
             
-            if 'warna' in df_stok.columns and not df_stok.empty:
-                matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(hasil_warna.lower(), na=False)]
-            else:
-                matching_products = df_stok.head(0)
-                
+            # 3. Fallback jika tidak ditemukan
+            if matching_products.empty:
+                st.warning(f"Produk warna {nama_warna} tidak ditemukan, menampilkan stok yang ada:")
+                matching_products = df_stok.head(3) if df_stok is not None else pd.DataFrame()
+            
             st.session_state.hasil_rekomendasi = matching_products
-            if len(st.session_state.hasil_rekomendasi) == 0:
-                st.session_state.hasil_rekomendasi = df_stok.head(2)
-                
+            st.session_state.warna_terdeteksi = nama_warna
             st.session_state.beli_aktif = True
             st.rerun()
 
+    # Blok untuk menampilkan hasil setelah button ditekan
     if st.session_state.get('beli_aktif'):
-        st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.warna_terdeteksi}**")
-        df_hasil = st.session_state.hasil_rekomendasi
+        st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
+        df_hasil = st.session_state.get('hasil_rekomendasi')
         
         if df_hasil is not None and not df_hasil.empty:
-            cols = st.columns(len(df_hasil))
+            # Gunakan min(len(df_hasil), 3) agar tidak error jika kolom terlalu banyak
+            cols = st.columns(min(len(df_hasil), 3))
             total_harga = 0
+            
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
-                with cols[i]:
-                    if 'url_gambar' in row and row['url_gambar']:
-                        st.image(row['url_gambar'], use_container_width=True)
-                    st.write(f"**{row['nama_produk']}**")
-                    total_harga += row['harga']
+                # Batasi hanya 3 kolom agar layout rapi
+                if i < 3: 
+                    with cols[i]:
+                        if 'url_gambar' in row and row['url_gambar']:
+                            st.image(row['url_gambar'], use_container_width=True)
+                        st.write(f"**{row['nama_produk']}**")
+                        # Pastikan harga adalah angka
+                        harga_item = float(row.get('harga', 0))
+                        total_harga += harga_item
             
             st.write(f"### Total: Rp {total_harga:,.0f}")
             
             if st.button("🛒 BELI SATU PAKET"):
                 st.session_state.total_omzet_toko += total_harga
                 for idx, row in df_hasil.iterrows():
-                    st.session_state.log_vibe_dibeli.append(row['vibe'])
-                    st.session_state.log_produk_dibeli.append(row['nama_produk'])
-                    
-                st.success("🎉 Transaksi Berhasil! Terima Kasih atas Pembeliannya <3")
+                    st.session_state.log_vibe_dibeli.append(row.get('vibe', 'Unknown'))
+                    st.session_state.log_produk_dibeli.append(row.get('nama_produk', 'Unknown'))
+                
+                st.success("🎉 Transaksi Berhasil! Terima Kasih <3")
                 st.session_state.beli_aktif = False
         else:
             st.warning("Tidak ada rekomendasi pakaian yang cocok untuk saat ini.")
-
     # =====================================================================
     # 🤖 LIVE CHATBOT INTERAKTIF VIA N8N 
     # =====================================================================
