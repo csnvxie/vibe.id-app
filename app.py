@@ -13,19 +13,30 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 # =====================================================================
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=5)
 def load_data_from_n8n():
     try:
         response = requests.get(N8N_DATA_URL)
         if response.status_code == 200:
-            df = pd.DataFrame(response.json())
+            raw_data = response.json()
             
-            # Bersihkan spasi nama kolom
+            # Jika n8n membungkus datanya dalam list, kita bongkar row-nya
+            if isinstance(raw_data, list):
+                # Ekstrak data jika n8n mengirim format bertingkat [{ "json": {...} }]
+                if len(raw_data) > 0 and 'json' in raw_data[0]:
+                    cleaned_list = [item['json'] for item in raw_data if 'json' in item]
+                    df = pd.DataFrame(cleaned_list)
+                else:
+                    df = pd.DataFrame(raw_data)
+            else:
+                df = pd.DataFrame(raw_data)
+            
+            # Bersihkan spasi di nama kolom
             df.columns = [str(col).strip() for col in df.columns]
             
-            # Buang baris header duplikat di tengah sheets
+            # Buang baris header duplikat dari Google Sheets (Baris 13)
             if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
             
@@ -40,7 +51,7 @@ def load_data_from_n8n():
             }
             df = df.rename(columns=mapping_kolom)
             
-            # SUNTIKKAN KOLOM WAJIB (Biar anti-KeyError selamanya)
+            # SUNTIKAN WAJIB AMAN: Pastikan kolom 'warna' dkk selalu eksis di DataFrame
             kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
             for col in kolom_wajib:
                 if col not in df.columns:
@@ -52,18 +63,16 @@ def load_data_from_n8n():
                         df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
                     else:
                         df[col] = ''
-                        
             return df
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
-    # Backup dataframe kosong berkolom lengkap jika n8n offline
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
 
-# Load data secara aman
+# Memanggil load data
 df_stok = load_data_from_n8n()
 
-# Bersihkan format harga agar siap dihitung matematika
+# Bersihkan format harga dari Google Sheets (menghilangkan Rp dan Titik)
 if not df_stok.empty and 'harga' in df_stok.columns:
     df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
@@ -98,7 +107,6 @@ def query_ai_vision(image_bytes):
             if colors and len(colors) > 0:
                 return colors[0]['closest_palette_color']
         except Exception as e:
-            st.error(f"API Error: {e}") 
             return "Warna Tidak Terdeteksi"
     return "Warna Tidak Terdeteksi"
 
@@ -146,16 +154,16 @@ if menu == "Pembeli":
             elif any(x in warna_str for x in ["beige", "tan", "khaki", "cream"]): hasil_warna = "Krem"
             elif any(x in warna_str for x in ["white"]): hasil_warna = "Putih"
             elif any(x in warna_str for x in ["brown", "chocolate"]): hasil_warna = "Cokelat"
-            elif any(x in warna_str for x in ["black", "grey", "charcoal"]): hasil_warna = "Hitam"
+            elif any(x in warna_str for x in ["black", "grey", "charcoal", "moss", "claret"]): hasil_warna = "Hitam"
             else: hasil_warna = "Monochrome"
             
             st.session_state.warna_terdeteksi = hasil_warna
             
-            # Ambil data pakaian berdasarkan warna secara AMAN (Cek ketersediaan kolom)
+            # Memfilter produk secara AMAN
             if 'warna' in df_stok.columns and not df_stok.empty:
-                matching_products = df_stok[df_stok['warna'].astype(str).str.lower() == hasil_warna.lower()]
+                matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(hasil_warna.lower(), na=False)]
             else:
-                激f_stok.head(0)
+                matching_products = df_stok.head(0)
                 
             st.session_state.hasil_rekomendasi = matching_products
             
@@ -167,7 +175,7 @@ if menu == "Pembeli":
 
     # TAMPILKAN HASIL
     if st.session_state.get('beli_aktif'):
-        st.success(f"🎨 Warna terdeteksi: **{st.session_state.warna_terdeteksi}**")
+        st.success(f"🎨 Warna terdeteksi (Palette/Closest): **{st.session_state.warna_terdeteksi}**")
         df_hasil = st.session_state.hasil_rekomendasi
         
         if df_hasil is not None and not df_hasil.empty:
@@ -176,7 +184,7 @@ if menu == "Pembeli":
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
                 with cols[i]:
                     if 'url_gambar' in row and row['url_gambar']:
-                        st.image(row['url_gambar'], use_container_width=True)
+                        st.image(row['url_gambar'], width='stretch')
                     st.write(f"**{row['nama_produk']}**")
                     total_harga += row['harga']
             
@@ -197,9 +205,9 @@ if menu == "Pembeli":
                         }
                         .coin { position: absolute; font-size: 32px; animation: drop 2.5s linear infinite; }
                     </style>
-                    <div class="coin" style="left: 10vw; animation-delay: 0s;">🪙</div>
-                    <div class="coin" style="left: 40vw; animation-delay: 0.2s;">🪙</div>
-                    <div class="coin" style="left: 70vw; animation-delay: 0.1s;">🪙</div>
+                    <div class="coin" style="left: 20vw; animation-delay: 0s;">🪙</div>
+                    <div class="coin" style="left: 50vw; animation-delay: 0.2s;">🪙</div>
+                    <div class="coin" style="left: 80vw; animation-delay: 0.4s;">🪙</div>
                 </div>
                 """
                 st.markdown(coin_html, unsafe_allow_html=True)
@@ -239,7 +247,7 @@ else:
                 for i, (idx, row) in enumerate(df_rekomendasi_stok.iterrows()):
                     with cols_produk[i]:
                         if 'url_gambar' in row and row['url_gambar']:
-                            st.image(row['url_gambar'], caption=row['nama_produk'], use_container_width=True)
+                            st.image(row['url_gambar'], caption=row['nama_produk'], width='stretch')
                         st.caption(f"Harga: Rp {row['harga']:,.0f}")
     else:
         st.warning("📊 Silakan lakukan simulasi pembelian di menu 'Pembeli' terlebih dahulu!")
