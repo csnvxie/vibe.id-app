@@ -74,8 +74,8 @@ def load_data_from_n8n():
             
 df.columns = [str(col).strip() for col in df.columns]
             
-            if 'Item ID' in df.columns:
-                df = df[df['Item ID'] != 'Item ID']
+        if 'Item ID' in df.columns:
+            df = df[df['Item ID'] != 'Item ID']
             
             mapping_kolom = {
                 'Nama Barang': 'nama_produk',
