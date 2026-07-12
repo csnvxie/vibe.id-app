@@ -214,7 +214,7 @@ else:
             st.rerun()
 
     # Blok untuk menampilkan hasil setelah button ditekan
-            if st.session_state.get('beli_aktif'):
+        if st.session_state.get('beli_aktif'):
             st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
             df_hasil = st.session_state.get('hasil_rekomendasi')
         
