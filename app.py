@@ -31,8 +31,12 @@ def get_dominant_color(image_bytes):
     except Exception:
         return (255, 255, 255)
 
+st.write(f"DEBUG Nilai RGB: {rgb_dominan}")
+
 def get_color_name(rgb):
     r, g, b = rgb
+
+    print(f"RGB: {r}, {g}, {b}")
     
     # Deteksi Hitam yang lebih akurat (hanya jika benar-benar gelap)
     if r < 40 and g < 40 and b < 40: return "Hitam"
