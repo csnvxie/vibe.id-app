@@ -11,7 +11,7 @@ menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 # URL API Model & Webhook n8n
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
-N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook/VibeID-ChattBot" # <-- URL WEBHOOK CHATBOT N8N KAMU
+N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" # <-- URL WEBHOOK CHATBOT N8N KAMU
 
 # =====================================================================
 # 2. DATABASE GUDANG (AMBIL DARI GOOGLE SHEETS VIA N8N)
