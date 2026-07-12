@@ -4,4 +4,3 @@ scikit-learn
 numpy
 opencv-python-headless
 scikit-learn
-numpy
