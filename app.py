@@ -232,8 +232,10 @@ else:
         st.warning("📊 Silakan lakukan simulasi pembelian di menu 'Pembeli' terlebih dahulu!")
     
     st.markdown("---")
-    st.subheader(f"📋 Seluruh Data Stok Gudang Ditarik dari Google Sheets ({len(df_stok)} Produk)")
-    if not df_stok.empty:
+    jumlah_stok = len(df_stok) if df_stok is not None else 0
+    st.subheader(f"📋 Seluruh Data Stok Gudang Ditarik dari Google Sheets ({jumlah_stok} Produk)")
+    
+    if df_stok is not None and not df_stok.empty:
         kolom_tampil = [col for col in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga'] if col in df_stok.columns]
         st.dataframe(df_stok[kolom_tampil], use_container_width=True)
     else:
