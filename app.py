@@ -62,7 +62,7 @@ def load_data_from_n8n():
 
 df_stok = load_data_from_n8n()
 
-if not df_stok.empty and 'harga' in df_stok.columns:
+if df_stok is not None and not df_stok.empty and 'harga' in df_stok.columns:
     df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
 
