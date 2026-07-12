@@ -21,6 +21,9 @@ def load_data_from_n8n():
     try:
         response = requests.get(N8N_DATA_URL)
         if response.status_code == 200:
+            df = pd.DataFrame(response.json())
+            
+            df.columns = [str(col).strip().lower() for col in df.columns]
             # Mengubah response data dari Google Sheets menjadi DataFrame
             return pd.DataFrame(response.json())
     except Exception as e:
