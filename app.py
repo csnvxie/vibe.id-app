@@ -13,7 +13,7 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 # =====================================================================
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 
 @st.cache_data(ttl=5)
 def load_data_from_n8n():
