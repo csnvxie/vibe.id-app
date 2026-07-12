@@ -102,11 +102,17 @@ def query_chatbot_n8n(user_text):
         response = requests.post(N8N_CHAT_URL, json=payload)
         if response.status_code == 200:
             res_data = response.json()
-            # Mengambil jawaban text, sesuaikan key 'reply' dengan output n8n kamu nanti
+            
+            # KODE BARU: Otomatis nyari 'output', 'response', baru 'reply' supaya gak error undefined lagi
             if isinstance(res_data, dict):
-                return res_data.get("reply", "Maaf, n8n tidak mengembalikan text 'reply'.")
+                return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
             elif isinstance(res_data, list) and len(res_data) > 0:
-                return res_data[0].get("reply", "Maaf, list data tidak berisi key 'reply'.")
+                first_item = res_data[0]
+                if isinstance(first_item, dict):
+                    if 'json' in first_item and isinstance(first_item['json'], dict):
+                        return first_item['json'].get("output", first_item['json'].get("response", first_item['json'].get("reply", "Gagal membaca objek json n8n.")))
+                    return first_item.get("output", first_item.get("response", first_item.get("reply", "Gagal membaca item pertama.")))
+            
             return str(res_data)
     except Exception as e:
         return f"Gagal tersambung ke Chatbot n8n: {e}"
@@ -202,13 +208,13 @@ if menu == "Pembeli":
             st.warning("Tidak ada rekomendasi pakaian yang cocok untuk saat ini.")
 
     # =====================================================================
-    # 🤖 FITUR BARU: LIVE CHATBOT INTERAKTIF VIA N8N 
+    # 🤖 LIVE CHATBOT INTERAKTIF VIA N8N 
     # =====================================================================
     st.markdown("---")
     st.header("💬 VIBE-ID Smart Assistant")
     st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
 
-    # Render histroy chat yang sudah tersimpan
+    # Render history chat yang sudah tersimpan
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
