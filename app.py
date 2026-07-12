@@ -24,7 +24,6 @@ def load_data_from_n8n():
             
             # Jika n8n membungkus datanya dalam list, kita bongkar row-nya
             if isinstance(raw_data, list):
-                # Ekstrak data jika n8n mengirim format bertingkat [{ "json": {...} }]
                 if len(raw_data) > 0 and 'json' in raw_data[0]:
                     cleaned_list = [item['json'] for item in raw_data if 'json' in item]
                     df = pd.DataFrame(cleaned_list)
@@ -36,7 +35,7 @@ def load_data_from_n8n():
             # Bersihkan spasi di nama kolom
             df.columns = [str(col).strip() for col in df.columns]
             
-            # Buang baris header duplikat dari Google Sheets (Baris 13)
+            # Buang baris header duplikat dari Google Sheets
             if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
             
