@@ -13,7 +13,7 @@ N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
 N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
 # =====================================================================
-# 2. LOAD DATA & FUNGSI AI
+# 2. FUNGSI LOAD DATA & AI
 # =====================================================================
 @st.cache_data(ttl=5)
 def load_data_from_n8n():
@@ -23,7 +23,8 @@ def load_data_from_n8n():
             data = response.json()
             cleaned = [item['json'] for item in data if 'json' in item] if isinstance(data, list) else data
             df = pd.DataFrame(cleaned)
-            return df.rename(columns={'Nama Barang': 'nama_produk', 'Harga': 'harga', 'Warna': 'warna'})
+            df.columns = [str(col).strip() for col in df.columns]
+            return df.rename(columns={'Nama Barang': 'nama_produk', 'Harga': 'harga', 'Warna': 'warna', 'Gaya (Style)': 'vibe'})
     except: return pd.DataFrame()
     return pd.DataFrame()
 
@@ -43,10 +44,12 @@ def query_chatbot_n8n(user_text):
     except: return "Bot error."
 
 # =====================================================================
-# 3. STATE
+# 3. INITIALIZATION STATE
 # =====================================================================
 if 'messages' not in st.session_state: st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa dibantu?"}]
+if 'img_buffer' not in st.session_state: st.session_state.img_buffer = None
 if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
+if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 
 # =====================================================================
 # 4. UI PEMBELI
@@ -54,6 +57,7 @@ if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if menu == "Pembeli":
     st.title("🛍️ VIBE-ID Smart Assistant")
     
+    # CHATBOT POPOVER
     with st.popover("💬 Chat Bantuan", use_container_width=True):
         for m in st.session_state.messages:
             with st.chat_message(m["role"]): st.markdown(m["content"])
@@ -62,29 +66,35 @@ if menu == "Pembeli":
             st.session_state.messages.append({"role": "assistant", "content": query_chatbot_n8n(prompt)})
             st.rerun()
 
+    st.header("👤 Langkah 1: Profil Gaya")
+    col1, col2 = st.columns(2)
+    col1.selectbox("Gender:", ["Wanita", "Pria"])
+    col2.selectbox("Usia:", ["Gen Z", "Milenial"])
+
     st.header("📸 Langkah 2: Input Foto")
     tab_cam, tab_file = st.tabs(["📷 Kamera", "📁 Upload"])
-    img_buffer = None
-    with tab_cam: img_buffer = st.camera_input("Foto baju")
-    with tab_file: img_buffer = st.file_uploader("Pilih file...", type=["jpg", "png"])
+    with tab_cam:
+        if foto := st.camera_input("Foto baju"): st.session_state.img_buffer = foto
+    with tab_file:
+        if file := st.file_uploader("Pilih file...", type=["jpg", "png"]): st.session_state.img_buffer = file
 
     if st.button("RUN AI VISUAL MATCHING 🚀"):
-        if img_buffer:
-            img_bytes = img_buffer.getvalue() if hasattr(img_buffer, "getvalue") else img_buffer.read()
+        if st.session_state.img_buffer:
+            st.info("🔮 AI sedang menganalisis warna...")
+            img_bytes = st.session_state.img_buffer.getvalue()
             label = query_ai_vision(img_bytes)
-            # Logika deteksi warna
             st.session_state.warna_terdeteksi = "Merah" if any(x in label for x in ["shirt", "jersey"]) else "Biru"
-            st.info(f"🔮 AI Mendeteksi: `{label}` | Warna: `{st.session_state.warna_terdeteksi}`")
-            
             st.session_state.hasil_rekomendasi = df_stok[df_stok['warna'].str.contains(st.session_state.warna_terdeteksi, na=False)]
             st.session_state.beli_aktif = True
             st.rerun()
-        else: st.warning("Upload foto dulu!")
+        else: st.warning("Silakan ambil foto atau upload file terlebih dahulu!")
 
     if st.session_state.beli_aktif:
+        st.success(f"Ditemukan rekomendasi warna: **{st.session_state.warna_terdeteksi}**")
         for _, row in st.session_state.hasil_rekomendasi.iterrows():
             st.write(f"**{row.get('nama_produk')}** - Rp {row.get('harga', 0)}")
         if st.button("🛒 BELI PAKET"):
+            st.session_state.total_omzet_toko += 100000
             st.success("Transaksi Berhasil!")
             st.session_state.beli_aktif = False
 
@@ -93,4 +103,5 @@ if menu == "Pembeli":
 # =====================================================================
 else:
     st.header("📈 Dasbor Admin")
+    st.metric("Total Pendapatan", f"Rp {st.session_state.total_omzet_toko:,.0f}")
     st.dataframe(df_stok, use_container_width=True)
