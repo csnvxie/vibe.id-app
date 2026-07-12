@@ -220,7 +220,7 @@ else:
         
             if df_hasil is not None and not df_hasil.empty:
             # Gunakan min(len(df_hasil), 3) agar tidak error jika kolom terlalu banyak
-            cols = st.columns(min(len(df_hasil), 3))
+                cols = st.columns(min(len(df_hasil), 3))
             total_harga = 0
             
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
