@@ -23,15 +23,15 @@ def get_dominant_color(image_bytes):
         # Gunakan metode 'box' agar lebih akurat mengambil rata-rata warna
         img = img.resize((1, 1), resample=Image.BOX) 
         color = img.getpixel((0, 0))
-        
+        st.write(f"DEBUG Nilai RGB: {rgb_dominan}")
         del img 
         gc.collect()
-        
+
+        return rgb_dominan
         return color
     except Exception:
         return (255, 255, 255)
 
-st.write(f"DEBUG Nilai RGB: {rgb_dominan}")
 
 def get_color_name(rgb):
     r, g, b = rgb
