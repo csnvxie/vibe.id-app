@@ -13,9 +13,10 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 # =====================================================================
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
+# ⚠️ PASTIKAN LINK INI ADALAH PRODUCTION URL WEBHOOK N8N KAMU
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=10) # Perkecil cache ke 10 detik biar cepat update
 def load_data_from_n8n():
     try:
         response = requests.get(N8N_DATA_URL)
@@ -25,11 +26,11 @@ def load_data_from_n8n():
             # 1. Bersihkan spasi di nama kolom bawaan Google Sheets
             df.columns = [str(col).strip() for col in df.columns]
             
-            # 2. Buang baris header duplikat yang ikutan ke-load di baris tengah (baris 13 di sheet)
+            # 2. Buang baris header duplikat (jika ada teks 'Item ID' di baris tengah)
             if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
             
-            # 3. MAPPING (Penerjemah dari nama kolomu ke nama yang dicari kodingan)
+            # 3. MAPPING (Penerjemah kolom)
             mapping_kolom = {
                 'Nama Barang': 'nama_produk',
                 'Kategori': 'kategori_baju',
@@ -40,17 +41,20 @@ def load_data_from_n8n():
             }
             df = df.rename(columns=mapping_kolom)
             
-            # 4. Tambahkan kolom tiruan yang ga ada di sheet biar kodingan bawah ga error
-            if 'target_usia' not in df.columns:
-                df['target_usia'] = 'Gen Z'
-            if 'url_gambar' not in df.columns:
-                # Karena di Sheets belum ada kolom URL foto, kita kasih gambar placeholder baju polos biar aman pas demo
-                df['url_gambar'] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
+            # 4. PENGAMAN MUTLAK: Jika kolom yang dicari kodingan bawah tidak ada, buatkan manual biar tidak KeyError
+            for col_wajib in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga']:
+                if col_wajib not in df.columns:
+                    df[col_wajib] = "" # kasih nilai string kosong biar ga crash
+            
+            # Kolom tiruan tambahan
+            if 'target_usia' not in df.columns: df['target_usia'] = 'Gen Z'
+            if 'url_gambar' not in df.columns: df['url_gambar'] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
                 
             return df
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
+    # Return dataframe cadangan dengan kolom lengkap jika request gagal
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
 
 # Memanggil fungsi untuk mengambil data pakaian secara real-time
@@ -61,7 +65,6 @@ if not df_stok.empty and 'harga' in df_stok.columns:
     df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
 # =====================================================================
-
 # 3. INITIALIZATION STATE
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
