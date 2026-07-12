@@ -75,22 +75,27 @@ if menu == "Pembeli":
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         if st.session_state.img_buffer:
             img_bytes = st.session_state.img_buffer.getvalue()
-            label = query_ai_vision(img_bytes)
+            # AI sekarang mengembalikan label yang lebih spesifik
+            label = query_ai_vision(img_bytes) 
             
-            # Deteksi warna berdasarkan label (bisa kamu sesuaikan logikanya)
-            warna_target = "Merah" if any(x in label for x in ["shirt", "jersey", "t-shirt"]) else "Biru"
-            
-            # Cek kolom yang tersedia di dataframe secara otomatis
-            cols = [c for c in df_stok.columns if 'warna' in c.lower() or 'Warna' in c]
+            # Kita cari kolom warna di database
+            cols = [c for c in df_stok.columns if 'warna' in c.lower()]
             if cols:
                 col_name = cols[0]
-                st.session_state.hasil_rekomendasi = df_stok[df_stok[col_name].astype(str).str.contains(warna_target, case=False, na=False)]
-                st.session_state.warna_terdeteksi = warna_target
+                
+                # CARA DINAMIS: Kita filter data berdasarkan label yang dideteksi AI
+                # Misal label AI: "red shirt", dia bakal cari "red" di database kamu
+                st.session_state.hasil_rekomendasi = df_stok[
+                    df_stok[col_name].astype(str).apply(lambda x: any(word in x.lower() for word in label.lower().split()))
+                ]
+                
+                st.session_state.warna_terdeteksi = label
                 st.session_state.beli_aktif = True
                 st.rerun()
             else:
-                st.error(f"Kolom warna tidak ditemukan! Kolom yang ada: {list(df_stok.columns)}")
-        else: st.warning("Silakan ambil foto atau upload file!")
+                st.error("Kolom warna tidak ditemukan di database.")
+        else:
+            st.warning("Silakan ambil foto atau upload file!")
 
     if st.session_state.beli_aktif:
         st.success(f"Ditemukan rekomendasi warna: **{st.session_state.warna_terdeteksi}**")
