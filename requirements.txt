@@ -2,5 +2,3 @@ requests
 Pillow
 scikit-learn
 numpy
-opencv-python-headless
-scikit-learn
