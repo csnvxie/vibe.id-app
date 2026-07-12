@@ -24,7 +24,7 @@ def get_dominant_color(image_bytes):
         color = img.getpixel((0, 0))
         
         # Bersihkan memori setelah proses
-        del img 
+        del raw_data 
         gc.collect() 
         
         return color
@@ -66,9 +66,9 @@ def load_data_from_n8n():
             gc.collect()
             
             # --- SEMUA INI HARUS MENJOROK KE DALAM (INDENTASI) ---
-            df.columns = [str(col).strip() for col in df.columns]
+        df.columns = [str(col).strip() for col in df.columns]
             
-            if 'Item ID' in df.columns:
+        if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
                 
                 mapping_kolom = {
