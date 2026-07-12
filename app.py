@@ -47,21 +47,30 @@ def get_color_name(rgb):
 # =====================================================================
 # 2. DATABASE GUDANG (AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-@st.cache_resource
+@st.cache_resource(show_spinner=False) # 1. Tambahkan show_spinner=False
 def load_data_from_n8n():
     try:
-        response = requests.get(N8N_DATA_URL)
+        # 2. Tambahkan timeout agar tidak menggantung memori jika n8n lambat
+        response = requests.get(N8N_DATA_URL, timeout=5) 
         if response.status_code == 200:
             raw_data = response.json()
             
-            if isinstance(raw_data, list):
-                if len(raw_data) > 0 and 'json' in raw_data[0]:
-                    cleaned_list = [item['json'] for item in raw_data if 'json' in item]
-                    df = pd.DataFrame(cleaned_list)
+            # Memproses data
+            if isinstance(raw_data, list) and len(raw_data) > 0:
+                if 'json' in raw_data[0]:
+                    df = pd.DataFrame([item['json'] for item in raw_data if 'json' in item])
                 else:
                     df = pd.DataFrame(raw_data)
             else:
                 df = pd.DataFrame(raw_data)
+            
+            # 3. Langsung bersihkan variabel raw_data untuk menghemat RAM
+            del raw_data 
+            gc.collect()
+            
+            return df
+    except Exception:
+        return pd.DataFrame()
             
             df.columns = [str(col).strip() for col in df.columns]
             
