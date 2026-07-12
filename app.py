@@ -4,7 +4,9 @@ from PIL import Image
 import requests
 import io
 
+# =====================================================================
 # 1. CONFIG & KONSTANTA UTAMA
+# =====================================================================
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
@@ -65,9 +67,10 @@ df_stok = load_data_from_n8n()
 if not df_stok.empty and 'harga' in df_stok.columns:
     df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
-# =====================================================================
 
+# =====================================================================
 # 3. INITIALIZATION STATE
+# =====================================================================
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
 if 'log_produk_dibeli' not in st.session_state: st.session_state.log_produk_dibeli = []
@@ -100,22 +103,28 @@ def query_chatbot_n8n(user_text):
         # Mengirimkan teks chat dari user ke webhook n8n
         payload = {"message": user_text}
         response = requests.post(N8N_CHAT_URL, json=payload)
+        
         if response.status_code == 200:
             res_data = response.json()
             
-            # KODE BARU: Otomatis nyari 'output', 'response', baru 'reply' supaya gak error undefined lagi
+            # 1. Jika n8n mengembalikan data berupa List/Array (misal: [ {...} ])
+            if isinstance(res_data, list) and len(res_data) > 0:
+                res_data = res_data[0]
+                
+            # 2. Jika item di dalam list dibungkus oleh key 'json' khas n8n
+            if isinstance(res_data, dict) and 'json' in res_data:
+                res_data = res_data['json']
+                
+            # 3. Ambil teks balasan final dari key 'output' (sesuai output AI Agent n8n)
             if isinstance(res_data, dict):
                 return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
-            elif isinstance(res_data, list) and len(res_data) > 0:
-                first_item = res_data[0]
-                if isinstance(first_item, dict):
-                    if 'json' in first_item and isinstance(first_item['json'], dict):
-                        return first_item['json'].get("output", first_item['json'].get("response", first_item['json'].get("reply", "Gagal membaca objek json n8n.")))
-                    return first_item.get("output", first_item.get("response", first_item.get("reply", "Gagal membaca item pertama.")))
             
+            # 4. Fallback jika format data tidak terduga
             return str(res_data)
+            
     except Exception as e:
         return f"Gagal tersambung ke Chatbot n8n: {e}"
+        
     return "Bot sedang tidak merespon."
 
 # =====================================================================
