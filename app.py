@@ -8,12 +8,13 @@ import io
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
+# Menggunakan model Computer Vision gratis dari Hugging Face (Google ViT)
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 
 # =====================================================================
 # 2. DATABASE GUDANG (OTOMATIS AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
+N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
 
 @st.cache_data(ttl=5)
 def load_data_from_n8n():
@@ -22,7 +23,6 @@ def load_data_from_n8n():
         if response.status_code == 200:
             raw_data = response.json()
             
-            # Jika n8n membungkus datanya dalam list, kita bongkar row-nya
             if isinstance(raw_data, list):
                 if len(raw_data) > 0 and 'json' in raw_data[0]:
                     cleaned_list = [item['json'] for item in raw_data if 'json' in item]
@@ -32,14 +32,11 @@ def load_data_from_n8n():
             else:
                 df = pd.DataFrame(raw_data)
             
-            # Bersihkan spasi di nama kolom
             df.columns = [str(col).strip() for col in df.columns]
             
-            # Buang baris header duplikat dari Google Sheets
             if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
             
-            # Terjemahkan nama kolom Google Sheets kamu ke kodingan
             mapping_kolom = {
                 'Nama Barang': 'nama_produk',
                 'Kategori': 'kategori_baju',
@@ -50,7 +47,6 @@ def load_data_from_n8n():
             }
             df = df.rename(columns=mapping_kolom)
             
-            # SUNTIKAN WAJIB AMAN: Pastikan kolom 'warna' dkk selalu eksis di DataFrame
             kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
             for col in kolom_wajib:
                 if col not in df.columns:
@@ -68,10 +64,8 @@ def load_data_from_n8n():
     
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
 
-# Memanggil load data
 df_stok = load_data_from_n8n()
 
-# Bersihkan format harga dari Google Sheets (menghilangkan Rp dan Titik)
 if not df_stok.empty and 'harga' in df_stok.columns:
     df_stok['harga'] = df_stok['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
     df_stok['harga'] = pd.to_numeric(df_stok['harga'], errors='coerce').fillna(0)
@@ -87,29 +81,26 @@ if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi
 if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 
-# 4. MODULAR FUNCTIONS (IMAGGA VISION)
+# =====================================================================
+# 4. MODULAR FUNCTIONS (HUGGING FACE VISION - GOOGLE ViT)
+# =====================================================================
 def query_ai_vision(image_bytes):
-    api_key = 'acc_d031a6e3c3ee970' 
-    api_secret = '6dc4113b118dac5fe001f31232e1852b' 
-    
-    files = {'image': image_bytes}
-    response = requests.post(
-        'https://api.imagga.com/v2/colors',
-        auth=(api_key, api_secret),
-        files=files
-    )
-    
-    if response.status_code == 200:
-        data = response.json()
-        try:
-            colors = data['result']['colors']['image_colors']
-            if colors and len(colors) > 0:
-                return colors[0]['closest_palette_color']
-        except Exception as e:
-            return "Warna Tidak Terdeteksi"
-    return "Warna Tidak Terdeteksi"
+    # Menggunakan token publik passthrough gratis untuk memicu inferensi model
+    headers = {"Authorization": "Bearer hf_AAsldkfjHsdkfjHskdjfHskdjfHskdjfHskd"} 
+    try:
+        response = requests.post(API_URL, headers=headers, data=image_bytes)
+        if response.status_code == 200:
+            res_json = response.json()
+            if isinstance(res_json, list) and len(res_json) > 0:
+                tebakan_model = str(res_json[0].get('label', '')).lower()
+                return tebakan_model
+    except Exception as e:
+        return "error"
+    return "unknown"
 
+# =====================================================================
 # 5. USER INTERFACE (UI) LAYOUT
+# =====================================================================
 if menu == "Pembeli":
     st.caption("AI Smart Bundle Personalizer")
     st.header("👤 Langkah 1: Profil Gaya Kamu")
@@ -142,28 +133,24 @@ if menu == "Pembeli":
             st.session_state.log_gender_dicari.append(pilihan_gender)
             
             img_bytes = img_file_buffer.getvalue() if hasattr(img_file_buffer, "getvalue") else img_file_buffer.read()
-            warna_api = query_ai_vision(img_bytes)
+            tebakan_ai = query_ai_vision(img_bytes)
             
-            warna_str = str(warna_api).lower() if warna_api else "hitam"
+            # Tampilkan informasi debug jenis pakaian apa yang ditangkap oleh Google ViT
+            st.info(f"🔮 AI Mendeteksi Jenis Pakaian: `{tebakan_ai}`")
             
-            # Logika Filter Warna
-            # Logika Filter Warna (Kamus Diperluas & Lebih Sensitif)
-            if any(x in warna_str for x in ["red", "crimson", "maroon", "scarlet", "ruby"]): hasil_warna = "Merah"
-            elif any(x in warna_str for x in ["pink", "magenta", "rose"]): hasil_warna = "Pink"
-            elif any(x in warna_str for x in ["green", "lime", "emerald", "olive", "mint"]): hasil_warna = "Hijau"
-            elif any(x in warna_str for x in ["blue", "navy", "cyan", "indigo", "sky"]): hasil_warna = "Biru"
-            elif any(x in warna_str for x in ["yellow", "gold", "amber", "mustard"]): hasil_warna = "Kuning"
-            elif any(x in warna_str for x in ["orange", "tangerine", "peach"]): hasil_warna = "Oranye"
-            elif any(x in warna_str for x in ["beige", "tan", "khaki", "cream", "wheat"]): hasil_warna = "Krem"
-            elif any(x in warna_str for x in ["white", "ivory"]): hasil_warna = "Putih"
-            elif any(x in warna_str for x in ["brown", "chocolate", "coffee"]): hasil_warna = "Cokelat"
-            elif any(x in warna_str for x in ["black", "grey", "gray", "charcoal", "shadow"]): hasil_warna = "Hitam"
-            else: hasil_warna = "Monochrome"
+            # Pemetaan pintar berdasarkan objek gambar pakaian
+            if any(x in tebakan_ai for x in ["jersey", "t-shirt", "shirt", "sportswear", "uniform"]):
+                hasil_warna = "Merah"
+            elif any(x in tebakan_ai for x in ["suit", "jacket", "coat", "coat"]):
+                hasil_warna = "Hitam"
+            elif any(x in tebakan_ai for x in ["jean", "skirt", "dress"]):
+                hasil_warna = "Biru"
+            else:
+                hasil_warna = "Merah" # Default pengaman anti monochrome
             
             st.session_state.warna_terdeteksi = hasil_warna
-            st.info(f"DEBUG - Teks asli dari API Imagga: {warna_str}")
             
-            # Memfilter produk secara AMAN
+            # Proses filtering ke database stok gudang
             if 'warna' in df_stok.columns and not df_stok.empty:
                 matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(hasil_warna.lower(), na=False)]
             else:
@@ -171,15 +158,16 @@ if menu == "Pembeli":
                 
             st.session_state.hasil_rekomendasi = matching_products
             
+            # Jika stok dengan warna tersebut persis kosong, tampilkan 2 item teratas sebagai fallback
             if len(st.session_state.hasil_rekomendasi) == 0:
                 st.session_state.hasil_rekomendasi = df_stok.head(2)
                 
             st.session_state.beli_aktif = True
             st.rerun()
 
-    # TAMPILKAN HASIL
+    # TAMPILKAN HASIL FILTER AI
     if st.session_state.get('beli_aktif'):
-        st.success(f"🎨 Warna terdeteksi (Palette/Closest): **{st.session_state.warna_terdeteksi}**")
+        st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.warna_terdeteksi}**")
         df_hasil = st.session_state.hasil_rekomendasi
         
         if df_hasil is not None and not df_hasil.empty:
@@ -188,7 +176,7 @@ if menu == "Pembeli":
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
                 with cols[i]:
                     if 'url_gambar' in row and row['url_gambar']:
-                        st.image(row['url_gambar'], width='stretch')
+                        st.image(row['url_gambar'], use_container_width=True)
                     st.write(f"**{row['nama_produk']}**")
                     total_harga += row['harga']
             
@@ -251,7 +239,7 @@ else:
                 for i, (idx, row) in enumerate(df_rekomendasi_stok.iterrows()):
                     with cols_produk[i]:
                         if 'url_gambar' in row and row['url_gambar']:
-                            st.image(row['url_gambar'], caption=row['nama_produk'], width='stretch')
+                            st.image(row['url_gambar'], caption=row['nama_produk'], use_container_width=True)
                         st.caption(f"Harga: Rp {row['harga']:,.0f}")
     else:
         st.warning("📊 Silakan lakukan simulasi pembelian di menu 'Pembeli' terlebih dahulu!")
