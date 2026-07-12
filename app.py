@@ -161,6 +161,7 @@ if menu == "Pembeli":
             else: hasil_warna = "Monochrome"
             
             st.session_state.warna_terdeteksi = hasil_warna
+            st.info(f"DEBUG - Teks asli dari API Imagga: {warna_str}")
             
             # Memfilter produk secara AMAN
             if 'warna' in df_stok.columns and not df_stok.empty:
