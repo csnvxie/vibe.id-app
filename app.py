@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+from streamlit_camera_input_live import camera_input_live
 
 # =========================================================================
 # ⚙️ CONFIGURATION & SETTINGS
@@ -7,85 +8,65 @@ import requests
 # Ganti dengan URL Production Webhook n8n kamu yang baru (AI Agent Gemini)
 N8N_WEBHOOK_URL = "https://casanovaxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
-st.set_page_config(page_title="VIBE-ID - Smart Outfit Assistant", page_icon="🛍️", layout="wide")
+st.set_page_config(page_title="VIBE-ID - AI Outfit Scanner & Chat", page_icon="🛍️", layout="wide")
 
 # =========================================================================
 # 🏠 TOP HEADER
 # =========================================================================
-st.title("🛍️ VIBE-ID — Asisten Toko & Gaya Baju Pintar")
-st.write("Temukan gaya pakaian terbaikmu secara otomatis atau langsung tanya ke AI Agent kami!")
+st.title("🛍️ VIBE-ID — AI Outfit Scanner & Smart Assistant")
+st.write("Deteksi vibe pakaianmu lewat kamera secara real-time atau tanya langsung ke asisten AI kami!")
 st.markdown("---")
 
-# Membuat dua kolom besar agar tampilan aplikasi rapi dan seimbang
-col1, col2 = st.columns([1, 1.2])
+# Kita bagi jadi 2 kolom: Kiri untuk Kamera & Deteksi, Kanan untuk Live Chatbot (Topping)
+col1, col2 = st.columns([1.2, 1])
 
 # =========================================================================
-# 📋 KOLOM 1: REKOMENDASI GAYA AUTOMATIC (Kuesioner Input)
+# 📸 KOLOM 1: AI CAMERA SCANNER (Fitur Utama yang Awal)
 # =========================================================================
 with col1:
-    st.subheader("🎯 Cari Tahu Vibe Pakaianmu")
-    st.write("Isi formulir singkat di bawah ini untuk dicocokkan dengan stok kami:")
+    st.subheader("📷 Live Vibe Scanner")
+    st.write("Arahkan kameramu ke pakaian yang sedang kamu pakai/pilih:")
     
-    with st.form("outfit_form"):
-        nama = st.text_input("Nama Kamu", placeholder="Contoh: Budi")
+    # Memanggil komponen kamera live awal
+    image = camera_input_live(show_controls=True, key="outfit_camera")
+    
+    if image is not None:
+        st.image(image, caption="Foto berhasil diambil!", use_container_width=True)
         
-        kategori = st.selectbox(
-            "Kategori Pakaian yang Dicari",
-            ["Atasan (Kaos/Kemeja)", "Bawahan (Celana/Rok)", "Outerwear (Jaket/Hoodie)", "Terusan (Dress/Setelan)"]
-        )
-        
-        vibe = st.selectbox(
-            "Gaya / Vibe yang Diinginkan",
-            ["Casual / Santai", "Formal / Kerja", "Streetwear / Hypebeast", "Korean Style", "Minimalist / Quiet Luxury"]
-        )
-        
-        target_usia = st.selectbox(
-            "Target Usia / Kategori",
-            ["Anak-anak", "Remaja (Teenager)", "Dewasa Muda (Young Adult)", "Dewasa (Adult)"]
-        )
-        
-        warna_favorit = st.text_input("Warna Pakaian Favorit", placeholder="Contoh: Hitam, Earth Tone, Pastel")
-        
-        submit_btn = st.form_submit_button("Cari Rekomendasi 🚀")
-        
-    if submit_btn:
-        if not nama or not warna_favorit:
-            st.warning("Yuk, isi Nama dan Warna Favorit kamu dulu ya!")
-        else:
-            st.success(f"Halo {nama}! Kuesioner kamu berhasil diproses.")
-            
-            # Teks otomatis yang dirakit berdasarkan jawaban kuesioner
-            pesan_otomatis = (
-                f"Halo Gemini, saya sedang merekomendasikan pakaian untuk {nama}. "
-                f"Tolong carikan di Google Sheets produk dengan kategori '{kategori}', "
-                f"gaya/vibe '{vibe}', target usia '{target_usia}', dan utamakan warna '{warna_favorit}'."
+        # Tombol untuk trigger proses deteksi AI
+        if st.button("Scan & Cocokkan Vibe Baju 🚀"):
+            # Siapkan pesan otomatis untuk n8n agar menganalisis (bisa disesuaikan dengan kebutuhan parsing gambar lo sebelumnya)
+            pesan_kamera = (
+                "Halo Gemini, saya baru saja mengambil foto pakaian saya lewat kamera. "
+                "Tolong analisis vibe/gaya pakaian saat ini, beri rekomendasi mix-and-match yang cocok, "
+                "dan carikan produk yang sesuai dari Google Sheets stok gudang kita ya!"
             )
             
-            # Otomatis nembak ke n8n untuk minta rekomendasi berdasarkan kuesioner
             try:
-                with st.spinner("Mencari kecocokan baju di gudang..."):
-                    res = requests.post(N8N_WEBHOOK_URL, json={"message": pesan_otomatis})
+                with st.spinner("AI sedang menganalisis foto dan mencocokkan stok gudang..."):
+                    # Kirim trigger ke webhook n8n
+                    res = requests.post(N8N_WEBHOOK_URL, json={"message": pesan_kamera})
                     
                 if res.status_code == 200:
                     data = res.json()
-                    jawaban_rekomendasi = data.get("output", data.get("response", "Gagal memproses rekomendasi."))
+                    hasil_scan = data.get("output", data.get("response", "Gagal memproses analisis gambar."))
                     
-                    st.markdown("### 🏷️ Rekomendasi Untukmu:")
-                    st.info(jawaban_rekomendasi)
+                    st.markdown("### 🎯 Hasil Analisis Vibe & Rekomendasi:")
+                    st.success(hasil_scan)
                 else:
                     st.error(f"Gagal terhubung ke n8n. Kode Error: {res.status_code}")
             except Exception as e:
-                st.error(f"Error sistem: {e}")
+                st.error(f"Error sistem kamera: {e}")
 
 # =========================================================================
-# 💬 KOLOM 2: LIVE CHATBOT (AI AGENT GEMINI 2.5 FLASH)
+# 💬 KOLOM 2: LIVE CHATBOT GEMINI (Topping Tambahan di Samping)
 # =========================================================================
 with col2:
     st.subheader("💬 Tanya Asisten AI (Real-time Stok)")
-    st.write("Mau cek ketersediaan ukuran atau tanya warna lain? Ketik langsung di bawah:")
+    st.write("Mau tanya ukuran, warna lain, atau harga baju spesifik? Chat di sini:")
     
     # Wadah komponen chat agar memiliki batas scroll yang rapi
-    chat_container = st.container(height=450)
+    chat_container = st.container(height=400)
     
     # Inisialisasi riwayat chat agar tidak hilang saat halaman reload
     if "messages" not in st.session_state:
@@ -98,7 +79,7 @@ with col2:
                 st.markdown(msg["content"])
                 
     # Input box chat pembeli (diletakkan di bawah container)
-    if user_input := st.chat_input("Tanya stok, misal: 'Kemeja hitam ukuran M ready gak?'"):
+    if user_input := st.chat_input("Tanya stok, misal: 'Ada kemeja flanel warna biru size L gak?'"):
         
         # Tampilkan chat pembeli di layar
         with chat_container:
@@ -106,7 +87,7 @@ with col2:
                 st.markdown(user_input)
         st.session_state.messages.append({"role": "user", "content": user_input})
         
-        # Kirim teks ke Webhook n8n AI Agent
+        # Kirim teks chat ke Webhook n8n AI Agent
         try:
             with chat_container:
                 with st.spinner("Gemini sedang mengecek database..."):
