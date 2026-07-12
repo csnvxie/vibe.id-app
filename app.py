@@ -1,3 +1,6 @@
+import numpy as np
+from sklearn.cluster import KMeans
+import cv2
 import streamlit as st
 import pandas as pd
 from PIL import Image
@@ -14,6 +17,33 @@ menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" # <-- URL WEBHOOK CHATBOT N8N KAMU
+
+def get_dominant_color(image_bytes):
+    # Load gambar
+    nparr = np.frombuffer(image_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.reshape((img.shape[0] * img.shape[1], 3))
+
+    # Gunakan K-Means untuk mencari 1 warna paling dominan
+    clt = KMeans(n_clusters=1)
+    clt.fit(img)
+    dominant_rgb = clt.cluster_centers_[0].astype(int)
+    
+    return tuple(dominant_rgb)
+
+def get_color_name(rgb):
+    # Logika sederhana untuk menentukan nama warna berdasarkan koordinat RGB
+    r, g, b = rgb
+    if r > 200 and g < 100 and b < 100: return "Merah"
+    if r < 100 and g > 200 and b < 100: return "Hijau"
+    if r < 100 and g < 100 and b > 200: return "Biru"
+    if r > 200 and g > 200 and b < 100: return "Kuning"
+    if r > 200 and g < 100 and b > 200: return "Ungu"
+    if r > 100 and g > 100 and b > 100 and r < 200: return "Abu-abu"
+    if r < 50 and g < 50 and b < 50: return "Hitam"
+    if r > 240 and g > 240 and b > 240: return "Putih"
+    return "Warna Campuran"
 
 # =====================================================================
 # 2. DATABASE GUDANG (AMBIL DARI GOOGLE SHEETS VIA N8N)
