@@ -214,9 +214,9 @@ else:
             st.rerun()
 
     # Blok untuk menampilkan hasil setelah button ditekan
-        if st.session_state.get('beli_aktif'):
-            st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
-            df_hasil = st.session_state.get('hasil_rekomendasi')
+            if st.session_state.get('beli_aktif'):
+                st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
+                df_hasil = st.session_state.get('hasil_rekomendasi')
         
             if df_hasil is not None and not df_hasil.empty:
             # Gunakan min(len(df_hasil), 3) agar tidak error jika kolom terlalu banyak
