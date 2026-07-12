@@ -47,15 +47,13 @@ def get_color_name(rgb):
 # =====================================================================
 # 2. DATABASE GUDANG (AMBIL DARI GOOGLE SHEETS VIA N8N)
 # =====================================================================
-@st.cache_resource(show_spinner=False) # 1. Tambahkan show_spinner=False
+@st.cache_resource(show_spinner=False)
 def load_data_from_n8n():
     try:
-        # 2. Tambahkan timeout agar tidak menggantung memori jika n8n lambat
         response = requests.get(N8N_DATA_URL, timeout=5) 
         if response.status_code == 200:
             raw_data = response.json()
             
-            # Memproses data
             if isinstance(raw_data, list) and len(raw_data) > 0:
                 if 'json' in raw_data[0]:
                     df = pd.DataFrame([item['json'] for item in raw_data if 'json' in item])
@@ -64,42 +62,38 @@ def load_data_from_n8n():
             else:
                 df = pd.DataFrame(raw_data)
             
-            # 3. Langsung bersihkan variabel raw_data untuk menghemat RAM
             del raw_data 
             gc.collect()
             
-            return df
-    except Exception:
-        return pd.DataFrame()
+            # --- SEMUA INI HARUS MENJOROK KE DALAM (INDENTASI) ---
+            df.columns = [str(col).strip() for col in df.columns]
             
-df.columns = [str(col).strip() for col in df.columns]
-            
-        if 'Item ID' in df.columns:
-            df = df[df['Item ID'] != 'Item ID']
-            
-            mapping_kolom = {
-                'Nama Barang': 'nama_produk',
-                'Kategori': 'kategori_baju',
-                'Gaya (Style)': 'vibe',
-                'Warna': 'warna',
-                'Gender': 'gender',
-                'Harga': 'harga'
-            }
-            df = df.rename(columns=mapping_kolom)
-            
-            kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
-            for col in kolom_wajib:
-                if col not in df.columns:
-                    if col == 'harga': df[col] = 0
-                    elif col == 'target_usia': df[col] = 'Gen Z'
-                    elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
-                    else: df[col] = ''
-            return df
+            if 'Item ID' in df.columns:
+                df = df[df['Item ID'] != 'Item ID']
+                
+                mapping_kolom = {
+                    'Nama Barang': 'nama_produk',
+                    'Kategori': 'kategori_baju',
+                    'Gaya (Style)': 'vibe',
+                    'Warna': 'warna',
+                    'Gender': 'gender',
+                    'Harga': 'harga'
+                }
+                df = df.rename(columns=mapping_kolom)
+                
+                kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
+                for col in kolom_wajib:
+                    if col not in df.columns:
+                        if col == 'harga': df[col] = 0
+                        elif col == 'target_usia': df[col] = 'Gen Z'
+                        elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
+                        else: df[col] = ''
+                return df
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
+    # Return default jika gagal
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
-
 df_stok = load_data_from_n8n()
 
 if not df_stok.empty and 'harga' in df_stok.columns:
