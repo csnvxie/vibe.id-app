@@ -13,7 +13,7 @@ N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/ambil-stok-gudang"
 N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
 # =====================================================================
-# 2. FUNGSI LOAD DATA & AI
+# 2. LOAD DATA & FUNGSI AI
 # =====================================================================
 @st.cache_data(ttl=5)
 def load_data_from_n8n():
@@ -24,7 +24,7 @@ def load_data_from_n8n():
             cleaned = [item['json'] for item in data if 'json' in item] if isinstance(data, list) else data
             df = pd.DataFrame(cleaned)
             df.columns = [str(col).strip() for col in df.columns]
-            return df.rename(columns={'Nama Barang': 'nama_produk', 'Harga': 'harga', 'Warna': 'warna', 'Gaya (Style)': 'vibe'})
+            return df
     except: return pd.DataFrame()
     return pd.DataFrame()
 
@@ -44,7 +44,7 @@ def query_chatbot_n8n(user_text):
     except: return "Bot error."
 
 # =====================================================================
-# 3. INITIALIZATION STATE
+# 3. STATE
 # =====================================================================
 if 'messages' not in st.session_state: st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa dibantu?"}]
 if 'img_buffer' not in st.session_state: st.session_state.img_buffer = None
@@ -57,7 +57,6 @@ if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko
 if menu == "Pembeli":
     st.title("🛍️ VIBE-ID Smart Assistant")
     
-    # CHATBOT POPOVER
     with st.popover("💬 Chat Bantuan", use_container_width=True):
         for m in st.session_state.messages:
             with st.chat_message(m["role"]): st.markdown(m["content"])
@@ -65,11 +64,6 @@ if menu == "Pembeli":
             st.session_state.messages.append({"role": "user", "content": prompt})
             st.session_state.messages.append({"role": "assistant", "content": query_chatbot_n8n(prompt)})
             st.rerun()
-
-    st.header("👤 Langkah 1: Profil Gaya")
-    col1, col2 = st.columns(2)
-    col1.selectbox("Gender:", ["Wanita", "Pria"])
-    col2.selectbox("Usia:", ["Gen Z", "Milenial"])
 
     st.header("📸 Langkah 2: Input Foto")
     tab_cam, tab_file = st.tabs(["📷 Kamera", "📁 Upload"])
@@ -80,19 +74,27 @@ if menu == "Pembeli":
 
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         if st.session_state.img_buffer:
-            st.info("🔮 AI sedang menganalisis warna...")
             img_bytes = st.session_state.img_buffer.getvalue()
             label = query_ai_vision(img_bytes)
-            st.session_state.warna_terdeteksi = "Merah" if any(x in label for x in ["shirt", "jersey"]) else "Biru"
-            st.session_state.hasil_rekomendasi = df_stok[df_stok['warna'].str.contains(st.session_state.warna_terdeteksi, na=False)]
-            st.session_state.beli_aktif = True
-            st.rerun()
-        else: st.warning("Silakan ambil foto atau upload file terlebih dahulu!")
+            
+            # Deteksi warna berdasarkan label (bisa kamu sesuaikan logikanya)
+            warna_target = "Merah" if any(x in label for x in ["shirt", "jersey", "t-shirt"]) else "Biru"
+            
+            # Cek kolom yang tersedia di dataframe secara otomatis
+            cols = [c for c in df_stok.columns if 'warna' in c.lower() or 'Warna' in c]
+            if cols:
+                col_name = cols[0]
+                st.session_state.hasil_rekomendasi = df_stok[df_stok[col_name].astype(str).str.contains(warna_target, case=False, na=False)]
+                st.session_state.warna_terdeteksi = warna_target
+                st.session_state.beli_aktif = True
+                st.rerun()
+            else:
+                st.error(f"Kolom warna tidak ditemukan! Kolom yang ada: {list(df_stok.columns)}")
+        else: st.warning("Silakan ambil foto atau upload file!")
 
     if st.session_state.beli_aktif:
         st.success(f"Ditemukan rekomendasi warna: **{st.session_state.warna_terdeteksi}**")
-        for _, row in st.session_state.hasil_rekomendasi.iterrows():
-            st.write(f"**{row.get('nama_produk')}** - Rp {row.get('harga', 0)}")
+        st.dataframe(st.session_state.hasil_rekomendasi, use_container_width=True)
         if st.button("🛒 BELI PAKET"):
             st.session_state.total_omzet_toko += 100000
             st.success("Transaksi Berhasil!")
