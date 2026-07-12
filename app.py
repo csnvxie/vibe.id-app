@@ -19,14 +19,17 @@ N8N_DATA_URL = "https://casanovaxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://casanovaxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" # <-- URL WEBHOOK CHATBOT N8N KAMU
 
 def get_dominant_color(image_bytes):
-    # Load gambar
     nparr = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if img is None: return (0, 0, 0) # Proteksi agar tidak crash
+    
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = img.reshape((img.shape[0] * img.shape[1], 3))
+    # TAMBAHKAN BARIS RESIZE INI AGAR TIDAK MEMORY OVERFLOW:
+    img = cv2.resize(img, (50, 50), interpolation=cv2.INTER_AREA)
+    img = img.reshape((-1, 3))
 
-    # Gunakan K-Means untuk mencari 1 warna paling dominan
-    clt = KMeans(n_clusters=1)
+    # Gunakan n_init='auto' untuk performa lebih baik
+    clt = KMeans(n_clusters=1, n_init='auto')
     clt.fit(img)
     dominant_rgb = clt.cluster_centers_[0].astype(int)
     
