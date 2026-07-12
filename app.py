@@ -72,7 +72,7 @@ def load_data_from_n8n():
     except Exception:
         return pd.DataFrame()
             
-            df.columns = [str(col).strip() for col in df.columns]
+df.columns = [str(col).strip() for col in df.columns]
             
             if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
