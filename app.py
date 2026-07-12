@@ -138,8 +138,8 @@ if menu == "Pembeli":
     if st.button("RUN AI VISUAL MATCHING 🚀"):
         if img_file_buffer is None:
             st.warning("⚠️ Ambil foto atau upload file dulu!")
-        elif df_stok.empty:
-            st.error("⚠️ Data produk kosong, periksa kembali koneksi Webhook n8n Anda!")
+        elif df_stok is None or df_stok.empty:
+            st.error("⚠️ Data produk kosong atau gagal dimuat")
         else:
             st.session_state.total_penggunaan_ai += 1
             st.session_state.log_gender_dicari.append(pilihan_gender)
