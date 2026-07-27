@@ -12,10 +12,10 @@ import gc
 st.set_page_config(page_title="VIBE-ID App", page_icon="🛍️", layout="centered")
 menu = st.sidebar.radio("Pilih Hak Akses:", ["Pembeli", "Admin"])
 
-# URL API Model & Webhook n8n
+# URL API Model & Webhook n8n (Pastikan URL n8n baru sudah benar di sini)
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
-N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot" # <-- URL WEBHOOK CHATBOT N8N KAMU
+N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
 
 def get_dominant_color(image_bytes):
     try:
@@ -23,11 +23,13 @@ def get_dominant_color(image_bytes):
         # Gunakan metode 'box' agar lebih akurat mengambil rata-rata warna
         img = img.resize((1, 1), resample=Image.BOX) 
         color = img.getpixel((0, 0))
-        st.write(f"DEBUG Nilai RGB: {rgb_dominan}")
+        
+        # Debugging ditaruh SETELAH variabel 'color' ada
+        st.write(f"DEBUG Nilai RGB: {color}")
+        
         del img 
         gc.collect()
 
-        return rgb_dominan
         return color
     except Exception:
         return (255, 255, 255)
@@ -35,17 +37,19 @@ def get_dominant_color(image_bytes):
 
 def get_color_name(rgb):
     r, g, b = rgb
-
+    
     print(f"RGB: {r}, {g}, {b}")
     
-    # Deteksi Hitam yang lebih akurat (hanya jika benar-benar gelap)
+    # Deteksi Hitam
     if r < 40 and g < 40 and b < 40: return "Hitam"
     
     # Deteksi Putih
     if r > 220 and g > 220 and b > 220: return "Putih"
     
-    # Deteksi Warna Utama
-    if r > 180 and g < 100 and b < 100: return "Merah"
+    # Deteksi Merah yang lebih sensitif (mengatasi baju merah terbaca warna campuran)
+    if r > 120 and r > g + 40 and r > b + 40: return "Merah"
+    
+    # Deteksi Warna Utama Lainnya
     if r < 100 and g > 180 and b < 100: return "Hijau"
     if r < 100 and g < 100 and b > 180: return "Biru"
     if r > 180 and g > 180 and b < 100: return "Kuning"
@@ -62,6 +66,7 @@ def get_color_name(rgb):
 # =====================================================================
 @st.cache_resource(show_spinner=False)
 def load_data_from_n8n():
+    df = pd.DataFrame()  # Inisialisasi awal agar aman dari UnboundLocalError
     try:
         response = requests.get(N8N_DATA_URL, timeout=5) 
         if response.status_code == 200:
@@ -78,35 +83,35 @@ def load_data_from_n8n():
             del raw_data 
             gc.collect()
             
-            # --- SEMUA INI HARUS MENJOROK KE DALAM (INDENTASI) ---
-        df.columns = [str(col).strip() for col in df.columns]
+        if not df.empty:
+            df.columns = [str(col).strip() for col in df.columns]
             
-        if 'Item ID' in df.columns:
+            if 'Item ID' in df.columns:
                 df = df[df['Item ID'] != 'Item ID']
                 
-                mapping_kolom = {
-                    'Nama Barang': 'nama_produk',
-                    'Kategori': 'kategori_baju',
-                    'Gaya (Style)': 'vibe',
-                    'Warna': 'warna',
-                    'Gender': 'gender',
-                    'Harga': 'harga'
-                }
-                df = df.rename(columns=mapping_kolom)
-                
-                kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
-                for col in kolom_wajib:
-                    if col not in df.columns:
-                        if col == 'harga': df[col] = 0
-                        elif col == 'target_usia': df[col] = 'Gen Z'
-                        elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
-                        else: df[col] = ''
-                return df
+            mapping_kolom = {
+                'Nama Barang': 'nama_produk',
+                'Kategori': 'kategori_baju',
+                'Gaya (Style)': 'vibe',
+                'Warna': 'warna',
+                'Gender': 'gender',
+                'Harga': 'harga'
+            }
+            df = df.rename(columns=mapping_kolom)
+            
+            kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
+            for col in kolom_wajib:
+                if col not in df.columns:
+                    if col == 'harga': df[col] = 0
+                    elif col == 'target_usia': df[col] = 'Gen Z'
+                    elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
+                    else: df[col] = ''
+            return df
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
-    # Return default jika gagal
     return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
+
 df_stok = load_data_from_n8n()
 
 if not df_stok.empty and 'harga' in df_stok.columns:
@@ -125,7 +130,6 @@ if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi
 if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 
-# State khusus untuk menyimpan histori chat agar tidak hilang saat refresh
 if 'messages' not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
 
@@ -145,26 +149,21 @@ def query_ai_vision(image_bytes):
 
 def query_chatbot_n8n(user_text):
     try:
-        # Mengirimkan teks chat dari user ke webhook n8n
         payload = {"message": user_text}
         response = requests.post(N8N_CHAT_URL, json=payload)
         
         if response.status_code == 200:
             res_data = response.json()
             
-            # 1. Jika n8n mengembalikan data berupa List/Array (misal: [ {...} ])
             if isinstance(res_data, list) and len(res_data) > 0:
                 res_data = res_data[0]
                 
-            # 2. Jika item di dalam list dibungkus oleh key 'json' khas n8n
             if isinstance(res_data, dict) and 'json' in res_data:
                 res_data = res_data['json']
                 
-            # 3. Ambil teks balasan final dari key 'output' (sesuai output AI Agent n8n)
             if isinstance(res_data, dict):
                 return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
             
-            # 4. Fallback jika format data tidak terduga
             return str(res_data)
             
     except Exception as e:
@@ -223,7 +222,6 @@ if menu == "Pembeli":
                 st.session_state.beli_aktif = True
                 st.rerun()
 
-    # --- TAMPILAN HASIL (DILUAR IF BUTTON) ---
     if st.session_state.get('beli_aktif'):
         st.success(f"🎨 Hasil Pemetaan Warna Toko: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
         df_hasil = st.session_state.get('hasil_rekomendasi')
@@ -247,33 +245,25 @@ if menu == "Pembeli":
         else:
             st.warning("Tidak ada rekomendasi yang cocok.")
                 
-    # =====================================================================
-    # 🤖 LIVE CHATBOT INTERAKTIF VIA N8N 
-    # =====================================================================
     st.markdown("---")
     st.header("💬 VIBE-ID Smart Assistant")
     st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
 
-    # Render history chat yang sudah tersimpan
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Tangkap inputan baru dari user
     if prompt := st.chat_input("Ketik pesan kamu ke asisten toko di sini..."):
-        # Tampilkan chat user ke layar
         with st.chat_message("user"):
             st.markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        # Ambil respon dari n8n webhook
         with st.chat_message("assistant"):
             with st.spinner("Memikirkan jawaban..."):
                 response_bot = query_chatbot_n8n(prompt)
                 st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# SISI ADMIN
 else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
     st.header("📈 Dasbor Analitik & Tren Outfit Penjualan")
