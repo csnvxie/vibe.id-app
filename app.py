@@ -282,7 +282,7 @@ if menu == "Pembeli":
 
     # 2. Tombol untuk memicu pop-up muncul
     st.info("Butuh bantuan atau mau tanya stok?")
-    if st.button("💬 Buka Chatbot Melayang", use_container_width=True, type="primary"):
+    if st.button("💬 Buka Chatbot", use_container_width=True, type="primary"):
         tampilkan_chatbot_popup()
 else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
