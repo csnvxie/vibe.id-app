@@ -252,7 +252,7 @@ if menu == "Pembeli":
     with st.popover("💬 Buka Chatbot VIBE-ID", use_container_width=True):
         st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
         
-        chat_container = st.container(height=350)
+        chat_container = st.container(height=100)
         
         with chat_container:
          
