@@ -246,42 +246,44 @@ if menu == "Pembeli":
             st.warning("Tidak ada rekomendasi yang cocok.")
                 
     st.markdown("---")
-    st.header("💬 VIBE-ID Smart Assistant")
-    st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
-
-    with st.popover("💬 Buka Chatbot VIBE-ID", use_container_width=True):
+    
+    @st.dialog("💬 VIBE-ID Smart Assistant")
+    def tampilkan_chatbot_popup():
         st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
-        
-        chat_container = st.container(height=100)
+     
+        chat_container = st.container(height=400)
         
         with chat_container:
-         
+            # Tampilkan history chat
             for message in st.session_state.messages:
                 with st.chat_message(message["role"]):
                     st.markdown(message["content"])
         
-        with st.form(key="chat_form", clear_on_submit=True):
-            cols = st.columns([5, 1])
-            with cols[0]:
-                prompt = st.text_input("Ketik pesan kamu di sini...", label_visibility="collapsed")
-            with cols[1]:
-                submit_btn = st.form_submit_button("Kirim")
+        # Input chat ditaruh di dalam pop-up
+        prompt = st.chat_input("Ketik pesan kamu di sini...")
+        
+        if prompt:
+            # Simpan dan tampilkan pesan user
+            st.session_state.messages.append({"role": "user", "content": prompt})
+            
+            with chat_container:
+                with st.chat_message("user"):
+                    st.markdown(prompt)
                 
-            if submit_btn and prompt:
-                st.session_state.messages.append({"role": "user", "content": prompt})
-                
-                with chat_container:
-                    with st.chat_message("user"):
-                        st.markdown(prompt)
-                        
-                    with st.chat_message("assistant"):
-                        with st.spinner("Memikirkan jawaban..."):
-                            response_bot = query_chatbot_n8n(prompt)
-                            st.markdown(response_bot)
-                            
-                st.session_state.messages.append({"role": "assistant", "content": response_bot})
-    
-                st.rerun()
+                # Proses balasan dari bot n8n
+                with st.chat_message("assistant"):
+                    with st.spinner("Memikirkan jawaban..."):
+                        response_bot = query_chatbot_n8n(prompt)
+                        st.markdown(response_bot)
+            
+            # Simpan balasan bot dan refresh pop-up
+            st.session_state.messages.append({"role": "assistant", "content": response_bot})
+            st.rerun()
+
+    # 2. Tombol untuk memicu pop-up muncul
+    st.info("Butuh bantuan atau mau tanya stok?")
+    if st.button("💬 Buka Chatbot Melayang", use_container_width=True, type="primary"):
+        tampilkan_chatbot_popup()
 else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
     st.header("📈 Dasbor Analitik & Tren Outfit Penjualan")
