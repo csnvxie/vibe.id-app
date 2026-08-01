@@ -249,21 +249,39 @@ if menu == "Pembeli":
     st.header("💬 VIBE-ID Smart Assistant")
     st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
 
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    if prompt := st.chat_input("Ketik pesan kamu ke asisten toko di sini..."):
-        with st.chat_message("user"):
-            st.markdown(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
-
-        with st.chat_message("assistant"):
-            with st.spinner("Memikirkan jawaban..."):
-                response_bot = query_chatbot_n8n(prompt)
-                st.markdown(response_bot)
-        st.session_state.messages.append({"role": "assistant", "content": response_bot})
-
+    with st.popover("💬 Buka Chatbot VIBE-ID", use_container_width=True):
+        st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
+        
+        chat_container = st.container(height=350)
+        
+        with chat_container:
+         
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+        
+        with st.form(key="chat_form", clear_on_submit=True):
+            cols = st.columns([5, 1])
+            with cols[0]:
+                prompt = st.text_input("Ketik pesan kamu di sini...", label_visibility="collapsed")
+            with cols[1]:
+                submit_btn = st.form_submit_button("Kirim")
+                
+            if submit_btn and prompt:
+                st.session_state.messages.append({"role": "user", "content": prompt})
+                
+                with chat_container:
+                    with st.chat_message("user"):
+                        st.markdown(prompt)
+                        
+                    with st.chat_message("assistant"):
+                        with st.spinner("Memikirkan jawaban..."):
+                            response_bot = query_chatbot_n8n(prompt)
+                            st.markdown(response_bot)
+                            
+                st.session_state.messages.append({"role": "assistant", "content": response_bot})
+    
+                st.rerun()
 else:
     st.caption("Real-Time Business Intelligence & Market Trends Dashboard")
     st.header("📈 Dasbor Analitik & Tren Outfit Penjualan")
