@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (MOBILE-FIRST OPTIMIZATION)
+# 1. CONFIG & STYLING MODERN (CLEAN MOBILE RESPONSIVE)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed" # Biar di HP sidebar ketutup rapi jadi tombol hamburger
 )
 
 st.markdown("""
@@ -139,14 +139,7 @@ st.markdown("""
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
 
-    /* OPTIMASI KHUSUS MOBILE (LAYAR KECIL) */
     @media (max-width: 768px) {
-        /* Paksa sidebar agar tampil dan tidak tersembunyi total di mobile */
-        section[data-testid="stSidebar"] {
-            width: 260px !important;
-            transform: translateX(0px) !important;
-        }
-        
         .vibe-banner {
             padding: 16px 18px;
         }
@@ -192,7 +185,7 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation (Menu Utama & Status yang tadinya ketutup di HP)
+# Sidebar Navigation (Standar Hamburger Menu di Pojok Kiri Atas)
 with st.sidebar:
     st.image("VIBEID LOGO.png", width=150)
     
@@ -386,10 +379,9 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT (RESPONSIVE STACKING UNTUK MOBILE)
+# 5. USER INTERFACE (UI) LAYOUT (CLEAN MOBILE STACKING)
 # =====================================================================
 if menu == "Pembeli":
-    # Menggunakan container tunggal agar di HP form & rekomendasi tersusun rapi ke bawah (tidak terpotong menyamping)
     with st.container():
         with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
             st.subheader("👤 Step 1: Profil Gaya Kamu")
@@ -442,16 +434,14 @@ if menu == "Pembeli":
 
     st.markdown("---")
 
-    # Bagian Rekomendasi & Transaksi ditaruh di bawahnya agar sangat nyaman diakses di layar HP vertikal
     with st.container():
         st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
         
-        # KONDISI 1: JIKA PEMBAYARAN SUKSES
         if st.session_state.get('order_success'):
             st.markdown("""
             <div class="success-card">
-                <h2 style="margin:0; color:#FFFFFF; font-size: 1.4rem;">🎉 PEMBAYARAN BERHASIL!</h2>
-                <p style="margin:8px 0 0 0; color:#D1FAE5; font-size: 0.9rem;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+                <h2 style="margin:0; color:#FFFFFF; font-size: 1.3rem;">🎉 PEMBAYARAN BERHASIL!</h2>
+                <p style="margin:8px 0 0 0; color:#D1FAE5; font-size: 0.85rem;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -471,7 +461,6 @@ if menu == "Pembeli":
                 st.session_state.form_reset_counter += 1
                 st.rerun()
 
-        # KONDISI 2: JIKA REKOMENDASI AKTIF (BELUM BAYAR)
         elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
@@ -538,7 +527,6 @@ if menu == "Pembeli":
                     st.balloons()
                     st.rerun()
 
-        # KONDISI 3: TAMPILAN AWAL SEBELUM SCAN
         else:
             st.info("👆 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di atas untuk melihat rekomendasi outfit.")
 
