@@ -184,6 +184,37 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+import streamlit.components.v1 as components
+
+# SCRIPT INJECTION UNTUK HAPUS BACKGROUND PUTIH BAWAAN STREAMLIT
+components.html("""
+<script>
+    const observer = new MutationObserver((mutations, obs) => {
+        // Target dropdown / selectbox dan tombol kamera/submit yang putih
+        const whiteElements = window.parent.document.querySelectorAll('div[data-baseweb="select"] > div, div[data-testid="stCameraInput"] > div > div:last-child, .stButton > button');
+        
+        whiteElements.forEach(el => {
+            if (el) {
+                el.style.setProperty('background-color', '#1E293B', 'important');
+                el.style.setProperty('color', '#F8FAFC', 'important');
+                el.style.setProperty('border-color', '#334155', 'important');
+            }
+        });
+        
+        // Target elemen span atau teks di dalam selectbox
+        const spans = window.parent.document.querySelectorAll('div[data-baseweb="select"] span');
+        spans.forEach(s => {
+            s.style.setProperty('color', '#F8FAFC', 'important');
+        });
+    });
+
+    observer.observe(window.parent.document.body, {
+        childList: true,
+        subtree: true
+    });
+</script>
+""", height=0)
+
 # API & Webhook URLs
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
