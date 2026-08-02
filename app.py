@@ -44,6 +44,12 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
+    /* CUSTOM WARNA HAMBURGER MENU STREAMLIT */
+    button[kind="header"] svg {
+        stroke: #F8FAFC !important;
+        fill: #F8FAFC !important;
+    }
+
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B;
@@ -84,13 +90,12 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* --- FIX TOTAL KOTAK SELECTBOX & DROPDOWN (WANITA & GEN Z) --- */
+    /* --- FIX TOTAL KOTAK SELECTBOX & DROPDOWN --- */
     div[data-baseweb="select"] {
         background-color: #1E293B !important;
         border-radius: 10px !important;
     }
 
-    /* Menghilangkan background putih di dalam container selectbox */
     div[data-baseweb="select"] > div,
     div[data-baseweb="select"] div {
         background-color: #1E293B !important;
@@ -102,7 +107,6 @@ st.markdown("""
         color: #F8FAFC !important;
     }
 
-    /* Menu popup dropdown saat diklik */
     div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
@@ -131,12 +135,10 @@ st.markdown("""
         background-color: #1E293B !important;
     }
 
-    /* Memaksa area container bawah tombol kamera jadi gelap */
     div[data-testid="stCameraInput"] div[data-baseweb="block"] {
         background-color: #1E293B !important;
     }
 
-    /* Tombol Take Photo bawaan kamera */
     div[data-testid="stCameraInput"] button {
         background-color: #334155 !important;
         color: #F8FAFC !important;
