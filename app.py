@@ -44,26 +44,27 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX POSISI & KOTAK TOMBOL COLLAPSE SIDEBAR (BUKA & TUTUP) --- */
-    header [data-testid="collapsedControl"] {
-        display: block !important;
-        z-index: 999999 !important;
-    }
-
-    header button[kind="header"],
-    [data-testid="collapsedControl"] button {
+    /* --- FIX TOMBOL COLLAPSE SIDEBAR (PAS TERBUKA & TERTUTUP) --- */
+    section[data-testid="stSidebar"] button[kind="header"],
+    section[data-testid="stSidebar"] [data-testid="collapsedControl"] button {
         background-color: #4F46E5 !important;
         border-radius: 8px !important;
         border: 2px solid #818CF8 !important;
-        padding: 6px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
+        padding: 4px !important;
     }
 
-    header button[kind="header"] svg,
-    [data-testid="collapsedControl"] svg {
+    header [data-testid="collapsedControl"] button,
+    header button[kind="header"] {
+        background-color: #4F46E5 !important;
+        border-radius: 8px !important;
+        border: 2px solid #818CF8 !important;
+        padding: 4px !important;
+    }
+
+    section[data-testid="stSidebar"] button[kind="header"] svg,
+    section[data-testid="stSidebar"] [data-testid="collapsedControl"] svg,
+    header [data-testid="collapsedControl"] svg,
+    header button[kind="header"] svg {
         fill: #FFFFFF !important;
         stroke: #FFFFFF !important;
         color: #FFFFFF !important;
