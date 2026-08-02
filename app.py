@@ -77,7 +77,7 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    /* --- FIX TOTAL DROPDOWN SELECTBOX (WANITA & GEN Z) --- */
+    /* --- FIX TOTAL KOTAK DROPDOWN SELECTBOX (WANITA & GEN Z) --- */
     div[data-baseweb="select"] {
         background-color: #1E293B !important;
         border-radius: 10px !important;
@@ -90,9 +90,9 @@ st.markdown("""
         border-radius: 10px !important;
     }
 
-    /* Menghilangkan background putih dalaman komponen selectbox */
-    div[data-baseweb="select"] * {
-        background-color: transparent !important;
+    /* Memaksa elemen teks/span di dalam selectbox jadi terang & background transparan */
+    div[data-baseweb="select"] span, 
+    div[data-baseweb="select"] div {
         color: #F8FAFC !important;
     }
     
@@ -100,6 +100,11 @@ st.markdown("""
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border: 1px solid #334155 !important;
+    }
+    
+    div[data-baseweb="menu"] div {
+        background-color: #1E293B !important;
+        color: #F8FAFC !important;
     }
 
     .stMarkdown h3, label {
@@ -119,6 +124,7 @@ st.markdown("""
         border-color: #6366F1 !important;
     }
 
+    /* --- FIX TOTAL AREA KAMERA & BAGIAN BAWAHNYA --- */
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
@@ -127,11 +133,12 @@ st.markdown("""
     }
 
     div[data-testid="stCameraInput"] section, 
-    div[data-testid="stCameraInput"] div, 
-    div[data-testid="stCameraInput"] [data-baseweb="block"] {
+    div[data-testid="stCameraInput"] div {
         background-color: #1E293B !important;
+        color: #F8FAFC !important;
     }
 
+    /* Memaksa area tombol ambil foto bawaan kamera jadi gelap */
     div[data-testid="stCameraInput"] button {
         background-color: #334155 !important;
         color: #F8FAFC !important;
