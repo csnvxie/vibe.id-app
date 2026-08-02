@@ -160,30 +160,37 @@ st.markdown("""
 # =====================================================================
 # 2. HELPER & DATABASE FUNCTIONS
 # =====================================================================
-def get_dominant_color(image_bytes):
-    try:
-        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        width, height = img.size
-        
-        # Ambil hanya area tengah (40% bagian tengah foto) tempat baju biasanya berada
-        left = int(width * 0.3)
-        top = int(height * 0.3)
-        right = int(width * 0.7)
-        bottom = int(height * 0.7)
-        
-        cropped = img.crop((left, top, right, bottom))
-        cropped = cropped.resize((30, 30), resample=Image.Resampling.BILINEAR)
-        arr = np.array(cropped)
-        
-        # Ambil rata-rata warna khusus di bagian tengah baju
-        pixels = arr.reshape(-1, 3)
-        mean_color = np.mean(pixels, axis=0).astype(int)
-        
-        del img, cropped
-        gc.collect()
-        return tuple(mean_color)
-    except Exception:
-        return (255, 255, 255)
+def get_color_name(rgb):
+    r, g, b = rgb
+    
+    # Palet warna fesyen dengan rentang acuan yang lebih pas untuk kamera HP/Webcam
+    palet_warna = {
+        "Hitam": (40, 40, 40),
+        "Putih": (220, 220, 220),
+        "Abu-abu": (128, 128, 128),
+        "Navy": (20, 35, 60),
+        "Biru": (50, 100, 200),
+        "Merah": (180, 40, 40),
+        "Hijau": (40, 140, 70),
+        "Kuning": (230, 200, 50),
+        "Cokelat": (110, 70, 40),
+        "Ungu": (90, 40, 110),
+        "Pink": (230, 120, 160),
+        "Krem": (210, 190, 150),
+        "Jingga": (230, 110, 40)
+    }
+    
+    jarak_terkecil = float('inf')
+    warna_terpilih = "Abu-abu"
+    
+    for nama_warna, (pr, pg, pb) in palet_warna.items():
+        # Menggunakan bobot warna agar mata manusia (sensitif ke hijau/merah) lebih akurat terdeteksi
+        jarak = np.sqrt(0.3 * (r - pr)**2 + 0.59 * (g - pg)**2 + 0.11 * (b - pb)**2)
+        if jarak < jarak_terkecil:
+            jarak_terkecil = jarak
+            warna_terpilih = nama_warna
+            
+    return warna_terpilih
 
 def get_color_name(rgb):
     r, g, b = rgb
