@@ -163,27 +163,34 @@ st.markdown("""
 def get_color_name(rgb):
     r, g, b = rgb
     
-    # 1. Hitam dan Putih Pekat
-    if r < 40 and g < 40 and b < 40: return "Hitam"
-    if r > 215 and g > 215 and b > 215: return "Putih"
+    # Palet standar warna fesyen beserta nilai RGB acuannya
+    palet_warna = {
+        "Hitam": (20, 20, 20),
+        "Putih": (240, 240, 240),
+        "Abu-abu": (128, 128, 128),
+        "Navy": (15, 23, 42),
+        "Biru": (30, 144, 255),
+        "Merah": (220, 20, 60),
+        "Hijau": (34, 139, 34),
+        "Kuning": (255, 215, 0),
+        "Cokelat": (139, 69, 19),
+        "Ungu": (128, 0, 128),
+        "Pink": (255, 105, 180),
+        "Krem": (245, 222, 179),
+        "Jingga": (255, 140, 0)
+    }
     
-    # 2. Toleransi Abu-abu jika selisih RGB sangat tipis
-    if abs(r - g) < 18 and abs(g - b) < 18 and abs(r - b) < 18:
-        return "Abu-abu"
-        
-    # 3. Penentuan Warna Dominan
-    max_val = max(r, g, b)
-    if max_val == r:
-        if g > 130 and b < 100: return "Kuning"
-        if g > 90 and b < 70: return "Jingga"
-        return "Merah"
-    elif max_val == g:
-        if r > 120 and b < 100: return "Kuning"
-        return "Hijau"
-    else:
-        if r > 120 and g < 100: return "Ungu"
-        if r > 150 and g > 150: return "Biru Muda"
-        return "Biru"
+    # Menghitung jarak terdekat (Euclidean distance) dari warna foto ke palet standar
+    jarak_terkecil = float('inf')
+    warna_terpilih = "Abu-abu"
+    
+    for nama_warna, (pr, pg, pb) in palet_warna.items():
+        jarak = np.sqrt((r - pr)**2 + (g - pg)**2 + (b - pb)**2)
+        if jarak < jarak_terkecil:
+            jarak_terkecil = jarak
+            warna_terpilih = nama_warna
+            
+    return warna_terpilih
     
 @st.cache_resource(show_spinner=False)
 def load_data_from_n8n():
