@@ -69,16 +69,22 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    /* --- FIX TOTAL ELEMEN PUTIH & KAMERA STREAMLIT --- */
+    /* --- FIX TOTAL KOTAK FORM & PANEL INPUT (GENDER, USIA, KAMERA) --- */
     
     div[data-testid="stForm"] {
         background-color: #0F172A !important;
         border: 1px solid #1E293B !important;
-        border-radius: 14px;
-        padding: 20px;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    /* Selectbox & Dropdown */
+    /* Memaksa background elemen di dalam form agar tidak ada yang putih terang */
+    div[data-testid="stForm"] [data-baseweb="block"] {
+        background-color: transparent !important;
+    }
+
+    /* Dropdown / Selectbox Gender & Usia */
     div[data-baseweb="select"] > div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
@@ -96,7 +102,7 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* Tab Styling */
+    /* Tab Menu Real Cam & Upload */
     button[data-baseweb="tab"] {
         background-color: #1E293B !important;
         color: #94A3B8 !important;
@@ -110,16 +116,13 @@ st.markdown("""
         border-color: #6366F1 !important;
     }
 
-    /* Target Kotak & Bagian Bawah Camera Input yang Putih */
-    div[data-testid="stCameraInput"], div[data-testid="stCameraInput"] > div {
+    /* Kotak Kamera & Area Bawah Tombol Take Photo */
+    div[data-testid="stCameraInput"], 
+    div[data-testid="stCameraInput"] > div, 
+    div[data-testid="stCameraInput"] section {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
         border-radius: 12px;
-    }
-    
-    /* Menghilangkan background putih bawaan element wrapper kamera */
-    div[data-testid="stCameraInput"] section {
-        background-color: #1E293B !important;
     }
 
     div[data-testid="stFileUploader"] {
