@@ -69,9 +69,8 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    /* --- CUSTOM DARK FIX UNTUK ELEMEN PUTIH STREAMLIT --- */
+    /* --- FIX TOTAL ELEMEN PUTIH & KAMERA STREAMLIT --- */
     
-    /* Kotak Form Utama */
     div[data-testid="stForm"] {
         background-color: #0F172A !important;
         border: 1px solid #1E293B !important;
@@ -79,7 +78,7 @@ st.markdown("""
         padding: 20px;
     }
 
-    /* Widget Selectbox & Input Dropdown */
+    /* Selectbox & Dropdown */
     div[data-baseweb="select"] > div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
@@ -93,12 +92,11 @@ st.markdown("""
         border: 1px solid #334155 !important;
     }
 
-    /* Warna Teks Judul Step & Label Form agar terang dan kontras */
     .stMarkdown h3, label {
         color: #F1F5F9 !important;
     }
 
-    /* Tab Styling (Real Cam & Upload Foto) */
+    /* Tab Styling */
     button[data-baseweb="tab"] {
         background-color: #1E293B !important;
         color: #94A3B8 !important;
@@ -112,8 +110,19 @@ st.markdown("""
         border-color: #6366F1 !important;
     }
 
-    /* Kamera / File Uploader Container Box */
-    div[data-testid="stCameraInput"] > div, div[data-testid="stFileUploader"] {
+    /* Target Kotak & Bagian Bawah Camera Input yang Putih */
+    div[data-testid="stCameraInput"], div[data-testid="stCameraInput"] > div {
+        background-color: #1E293B !important;
+        border: 1px solid #334155 !important;
+        border-radius: 12px;
+    }
+    
+    /* Menghilangkan background putih bawaan element wrapper kamera */
+    div[data-testid="stCameraInput"] section {
+        background-color: #1E293B !important;
+    }
+
+    div[data-testid="stFileUploader"] {
         background-color: #1E293B !important;
         border: 1px dashed #334155 !important;
         border-radius: 12px;
