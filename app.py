@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DARK THEME & COLLAPSED SIDEBAR)
+# 1. CONFIG & STYLING MODERN (FIXED SIDEBAR & RESPONSIVE)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="auto"  
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -40,19 +40,8 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* --- FIX HEADER & TOMBOL HAMBURGER SIDEBAR --- */
-    header[data-testid="stHeader"] {
-        visibility: visible !important;
-        background-color: transparent !important;
-    }
-    
-    header[data-testid="stHeader"] button {
-        color: #FFFFFF !important;
-    }
-
-    header[data-testid="stHeader"] svg {
-        fill: #FFFFFF !important;
-    }
+    /* Memunculkan kembali header agar tombol panah/titik tiga bawaan Streamlit muncul rapi */
+    header {visibility: visible !important; background-color: transparent !important;}
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -82,111 +71,15 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    div[data-testid="stForm"] {
-        background-color: #0F172A !important;
-        border: 1px solid #1E293B !important;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    .stMarkdown h3, label {
-        color: #F1F5F9 !important;
-    }
-
-    /* --- KOTAK SELECTBOX WARNA BIRU SENADA BANNER ATAS & TEKS PUTIH --- */
-    div[data-baseweb="select"] {
-        background: linear-gradient(135deg, #312E81 0%, #1E1B4B 100%) !important;
-        border: 1px solid #4338CA !important;
-        border-radius: 10px !important;
-    }
-
-    div[data-baseweb="select"] > div {
-        background: transparent !important;
-        border-color: transparent !important;
-        border-radius: 10px !important;
-    }
-
-    div[data-baseweb="select"] span, 
-    div[data-baseweb="select"] div,
-    div[data-baseweb="select"] p {
-        color: #FFFFFF !important;
-        background-color: transparent !important;
-    }
-
-    div[data-baseweb="select"] svg {
-        fill: #C7D2FE !important;
-    }
-
-    /* Bagian dropdown popup list-nya */
-    div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #1E1B4B !important;
-        color: #FFFFFF !important;
-        border: 1px solid #4338CA !important;
-    }
-
-    div[role="option"] {
-        background-color: #1E1B4B !important;
-        color: #FFFFFF !important;
-    }
-    
-    div[role="option"]:hover {
-        background-color: #312E81 !important;
-    }
-
-    button[data-baseweb="tab"] {
-        background-color: #1E293B !important;
-        color: #94A3B8 !important;
-        border-radius: 8px 8px 0 0 !important;
-        border: 1px solid #334155 !important;
-    }
-    
-    button[data-baseweb="tab"][aria-selected="true"] {
-        background-color: #4F46E5 !important;
-        color: #FFFFFF !important;
-        border-color: #6366F1 !important;
-    }
-
-    div[data-testid="stCameraInput"] {
-        background-color: #1E293B !important;
-        border: 1px solid #334155 !important;
-        border-radius: 12px;
-        padding: 10px;
-    }
-
-    div[data-testid="stCameraInput"] section, 
-    div[data-testid="stCameraInput"] > div {
-        background-color: #1E293B !important;
-    }
-
-    div[data-testid="stCameraInput"] button {
-        background-color: #334155 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #475569 !important;
-        border-radius: 8px !important;
-    }
-
-    div[data-testid="stFileUploader"] {
-        background-color: #1E293B !important;
-        border: 1px dashed #334155 !important;
-        border-radius: 12px;
-        padding: 10px;
-    }
-
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 10px;
         padding: 12px 24px;
         font-weight: 600;
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         width: 100%;
-    }
-
-    .stButton > button *, div[data-testid="stForm"] button[type="submit"] * {
-        color: #FFFFFF !important;
-        fill: #FFFFFF !important;
     }
 
     .receipt-box {
@@ -208,35 +101,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-import streamlit.components.v1 as components
-
-# SCRIPT INJECTION UNTUK HAPUS BACKGROUND PUTIH BAWAAN STREAMLIT
-components.html("""
-<script>
-    const observer = new MutationObserver((mutations, obs) => {
-        const whiteElements = window.parent.document.querySelectorAll('div[data-baseweb="select"] > div, div[data-testid="stCameraInput"] > div > div:last-child, .stButton > button');
-        
-        whiteElements.forEach(el => {
-            if (el) {
-                el.style.setProperty('background-color', '#1E293B', 'important');
-                el.style.setProperty('color', '#F8FAFC', 'important');
-                el.style.setProperty('border-color', '#334155', 'important');
-            }
-        });
-        
-        const spans = window.parent.document.querySelectorAll('div[data-baseweb="select"] span');
-        spans.forEach(s => {
-            s.style.setProperty('color', '#FFFFFF', 'important');
-        });
-    });
-
-    observer.observe(window.parent.document.body, {
-        childList: true,
-        subtree: true
-    });
-</script>
-""", height=0)
 
 # API & Webhook URLs
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
@@ -572,7 +436,7 @@ if menu == "Pembeli":
                     st.rerun()
 
         else:
-            st.info("👈 Buka ikon menu hamburger di pojok kiri atas untuk navigasi menu atau upload foto untuk mulai AI Visual Matching.")
+            st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
