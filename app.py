@@ -90,11 +90,13 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    div[data-testid="stForm"] {
+    /* KOTAK PEMBUNGKUS STEP INDIVIDUAL */
+    .vibe-step-box {
         background-color: #0F172A !important;
         border: 1px solid #1E293B !important;
         border-radius: 16px;
-        padding: 24px;
+        padding: 20px 24px;
+        margin-bottom: 20px;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
@@ -391,25 +393,30 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
-            st.subheader("👤 Step 1: Profil Gaya Kamu")
-            sub_c1, sub_c2 = st.columns(2)
-            pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-            pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+        # KOTAK STEP 1
+        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
+        st.subheader("👤 Step 1: Profil Gaya Kamu")
+        sub_c1, sub_c2 = st.columns(2)
+        pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+        pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+        st.markdown('</div>', unsafe_allow_html=True)
 
-            st.subheader("📸 Step 2: Input Foto Pakaian")
-            tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
-            
-            img_file_buffer = None
-            with tab_cam:
-                foto_kamera = st.camera_input("Ambil foto pakaian kamu")
-                if foto_kamera: img_file_buffer = foto_kamera
-            with tab_file:
-                file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
-                if file_foto: img_file_buffer = file_foto
+        # KOTAK STEP 2
+        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
+        st.subheader("📸 Step 2: Input Foto Pakaian")
+        tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
+        
+        img_file_buffer = None
+        with tab_cam:
+            foto_kamera = st.camera_input("Ambil foto pakaian kamu")
+            if foto_kamera: img_file_buffer = foto_kamera
+        with tab_file:
+            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
+            if file_foto: img_file_buffer = file_foto
 
-            st.markdown("<br>", unsafe_allow_html=True)
-            submit_matching = st.form_submit_button("🚀 RUN AI VISUAL MATCHING")
+        st.markdown("<br>", unsafe_allow_html=True)
+        submit_matching = st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
         if submit_matching:
             if img_file_buffer is None:
@@ -441,6 +448,8 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
+        # KOTAK STEP 3
+        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
         st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
         
         if st.session_state.get('order_success'):
@@ -529,6 +538,7 @@ if menu == "Pembeli":
 
         else:
             st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
+        st.markdown('</div>', unsafe_allow_html=True)
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
