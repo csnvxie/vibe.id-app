@@ -70,10 +70,11 @@ st.markdown("""
         margin-bottom: 0;
     }
 
+    /* Perbaikan Tombol Utama & Form Submit agar teks selalu putih kontras */
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
-        background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+        background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
-        border: none;
+        border: none !important;
         border-radius: 10px;
         padding: 12px 24px;
         font-weight: 600;
@@ -86,6 +87,7 @@ st.markdown("""
     .stButton > button:hover, div[data-testid="stForm"] button[type="submit"]:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        color: #FFFFFF !important;
     }
 
     div[data-testid="stMetric"] {
@@ -145,7 +147,7 @@ with st.sidebar:
             "container": {"padding": "0!important", "background-color": "transparent"},
             "icon": {"color": "#818CF8", "font-size": "16px"},
             "nav-link": {"font-size": "14px", "color": "#94A3B8", "border-radius": "8px", "margin": "4px 0px"},
-            "nav-link-selected": {"background-color": "#4F46E5", "color": "#000000", "font-weight": "600"}
+            "nav-link-selected": {"background-color": "#4F46E5", "color": "#FFFFFF", "font-weight": "600"}
         }
     )
 
@@ -296,7 +298,6 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
         
         if st.button("Selesai & Reset ke Beranda", use_container_width=True):
-            # Reset semua state data agar tampilan bersih total
             st.session_state.order_success = False
             st.session_state.beli_aktif = False
             st.session_state.hasil_rekomendasi = None
@@ -343,7 +344,7 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         if st.button("✅ Bayar Sekarang", use_container_width=True):
             with st.spinner("Memproses transaksi perbankan & gateway..."):
                 import time
-                time.sleep(1.5)
+                time.sleep(1.2)
                 
                 st.session_state.total_omzet_toko += grand_total
                 st.session_state.last_order_details = {"metode": metode_bayar}
@@ -415,7 +416,8 @@ if menu == "Pembeli":
 
     with col_right:
         st.subheader("🎯 Step 3: Rekomendasi Outfit")
-        # Pastikan hanya tampil jika beli_aktif True DAN hasil rekomendasi benar-benar ada
+        
+        # Hanya tampil jika beli_aktif True dan data rekomendasinya valid/tidak kosong
         if st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
