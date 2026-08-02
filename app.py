@@ -393,7 +393,7 @@ if menu == "Pembeli":
             
             df_hasil = st.session_state.get('hasil_rekomendasi')
             
-cols = st.columns(min(len(df_hasil), 3))
+            cols = st.columns(min(len(df_hasil), 3))
             total_harga = 0
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
                 if i < 3:
