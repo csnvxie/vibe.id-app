@@ -401,7 +401,7 @@ if menu == "Pembeli":
                         img_url = str(row.get('url_gambar', ''))
                         
                         if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
-                            img_url = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"
+                            img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
                         
                         try:
                             st.image(img_url, use_container_width=True)
