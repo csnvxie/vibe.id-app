@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DARK THEME & FIX HAMBURGER MENU)
+# 1. CONFIG & STYLING MODERN (DARK THEME & COLLAPSED SIDEBAR)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="collapsed"  # <-- DIUBAH JADI COLLAPSED SUPAYA JADI HAMBURGER MENU
 )
 
 st.markdown("""
@@ -572,7 +572,7 @@ if menu == "Pembeli":
                     st.rerun()
 
         else:
-            st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
+            st.info("👈 Buka ikon menu hamburger di pojok kiri atas untuk navigasi menu atau upload foto untuk mulai AI Visual Matching.")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
