@@ -44,10 +44,18 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* CUSTOM WARNA HAMBURGER MENU STREAMLIT */
-    button[kind="header"] svg {
-        stroke: #F8FAFC !important;
-        fill: #F8FAFC !important;
+    /* --- FIX TOTAL IKON & KOTAK HAMBURGER MENU STREAMLIT --- */
+    header [data-testid="stSidebarNavCollapseButton"] svg,
+    header button svg {
+        stroke: #FFFFFF !important;
+        fill: #FFFFFF !important;
+    }
+
+    header [data-testid="stSidebarNavCollapseButton"],
+    header button[kind="header"] {
+        background-color: #334155 !important;
+        border-radius: 8px !important;
+        border: 1px solid #475569 !important;
     }
 
     section[data-testid="stSidebar"] {
@@ -90,7 +98,6 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* --- FIX TOTAL KOTAK SELECTBOX & DROPDOWN --- */
     div[data-baseweb="select"] {
         background-color: #1E293B !important;
         border-radius: 10px !important;
@@ -122,7 +129,6 @@ st.markdown("""
         background-color: #334155 !important;
     }
 
-    /* --- FIX TOTAL AREA CAMERA INPUT & TOMBOL TAKE PHOTO --- */
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
