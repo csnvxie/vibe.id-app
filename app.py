@@ -40,24 +40,26 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* AMANKAN HEADER & HAMBURGER MENU */
+    /* AMANKAN HEADER & TOMBOL COLLAPSE */
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOTAL TOMBOL SIDEBAR COLLAPSE AGAR JELAS --- */
-    header [data-testid="stSidebarNavCollapseButton"],
+    /* --- FIX TOTAL KOTAK TOMBOL COLLAPSE SIDEBAR STREAMLIT --- */
+    header [data-testid="collapsedControl"],
     header button[kind="header"] {
-        background-color: #4F46E5 !important;
+        background-color: #312E81 !important;
         border-radius: 8px !important;
         border: 2px solid #818CF8 !important;
-        opacity: 1 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px !important;
     }
 
-    header [data-testid="stSidebarNavCollapseButton"] svg,
-    header button svg {
-        stroke: #FFFFFF !important;
+    header [data-testid="collapsedControl"] svg,
+    header button[kind="header"] svg {
         fill: #FFFFFF !important;
-        color: #FFFFFF !important;
+        stroke: #FFFFFF !important;
     }
 
     section[data-testid="stSidebar"] {
