@@ -160,35 +160,29 @@ st.markdown("""
 # =====================================================================
 # 2. HELPER & DATABASE FUNCTIONS
 # =====================================================================
-def get_dominant_color(image_bytes):
-    try:
-        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        img = img.resize((1, 1), resample=Image.BOX) 
-        color = img.getpixel((0, 0))
-        del img 
-        gc.collect()
-        return color
-    except Exception:
-        return (255, 255, 255)
-
 def get_color_name(rgb):
     r, g, b = rgb
-    if r < 45 and g < 45 and b < 45: return "Hitam"
-    if r > 210 and g > 210 and b > 210: return "Putih"
     
-    if r > g and r > b:
+    # 1. Hitam dan Putih Pekat
+    if r < 40 and g < 40 and b < 40: return "Hitam"
+    if r > 215 and g > 215 and b > 215: return "Putih"
+    
+    # 2. Toleransi Abu-abu jika selisih RGB sangat tipis
+    if abs(r - g) < 18 and abs(g - b) < 18 and abs(r - b) < 18:
+        return "Abu-abu"
+        
+    # 3. Penentuan Warna Dominan
+    max_val = max(r, g, b)
+    if max_val == r:
         if g > 130 and b < 100: return "Kuning"
-        if g > 100 and b < 80: return "Jingga"
-        if abs(r - g) < 25 and abs(g - b) < 25: return "Abu-abu"
+        if g > 90 and b < 70: return "Jingga"
         return "Merah"
-    elif g > r and g > b:
-        if r > 130 and b < 100: return "Kuning"
-        if abs(r - g) < 25 and abs(g - b) < 25: return "Abu-abu"
+    elif max_val == g:
+        if r > 120 and b < 100: return "Kuning"
         return "Hijau"
     else:
         if r > 120 and g < 100: return "Ungu"
         if r > 150 and g > 150: return "Biru Muda"
-        if abs(r - g) < 25 and abs(g - b) < 25: return "Abu-abu"
         return "Biru"
     
 @st.cache_resource(show_spinner=False)
