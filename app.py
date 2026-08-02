@@ -375,7 +375,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("💬 Chat sama VibeBunny", use_container_width=True):
+    if st.button("💬 Chat sama VibeBunny (AI Assistant)", use_container_width=True):
         tampilkan_chatbot_popup()
     
     st.markdown("---")
