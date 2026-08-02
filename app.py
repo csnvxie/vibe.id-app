@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DENGAN GLOW BACKGROUND)
+# 1. CONFIG & STYLING MODERN (DENGAN ANIMASI KELINCI BERLARI DI BANNER)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -71,11 +71,29 @@ st.markdown("""
         border-right: 1px solid #1E293B;
     }
 
-    /* BANNER DENGAN ANIMASI BUNNY FLOATING */
-    @keyframes floatBunny {
-        0% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-8px) rotate(3deg); }
-        100% { transform: translateY(0px) rotate(0deg); }
+    /* BANNER DENGAN ANIMASI 3 KELINCI LARI BOLAK-BALIK */
+    @keyframes runRabbits1 {
+        0% { left: 35%; transform: scaleX(1); }
+        48% { left: 65%; transform: scaleX(1); }
+        50% { left: 65%; transform: scaleX(-1); }
+        98% { left: 35%; transform: scaleX(-1); }
+        100% { left: 35%; transform: scaleX(1); }
+    }
+
+    @keyframes runRabbits2 {
+        0% { left: 45%; transform: scaleX(-1); }
+        48% { left: 30%; transform: scaleX(-1); }
+        50% { left: 30%; transform: scaleX(1); }
+        98% { left: 60%; transform: scaleX(1); }
+        100% { left: 45%; transform: scaleX(-1); }
+    }
+
+    @keyframes runRabbits3 {
+        0% { left: 55%; transform: scaleX(1); }
+        48% { left: 40%; transform: scaleX(1); }
+        50% { left: 40%; transform: scaleX(-1); }
+        98% { left: 55%; transform: scaleX(-1); }
+        100% { left: 55%; transform: scaleX(1); }
     }
 
     .vibe-banner {
@@ -88,13 +106,29 @@ st.markdown("""
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: relative;
+        overflow: hidden;
     }
+
+    .running-bunny {
+        position: absolute;
+        bottom: 12px;
+        font-size: 1.6rem;
+        pointer-events: none;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .rb-1 { animation: runRabbits1 7s ease-in-out infinite; }
+    .rb-2 { animation: runRabbits2 5.5s ease-in-out infinite; bottom: 8px; }
+    .rb-3 { animation: runRabbits3 8s ease-in-out infinite; bottom: 15px; }
 
     .vibe-banner-content h1 {
         color: #FFFFFF;
         font-weight: 700;
         font-size: 1.9rem;
         margin: 0;
+        position: relative;
+        z-index: 2;
     }
 
     .vibe-banner-content p {
@@ -102,17 +136,20 @@ st.markdown("""
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
+        position: relative;
+        z-index: 2;
     }
 
     .floating-bunny {
         font-size: 3.2rem;
-        animation: floatBunny 3s ease-in-out infinite;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 10px 16px;
         border-radius: 20px;
         text-align: center;
         box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        position: relative;
+        z-index: 2;
     }
 
     /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#111827) */
@@ -367,13 +404,16 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan VibeBunny Floating Animasi Utama
+# Header Top Banner dengan Animasi 3 Kelinci Berlari Bolak-balik di dalamnya
 st.markdown("""
 <div class="vibe-banner">
     <div class="vibe-banner-content">
         <h1>VIBE-ID Smart Assistant & Analytics</h1>
         <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
     </div>
+    <div class="running-bunny rb-1">🐇</div>
+    <div class="running-bunny rb-2">🐇</div>
+    <div class="running-bunny rb-3">🐇</div>
     <div class="floating-bunny" title="VibeBunny AI Assistant">
         🐰✨
     </div>
