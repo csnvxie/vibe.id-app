@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="VIBEID LOGO.png" alt="VIBE.ID Logo" width="250"/>
+</p>
 # VIBE-ID: AI Smart Bundle & Visual Search Platform 🛍️
 
 Proyek ini merupakan prototipe fungsional (Minimum Viable Product / MVP) dari platform **VIBE-ID** yang dikembangkan menggunakan *framework* Streamlit berbasis Python. Sistem ini dirancang untuk menjembatani kebutuhan pembeli dalam mencari gaya pakaian berbasis visual sekaligus membantu pemilik toko (UMKM) mengelola inventaris secara cerdas.
