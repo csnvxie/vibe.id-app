@@ -44,18 +44,25 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOTAL KOTAK TOMBOL COLLAPSE SIDEBAR (PANAH GANDA) --- */
-    button[kind="header"][aria-label*="collapse"],
-    button[kind="header"][aria-label*="Open"],
-    header [data-testid="collapsedControl"] button,
-    [data-testid="stHeader"] button {
+    /* --- FIX POSISI & KOTAK TOMBOL COLLAPSE SIDEBAR (BUKA & TUTUP) --- */
+    header [data-testid="collapsedControl"] {
+        display: block !important;
+        z-index: 999999 !important;
+    }
+
+    header button[kind="header"],
+    [data-testid="collapsedControl"] button {
         background-color: #4F46E5 !important;
         border-radius: 8px !important;
         border: 2px solid #818CF8 !important;
-        opacity: 1 !important;
+        padding: 6px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4) !important;
     }
 
-    button[kind="header"] svg,
+    header button[kind="header"] svg,
     [data-testid="collapsedControl"] svg {
         fill: #FFFFFF !important;
         stroke: #FFFFFF !important;
