@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (CSS INJECTION)
+# 1. CONFIG & STYLING MODERN (DENGAN RESPONSIVE MOBILE HAMBURGER)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -139,6 +139,16 @@ st.markdown("""
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
+
+    /* === RESPONSIVE MOBILE FIX (HAMBURGER MENU & KOLOM) === */
+    @media (max-width: 768px) {
+        .vibe-banner h1 {
+            font-size: 1.5rem;
+        }
+        .vibe-banner {
+            padding: 16px 20px;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -181,7 +191,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # Tombol Chatbot dipasang permanen di sidebar atas agar tidak hilang
     if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
         tampilkan_chatbot_popup()
     
@@ -423,7 +432,6 @@ if menu == "Pembeli":
     with col_right:
         st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
         
-        # KONDISI 1: JIKA PEMBAYARAN SUKSES
         if st.session_state.get('order_success'):
             st.markdown("""
             <div class="success-card">
@@ -448,7 +456,6 @@ if menu == "Pembeli":
                 st.session_state.form_reset_counter += 1
                 st.rerun()
 
-        # KONDISI 2: JIKA REKOMENDASI AKTIF (BELUM BAYAR)
         elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
@@ -515,7 +522,6 @@ if menu == "Pembeli":
                     st.balloons()
                     st.rerun()
 
-        # KONDISI 3: TAMPILAN AWAL SEBELUM SCAN
         else:
             st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
 
