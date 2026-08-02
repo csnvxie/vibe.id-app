@@ -93,7 +93,43 @@ st.markdown("""
         background-color: #131B2E !important;
         border: 1px solid #263353 !important;
         border-radius: 16px !important;
-        padding: 10px !important;
+        padding: 14px !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* PRO SAAS CARD HEADER STYLING */
+    .saas-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #1E293B;
+        padding-bottom: 12px;
+        margin-bottom: 16px;
+    }
+
+    .saas-badge {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818CF8;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .saas-title-group h3 {
+        margin: 0 !important;
+        font-size: 1.15rem !important;
+        font-weight: 700 !important;
+        color: #F8FAFC !important;
+    }
+
+    .saas-title-group p {
+        margin: 2px 0 0 0 !important;
+        font-size: 0.82rem !important;
+        color: #94A3B8 !important;
     }
 
     .stMarkdown h3, label {
@@ -389,18 +425,36 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # KOTAK STEP 1
+        # KOTAK STEP 1 (Pro SaaS Header Styling)
         with st.container(border=True):
-            st.subheader("👤 Step 1: Profil Gaya Kamu")
+            st.markdown("""
+            <div class="saas-card-header">
+                <div class="saas-title-group">
+                    <h3>👤 Profil Gaya Kamu</h3>
+                    <p>Sesuaikan demografi dan preferensi fashion Anda</p>
+                </div>
+                <div class="saas-badge">Step 01</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
             sub_c1, sub_c2 = st.columns(2)
             pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
             pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # KOTAK STEP 2
+        # KOTAK STEP 2 (Pro SaaS Header Styling)
         with st.container(border=True):
-            st.subheader("📸 Step 2: Input Foto Pakaian")
+            st.markdown("""
+            <div class="saas-card-header">
+                <div class="saas-title-group">
+                    <h3>📸 Input Foto Pakaian</h3>
+                    <p>Ambil langsung via kamera atau unggah file gambar</p>
+                </div>
+                <div class="saas-badge">Step 02</div>
+            </div>
+            """, unsafe_allow_html=True)
+            
             tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
             
             img_file_buffer = None
@@ -444,9 +498,17 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
-        # KOTAK STEP 3
+        # KOTAK STEP 3 (Pro SaaS Header Styling)
         with st.container(border=True):
-            st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
+            st.markdown("""
+            <div class="saas-card-header">
+                <div class="saas-title-group">
+                    <h3>🎯 Rekomendasi & Transaksi</h3>
+                    <p>Hasil visual AI matching dan sistem pembayaran</p>
+                </div>
+                <div class="saas-badge">Step 03</div>
+            </div>
+            """, unsafe_allow_html=True)
             
             if st.session_state.get('order_success'):
                 st.markdown("""
