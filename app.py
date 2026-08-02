@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (FIX HAMBURGER MENU & 2 KOLOM MOBILE)
+# 1. CONFIG & STYLING MODERN (SIDEBAR HAMBURGER + 2 KOLOM KIRI-KANAN)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="collapsed"  # Default collapsed di HP supaya bersih
+    initial_sidebar_state="auto"
 )
 
 st.markdown("""
@@ -41,7 +41,6 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Styling Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B;
@@ -59,14 +58,6 @@ st.markdown("""
         justify-content: center;
         align-items: center;
         width: 100%;
-    }
-
-    /* Memperbaiki posisi tombol Hamburger Streamlit di HP supaya tidak ketutup */
-    button[kind="header"] {
-        background-color: #1E293B !important;
-        color: #38BDF8 !important;
-        border-radius: 8px !important;
-        border: 1px solid #334155 !important;
     }
 
     .vibe-banner {
@@ -178,14 +169,14 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation (Menu Hamburger di HP)
+# Sidebar Navigation (Hamburger Menu)
 with st.sidebar:
     st.image("VIBEID LOGO.png", width=170)
     
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 10px 0px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
-        <span style="font-size: 12px; color: #34D399;">● AI Engine Online & Ready</span>
+        <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -347,7 +338,7 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT (2 KOLOM KIRI-KANAN KEMBALI)
+# 5. USER INTERFACE (UI) LAYOUT - 2 KOLOM KIRI-KANAN + HAMBURGER SIDEBAR
 # =====================================================================
 if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
@@ -417,7 +408,7 @@ if menu == "Pembeli":
             st.markdown("### 🧾 Ringkasan Invoice")
             st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
             st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-            st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
+            st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu. Terima kasih telah berbelanja! 🚀")
             
             st.markdown("<br>", unsafe_allow_html=True)
             if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
