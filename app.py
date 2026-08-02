@@ -139,9 +139,14 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
 # Sidebar Navigation
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=200)
+    # Membungkus logo dengan div center agar posisinya persis di tengah
+    st.markdown("""
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px;">
+    """, unsafe_allow_html=True)
+    st.image("VIBEID LOGO.png", width=170)
+    st.markdown("</div>", unsafe_allow_html=True)
     
-    # Elemen lucu di bawah logo (mengisi ruang kosong sidebar)
+    # Elemen lucu status di bawah logo
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 15px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
@@ -150,16 +155,6 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     
     st.markdown("---")
-    
-    # Kustomisasi container menu option_menu agar menyatu dengan background gelap
-    st.markdown("""
-    <style>
-        /* Menghilangkan kotak putih default dari wrapper option_menu */
-        .nav-pills, .container-fluid {
-            background-color: transparent !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
     
     menu = option_menu(
         menu_title="AKSES",
