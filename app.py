@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (FIXED SYNTAX ERROR)
+# 1. CONFIG & STYLING MODERN (DENGAN KELINCI BERLARI CSS PURE SMOOTH)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -78,6 +78,15 @@ st.markdown("""
         100% { transform: translateY(0px) rotate(0deg); }
     }
 
+    /* ANIMASI KELINCI BERLARI BOLAK-BALIK SMOOTH */
+    @keyframes runBunnySmooth {
+        0% { transform: translateX(0px) scaleX(1); }
+        48% { transform: translateX(180px) scaleX(1); }
+        50% { transform: translateX(180px) scaleX(-1); }
+        98% { transform: translateX(0px) scaleX(-1); }
+        100% { transform: translateX(0px) scaleX(1); }
+    }
+
     .vibe-banner {
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
@@ -121,6 +130,38 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         position: relative;
         z-index: 2;
+    }
+
+    .running-bunny-1 {
+        position: absolute;
+        bottom: 10px;
+        left: 38%;
+        font-size: 1.5rem;
+        animation: runBunnySmooth 6s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .running-bunny-2 {
+        position: absolute;
+        bottom: 12px;
+        left: 44%;
+        font-size: 1.4rem;
+        animation: runBunnySmooth 4.5s ease-in-out infinite;
+        animation-delay: -1.5s;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .running-bunny-3 {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        font-size: 1.6rem;
+        animation: runBunnySmooth 7.5s ease-in-out infinite;
+        animation-delay: -3s;
+        pointer-events: none;
+        z-index: 1;
     }
 
     /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#111827) */
@@ -375,60 +416,20 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan 3 Kelinci Berlari Smooth via JavaScript
+# Header Top Banner dengan 3 Kelinci Berlari Smooth via Pure CSS
 st.markdown("""
-<div class="vibe-banner" id="vibeBannerBox">
+<div class="vibe-banner">
     <div class="vibe-banner-content">
         <h1>VIBE-ID Smart Assistant & Analytics</h1>
         <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
     </div>
-    <div id="jsBunny1" style="position: absolute; bottom: 10px; font-size: 1.5rem; pointer-events: none; z-index: 1;">🐇</div>
-    <div id="jsBunny2" style="position: absolute; bottom: 14px; font-size: 1.5rem; pointer-events: none; z-index: 1;">🐇</div>
-    <div id="jsBunny3" style="position: absolute; bottom: 8px; font-size: 1.5rem; pointer-events: none; z-index: 1;">🐇</div>
+    <div class="running-bunny-1">🐇</div>
+    <div class="running-bunny-2">🐇</div>
+    <div class="running-bunny-3">🐇</div>
     <div class="floating-bunny" title="VibeBunny AI Assistant">
         🐰✨
     </div>
 </div>
-
-<script>
-    (function() {
-        const b1 = document.getElementById('jsBunny1');
-        const b2 = document.getElementById('jsBunny2');
-        const b3 = document.getElementById('jsBunny3');
-        
-        let t1 = 0, t2 = 2, t3 = 4;
-        
-        function updateSmoothRabbits() {
-            t1 += 0.015;
-            t2 += 0.022;
-            t3 += 0.012;
-            
-            let pos1 = 48 + 14 * Math.sin(t1);
-            let pos2 = 45 + 16 * Math.sin(t2);
-            let pos3 = 50 + 12 * Math.sin(t3);
-            
-            let dir1 = Math.cos(t1) >= 0 ? 1 : -1;
-            let dir2 = Math.cos(t2) >= 0 ? 1 : -1;
-            let dir3 = Math.cos(t3) >= 0 ? 1 : -1;
-            
-            if(b1) {
-                b1.style.left = pos1 + '%';
-                b1.style.transform = `scaleX(${dir1})`;
-            }
-            if(b2) {
-                b2.style.left = pos2 + '%';
-                b2.style.transform = `scaleX(${dir2})`;
-            }
-            if(b3) {
-                b3.style.left = pos3 + '%';
-                b3.style.transform = `scaleX(${dir3})`;
-            }
-            
-            requestAnimationFrame(updateSmoothRabbits);
-        }
-        requestAnimationFrame(updateSmoothRabbits);
-    })();
-</script>
 """, unsafe_allow_html=True)
 
 # Helper & Database Functions
