@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (FIXED SIDEBAR & RESPONSIVE)
+# 1. CONFIG & STYLING MODERN (DENGAN GLOW BACKGROUND)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -26,9 +26,15 @@ st.markdown("""
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
+    /* BACKGROUND GRADIENT GLOW ELEGAN */
     .stApp {
-        background-color: #0B0F17;
+        background-color: #07090E;
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 50%),
+            radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+            radial-gradient(at 50% 100%, rgba(30, 27, 75, 0.2) 0px, transparent 60%);
         color: #E2E8F0;
+        background-attachment: fixed;
     }
 
     .block-container {
@@ -61,7 +67,7 @@ st.markdown("""
     }
 
     section[data-testid="stSidebar"] {
-        background-color: #0F172A !important;
+        background-color: #0B0F17 !important;
         border-right: 1px solid #1E293B;
     }
 
@@ -109,13 +115,14 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
-    /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#131B2E) */
+    /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#111827) */
     div[data-testid="stContainer"] {
-        background-color: #131B2E !important;
-        border: 1px solid #263353 !important;
+        background-color: rgba(17, 24, 39, 0.75) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid #1F2937 !important;
         border-radius: 16px !important;
         padding: 16px !important;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
 
     /* CLEAN PRO SAAS HEADER DENGAN MINI BUNNY MASCOT */
@@ -123,7 +130,7 @@ st.markdown("""
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #1E293B;
+        border-bottom: 1px solid #1F2937;
         padding-bottom: 12px;
         margin-bottom: 18px;
     }
@@ -150,8 +157,8 @@ st.markdown("""
 
     .saas-icon-box {
         font-size: 1.4rem;
-        background: #1E293B;
-        border: 1px solid #334155;
+        background: #1F2937;
+        border: 1px solid #374151;
         border-radius: 10px;
         width: 40px;
         height: 40px;
@@ -178,15 +185,15 @@ st.markdown("""
     }
 
     div[data-baseweb="select"] {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
         border-radius: 10px !important;
     }
 
     div[data-baseweb="select"] > div,
     div[data-baseweb="select"] div {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
         color: #F8FAFC !important;
-        border-color: #334155 !important;
+        border-color: #374151 !important;
     }
 
     div[data-baseweb="select"] span {
@@ -194,46 +201,46 @@ st.markdown("""
     }
 
     div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
         color: #F8FAFC !important;
-        border: 1px solid #334155 !important;
+        border: 1px solid #374151 !important;
     }
 
     div[role="option"] {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
         color: #F8FAFC !important;
     }
     
     div[role="option"]:hover {
-        background-color: #334155 !important;
+        background-color: #374151 !important;
     }
 
     div[data-testid="stCameraInput"] {
-        background-color: #1E293B !important;
-        border: 1px solid #334155 !important;
+        background-color: #1F2937 !important;
+        border: 1px solid #374151 !important;
         border-radius: 12px;
         padding: 10px;
     }
 
     div[data-testid="stCameraInput"] section, 
     div[data-testid="stCameraInput"] > div {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
     }
 
     div[data-testid="stCameraInput"] div[data-baseweb="block"] {
-        background-color: #1E293B !important;
+        background-color: #1F2937 !important;
     }
 
     div[data-testid="stCameraInput"] button {
-        background-color: #334155 !important;
+        background-color: #374151 !important;
         color: #F8FAFC !important;
-        border: 1px solid #475569 !important;
+        border: 1px solid #4B5563 !important;
         border-radius: 8px !important;
     }
 
     div[data-testid="stFileUploader"] {
-        background-color: #1E293B !important;
-        border: 1px dashed #334155 !important;
+        background-color: #1F2937 !important;
+        border: 1px dashed #374151 !important;
         border-radius: 12px;
         padding: 10px;
     }
@@ -250,8 +257,8 @@ st.markdown("""
     }
 
     .receipt-box {
-        background-color: #1E293B;
-        border: 1px solid #334155;
+        background-color: #1F2937;
+        border: 1px solid #374151;
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 15px;
@@ -318,7 +325,7 @@ with st.sidebar:
     st.image("VIBEID LOGO.png", width=160)
     
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #1F2937 0%, #111827 100%); border: 1px solid #374151; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
         <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
     </div>
@@ -335,15 +342,15 @@ with st.sidebar:
         icons=["bag-check-fill", "speedometer"],
         default_index=0,
         styles={
-            "container": {"padding": "0!important", "background-color": "#0F172A"},
+            "container": {"padding": "0!important", "background-color": "transparent"},
             "icon": {"color": "#818CF8", "font-size": "16px"},
             "nav-link": {
                 "font-size": "14px", 
                 "color": "#94A3B8", 
-                "background-color": "#1E293B", 
+                "background-color": "#1F2937", 
                 "border-radius": "8px", 
                 "margin": "4px 0px",
-                "border": "1px solid #334155"
+                "border": "1px solid #374151"
             },
             "nav-link-selected": {
                 "background-color": "#4F46E5", 
@@ -471,7 +478,7 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # KOTAK 1 (Maskot Bunny Kacamata Gaya 🕶️🐰)
+        # KOTAK 1 (Profil Gaya Kamu)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -494,7 +501,7 @@ if menu == "Pembeli":
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # KOTAK 2 (Maskot Bunny Fotografer 📸🐰)
+        # KOTAK 2 (Input Foto Pakaian)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -554,7 +561,7 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
-        # KOTAK 3 (Maskot Bunny Belanja / Kasir 🛍️🐰)
+        # KOTAK 3 (Rekomendasi & Transaksi)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -625,7 +632,7 @@ if menu == "Pembeli":
                 <div class="receipt-box">
                     <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
                     <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-                    <hr style="border-color: #334155; margin: 8px 0;">
+                    <hr style="border-color: #374151; margin: 8px 0;">
                     <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
                 </div>
                 """, unsafe_allow_html=True)
