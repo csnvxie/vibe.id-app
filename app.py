@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="auto"  # Otomatis terbuka di PC, jadi hamburger menu di Mobile
+    initial_sidebar_state="expanded"  # PC dipaksa terbuka otomatis
 )
 
 st.markdown("""
