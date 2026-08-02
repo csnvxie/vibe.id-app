@@ -128,8 +128,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # API & Webhook URLs
+API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
-N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
+N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
 # Sidebar Navigation
 with st.sidebar:
