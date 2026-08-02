@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (CSS INJECTION)
+# 1. CONFIG & STYLING MODERN (CSS INJECTION + MOBILE OPTIMIZATION)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -139,6 +139,21 @@ st.markdown("""
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
+
+    /* FIX TAMPILAN MOBILE SUPAYA TIDAK HANCUR */
+    @media (max-width: 768px) {
+        .vibe-banner h1 {
+            font-size: 1.5rem !important;
+        }
+        .vibe-banner p {
+            font-size: 0.85rem !important;
+        }
+        /* Menyesuaikan padding container agar pas di layar HP */
+        .block-container {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -181,7 +196,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # Tombol Chatbot dipasang permanen di sidebar atas agar tidak hilang
     if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
         tampilkan_chatbot_popup()
     
