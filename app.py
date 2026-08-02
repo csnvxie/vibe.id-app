@@ -93,46 +93,64 @@ st.markdown("""
         background-color: #131B2E !important;
         border: 1px solid #263353 !important;
         border-radius: 16px !important;
-        padding: 14px !important;
+        padding: 16px !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
-    /* PRO SAAS CARD HEADER STYLING */
-    .saas-card-header {
+    /* CLEAN PRO SAAS HEADER */
+    .saas-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         border-bottom: 1px solid #1E293B;
         padding-bottom: 12px;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
     }
 
     .saas-badge {
         background: rgba(99, 102, 241, 0.15);
         color: #818CF8;
         border: 1px solid rgba(99, 102, 241, 0.3);
-        padding: 4px 12px;
+        padding: 5px 12px;
         border-radius: 20px;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-weight: 700;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
         text-transform: uppercase;
     }
 
-    .saas-title-group h3 {
+    .saas-title-flex {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .saas-icon-box {
+        font-size: 1.4rem;
+        background: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .saas-title-group h4 {
         margin: 0 !important;
-        font-size: 1.15rem !important;
+        font-size: 1.05rem !important;
         font-weight: 700 !important;
         color: #F8FAFC !important;
     }
 
     .saas-title-group p {
         margin: 2px 0 0 0 !important;
-        font-size: 0.82rem !important;
+        font-size: 0.8rem !important;
         color: #94A3B8 !important;
     }
 
-    .stMarkdown h3, label {
+    label {
         color: #F1F5F9 !important;
     }
 
@@ -425,13 +443,16 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # KOTAK STEP 1 (Pro SaaS Header Styling)
+        # KOTAK STEP 1
         with st.container(border=True):
             st.markdown("""
-            <div class="saas-card-header">
-                <div class="saas-title-group">
-                    <h3>👤 Profil Gaya Kamu</h3>
-                    <p>Sesuaikan demografi dan preferensi fashion Anda</p>
+            <div class="saas-header">
+                <div class="saas-title-flex">
+                    <div class="saas-icon-box">👤</div>
+                    <div class="saas-title-group">
+                        <h4>Profil Gaya Kamu</h4>
+                        <p>Sesuaikan demografi dan preferensi fashion</p>
+                    </div>
                 </div>
                 <div class="saas-badge">Step 01</div>
             </div>
@@ -443,13 +464,16 @@ if menu == "Pembeli":
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # KOTAK STEP 2 (Pro SaaS Header Styling)
+        # KOTAK STEP 2
         with st.container(border=True):
             st.markdown("""
-            <div class="saas-card-header">
-                <div class="saas-title-group">
-                    <h3>📸 Input Foto Pakaian</h3>
-                    <p>Ambil langsung via kamera atau unggah file gambar</p>
+            <div class="saas-header">
+                <div class="saas-title-flex">
+                    <div class="saas-icon-box">📸</div>
+                    <div class="saas-title-group">
+                        <h4>Input Foto Pakaian</h4>
+                        <p>Ambil langsung via kamera atau unggah file</p>
+                    </div>
                 </div>
                 <div class="saas-badge">Step 02</div>
             </div>
@@ -498,13 +522,16 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
-        # KOTAK STEP 3 (Pro SaaS Header Styling)
+        # KOTAK STEP 3
         with st.container(border=True):
             st.markdown("""
-            <div class="saas-card-header">
-                <div class="saas-title-group">
-                    <h3>🎯 Rekomendasi & Transaksi</h3>
-                    <p>Hasil visual AI matching dan sistem pembayaran</p>
+            <div class="saas-header">
+                <div class="saas-title-flex">
+                    <div class="saas-icon-box">🎯</div>
+                    <div class="saas-title-group">
+                        <h4>Rekomendasi & Transaksi</h4>
+                        <p>Hasil visual AI matching dan sistem pembayaran</p>
+                    </div>
                 </div>
                 <div class="saas-badge">Step 03</div>
             </div>
