@@ -46,6 +46,21 @@ st.markdown("""
         border-right: 1px solid #1E293B;
     }
 
+    /* Memaksa logo di dalam sidebar supaya benar-benar center */
+    section[data-testid="stSidebar"] img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    section[data-testid="stSidebar"] [data-testid="stImage"] {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
     .vibe-banner {
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
@@ -124,11 +139,6 @@ st.markdown("""
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
-    
-    /* CUSTOM SIDEBAR WIDGET OVERRIDES */
-    section[data-testid="stSidebar"] .element-container {
-        background-color: transparent !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -137,22 +147,43 @@ API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-2
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
+# Dialog Chatbot
+@st.dialog("💬 VIBE-ID Smart Assistant")
+def tampilkan_chatbot_popup():
+    st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
+    chat_container = st.container(height=320)
+    
+    with chat_container:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+    
+    prompt = st.chat_input("Ketik pesan kamu...")
+    if prompt:
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
+            with st.chat_message("assistant"):
+                with st.spinner("Memikirkan jawaban..."):
+                    response_bot = query_chatbot_n8n(prompt)
+                    st.markdown(response_bot)
+        st.session_state.messages.append({"role": "assistant", "content": response_bot})
+
 # Sidebar Navigation
 with st.sidebar:
-    # Membungkus logo dengan div center agar posisinya persis di tengah
-    st.markdown("""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 5px;">
-    """, unsafe_allow_html=True)
     st.image("VIBEID LOGO.png", width=170)
-    st.markdown("</div>", unsafe_allow_html=True)
     
-    # Elemen lucu status di bawah logo
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 15px 0px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
         <span style="font-size: 12px; color: #34D399;">● AI Engine Online & Ready</span>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Tombol Chatbot dipasang permanen di sidebar atas agar tidak hilang
+    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
+        tampilkan_chatbot_popup()
     
     st.markdown("---")
     
@@ -223,7 +254,6 @@ def get_dominant_color(image_bytes):
 
 def get_color_name(rgb):
     r, g, b = rgb
-    
     palet_warna = {
         "Hitam": (40, 40, 40),
         "Putih": (220, 220, 220),
@@ -488,34 +518,6 @@ if menu == "Pembeli":
         # KONDISI 3: TAMPILAN AWAL SEBELUM SCAN
         else:
             st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
-
-    st.markdown("---")
-    
-    @st.dialog("💬 VIBE-ID Smart Assistant")
-    def tampilkan_chatbot_popup():
-        st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
-        chat_container = st.container(height=320)
-        
-        with chat_container:
-            for message in st.session_state.messages:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-        
-        prompt = st.chat_input("Ketik pesan kamu...")
-        if prompt:
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            with chat_container:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-                with st.chat_message("assistant"):
-                    with st.spinner("Memikirkan jawaban..."):
-                        response_bot = query_chatbot_n8n(prompt)
-                        st.markdown(response_bot)
-            st.session_state.messages.append({"role": "assistant", "content": response_bot})
-
-    st.info("💡 Butuh bantuan rekomendasi atau tanya ketersediaan stok produk?")
-    if st.button("💬 Buka AI Assistant Chatbot", use_container_width=True):
-        tampilkan_chatbot_popup()
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
