@@ -15,7 +15,7 @@ st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="collapsed"  # <-- DIUBAH JADI COLLAPSED SUPAYA JADI HAMBURGER MENU
+    initial_sidebar_state="auto"  
 )
 
 st.markdown("""
