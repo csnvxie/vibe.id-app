@@ -243,7 +243,8 @@ def load_data_from_n8n():
                 'Gaya (Style)': 'vibe',
                 'Warna': 'warna',
                 'Gender': 'gender',
-                'Harga': 'harga'
+                'Harga': 'harga',
+                'Link images': 'url_gambar'
             }
             df = df.rename(columns=mapping_kolom)
             
