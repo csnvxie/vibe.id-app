@@ -77,11 +77,23 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
+    /* --- FIX TOTAL DROPDOWN SELECTBOX (WANITA & GEN Z) --- */
+    div[data-baseweb="select"] {
+        background-color: #1E293B !important;
+        border-radius: 10px !important;
+    }
+
     div[data-baseweb="select"] > div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border-color: #334155 !important;
         border-radius: 10px !important;
+    }
+
+    /* Menghilangkan background putih dalaman komponen selectbox */
+    div[data-baseweb="select"] * {
+        background-color: transparent !important;
+        color: #F8FAFC !important;
     }
     
     div[data-baseweb="popover"], div[data-baseweb="menu"] {
@@ -107,7 +119,6 @@ st.markdown("""
         border-color: #6366F1 !important;
     }
 
-    /* --- FIX TOTAL BACKGROUND & BAGIAN BAWAH CAMERA INPUT --- */
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
@@ -121,7 +132,6 @@ st.markdown("""
         background-color: #1E293B !important;
     }
 
-    /* Memaksa area container tombol ambil foto jadi gelap & teks tombol jadi kontras */
     div[data-testid="stCameraInput"] button {
         background-color: #334155 !important;
         color: #F8FAFC !important;
@@ -135,11 +145,12 @@ st.markdown("""
         padding: 10px;
     }
 
+    /* --- FIX TOMBOL UTAMA (RUN AI VISUAL MATCHING) --- */
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 10px;
+        border-radius: 10px !important;
         padding: 12px 24px;
         font-weight: 600;
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
