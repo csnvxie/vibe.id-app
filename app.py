@@ -39,7 +39,10 @@ st.markdown("""
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
+    
+    /* HEADER AMAN: Memastikan tombol hamburger / menu atas tidak hilang */
     header {visibility: visible !important; background-color: transparent !important;}
+    header button {color: #E2E8F0 !important;}
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -77,38 +80,33 @@ st.markdown("""
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
-    /* --- FIX TOTAL KOTAK DROPDOWN SELECTBOX (WANITA & GEN Z) --- */
-    div[data-baseweb="select"] {
-        background-color: #1E293B !important;
-        border-radius: 10px !important;
+    .stMarkdown h3, label {
+        color: #F1F5F9 !important;
     }
 
+    /* --- TARGET SPESIFIK SELECTBOX STREAMLIT (WANITA & GEN Z) --- */
+    div[data-baseweb="select"] {
+        background-color: #1E293B !important;
+        border-radius: 8px !important;
+    }
+    
     div[data-baseweb="select"] > div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border-color: #334155 !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
     }
 
-    /* Memaksa elemen teks/span di dalam selectbox jadi terang & background transparan */
-    div[data-baseweb="select"] span, 
-    div[data-baseweb="select"] div {
+    /* Memaksa teks nilai dalam selectbox agar terang */
+    div[data-baseweb="select"] span {
         color: #F8FAFC !important;
     }
-    
+
+    /* Dropdown popup pilihan itemnya */
     div[data-baseweb="popover"], div[data-baseweb="menu"] {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border: 1px solid #334155 !important;
-    }
-    
-    div[data-baseweb="menu"] div {
-        background-color: #1E293B !important;
-        color: #F8FAFC !important;
-    }
-
-    .stMarkdown h3, label {
-        color: #F1F5F9 !important;
     }
 
     button[data-baseweb="tab"] {
@@ -124,25 +122,11 @@ st.markdown("""
         border-color: #6366F1 !important;
     }
 
-    /* --- FIX TOTAL AREA KAMERA & BAGIAN BAWAHNYA --- */
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
         border-radius: 12px;
         padding: 10px;
-    }
-
-    div[data-testid="stCameraInput"] section, 
-    div[data-testid="stCameraInput"] div {
-        background-color: #1E293B !important;
-        color: #F8FAFC !important;
-    }
-
-    /* Memaksa area tombol ambil foto bawaan kamera jadi gelap */
-    div[data-testid="stCameraInput"] button {
-        background-color: #334155 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #475569 !important;
     }
 
     div[data-testid="stFileUploader"] {
@@ -152,7 +136,6 @@ st.markdown("""
         padding: 10px;
     }
 
-    /* --- FIX TOMBOL UTAMA (RUN AI VISUAL MATCHING) --- */
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
