@@ -39,7 +39,7 @@ st.markdown("""
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    /* header TIDAK di-hidden lagi supaya tombol garis tiga sidebar muncul di HP */
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -156,7 +156,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
 # API & Webhook URLs
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
