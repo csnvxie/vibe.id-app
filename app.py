@@ -273,7 +273,7 @@ def query_chatbot_n8n(user_text):
 @st.dialog("🛍️ Secure Checkout — VIBE-ID Store")
 def tampilkan_payment_dialog(df_hasil, total_harga):
     if st.session_state.order_success:
-        st.success("✨ Pembayaran Diterima & Pesanan Diproses!")
+        st.success("✨ Pembayaran Berhasil & Pesanan Diproses!")
         st.markdown("---")
         st.markdown("### 🧾 Ringkasan Invoice Resmi")
         st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
