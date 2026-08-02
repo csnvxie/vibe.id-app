@@ -40,9 +40,7 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* AMANKAN HEADER & HAMBURGER MENU */
     header {visibility: visible !important; background-color: transparent !important;}
-    header [data-testid="stHeader"] {background-color: transparent !important;}
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -84,25 +82,27 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* --- FIX TOTAL KOTAK SELECTBOX & DROPDOWN (WANITA & GEN Z) --- */
+    /* --- FIX TOTAL TAMPILAN AWAL SELECTBOX (SUPAYA TIDAK PUTIH) --- */
     div[data-baseweb="select"] {
         background-color: #1E293B !important;
         border-radius: 10px !important;
     }
 
-    /* Menghilangkan background putih di dalam container selectbox */
-    div[data-baseweb="select"] > div,
-    div[data-baseweb="select"] div {
+    /* Paksa semua elemen bagian dalam container selectbox jadi gelap di tampilan awal */
+    div[data-baseweb="select"] > div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border-color: #334155 !important;
+        border-radius: 10px !important;
     }
 
+    div[data-baseweb="select"] div[data-testid="stMarkdownContainer"],
     div[data-baseweb="select"] span {
+        background-color: transparent !important;
         color: #F8FAFC !important;
     }
 
-    /* Menu popup dropdown saat diklik */
+    /* Bagian dropdown popup list-nya */
     div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
@@ -118,7 +118,19 @@ st.markdown("""
         background-color: #334155 !important;
     }
 
-    /* --- FIX TOTAL AREA CAMERA INPUT & TOMBOL TAKE PHOTO --- */
+    button[data-baseweb="tab"] {
+        background-color: #1E293B !important;
+        color: #94A3B8 !important;
+        border-radius: 8px 8px 0 0 !important;
+        border: 1px solid #334155 !important;
+    }
+    
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #4F46E5 !important;
+        color: #FFFFFF !important;
+        border-color: #6366F1 !important;
+    }
+
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
@@ -131,12 +143,6 @@ st.markdown("""
         background-color: #1E293B !important;
     }
 
-    /* Memaksa area container bawah tombol kamera jadi gelap */
-    div[data-testid="stCameraInput"] div[data-baseweb="block"] {
-        background-color: #1E293B !important;
-    }
-
-    /* Tombol Take Photo bawaan kamera */
     div[data-testid="stCameraInput"] button {
         background-color: #334155 !important;
         color: #F8FAFC !important;
