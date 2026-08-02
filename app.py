@@ -124,10 +124,15 @@ st.markdown("""
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
+    
+    /* CUSTOM SIDEBAR WIDGET OVERRIDES */
+    section[data-testid="stSidebar"] .element-container {
+        background-color: transparent !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# API & Webhook URLs (Pastikan jalur chat menggunakan /webhook/ production)
+# API & Webhook URLs
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
@@ -135,7 +140,26 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 # Sidebar Navigation
 with st.sidebar:
     st.image("VIBEID LOGO.png", width=200)
+    
+    # Elemen lucu di bawah logo (mengisi ruang kosong sidebar)
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 15px 0px; text-align: center;">
+        <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
+        <span style="font-size: 12px; color: #34D399;">● AI Engine Online & Ready</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("---")
+    
+    # Kustomisasi container menu option_menu agar menyatu dengan background gelap
+    st.markdown("""
+    <style>
+        /* Menghilangkan kotak putih default dari wrapper option_menu */
+        .nav-pills, .container-fluid {
+            background-color: transparent !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
     
     menu = option_menu(
         menu_title="AKSES",
@@ -143,10 +167,28 @@ with st.sidebar:
         icons=["bag-check-fill", "speedometer"],
         default_index=0,
         styles={
-            "container": {"padding": "0!important", "background-color": "transparent"},
+            "container": {"padding": "0!important", "background-color": "#0F172A"},
             "icon": {"color": "#818CF8", "font-size": "16px"},
-            "nav-link": {"font-size": "14px", "color": "#94A3B8", "border-radius": "8px", "margin": "4px 0px"},
-            "nav-link-selected": {"background-color": "#4F46E5", "color": "#FFFFFF", "font-weight": "600"}
+            "nav-link": {
+                "font-size": "14px", 
+                "color": "#94A3B8", 
+                "background-color": "#1E293B", 
+                "border-radius": "8px", 
+                "margin": "4px 0px",
+                "border": "1px solid #334155"
+            },
+            "nav-link-selected": {
+                "background-color": "#4F46E5", 
+                "color": "#FFFFFF", 
+                "font-weight": "600",
+                "border": "1px solid #6366F1"
+            },
+            "menu-title": {
+                "color": "#64748B",
+                "font-size": "12px",
+                "font-weight": "700",
+                "letter-spacing": "1px"
+            }
         }
     )
 
@@ -396,7 +438,6 @@ if menu == "Pembeli":
                     with cols[i]:
                         img_url = str(row.get('url_gambar', ''))
                         
-                        # Validasi link agar tidak manggil thumbnail Google / foto brewok yang rusak
                         if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
                             img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
                         
