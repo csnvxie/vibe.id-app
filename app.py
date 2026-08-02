@@ -113,7 +113,7 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
 
 # Sidebar Navigation
 with st.sidebar:
-    st.markdown("<h2 style='text-align: center; color: #818CF8; font-weight:700;'>🛍️ VIBE-ID</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #818CF8; font-weight:700;'>https://ibb.co.com/Z6dCMx8w VIBE-ID</h2>", unsafe_allow_html=True)
     st.caption("AI Smart Outfit Personalizer & Analytics")
     st.markdown("---")
     
