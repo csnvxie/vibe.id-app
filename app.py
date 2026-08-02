@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (FIXED SIDEBAR & RESPONSIVE)
+# 1. CONFIG & STYLING MODERN (DARK THEME OVERRIDE UNTUK ELEMEN PUTIH)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -39,8 +39,6 @@ st.markdown("""
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* Memunculkan kembali header agar tombol panah/titik tiga bawaan Streamlit muncul rapi */
     header {visibility: visible !important; background-color: transparent !important;}
 
     section[data-testid="stSidebar"] {
@@ -69,6 +67,57 @@ st.markdown("""
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
+    }
+
+    /* --- CUSTOM DARK FIX UNTUK ELEMEN PUTIH STREAMLIT --- */
+    
+    /* Kotak Form Utama */
+    div[data-testid="stForm"] {
+        background-color: #0F172A !important;
+        border: 1px solid #1E293B !important;
+        border-radius: 14px;
+        padding: 20px;
+    }
+
+    /* Widget Selectbox & Input Dropdown */
+    div[data-baseweb="select"] > div {
+        background-color: #1E293B !important;
+        color: #F8FAFC !important;
+        border-color: #334155 !important;
+        border-radius: 10px !important;
+    }
+    
+    div[data-baseweb="popover"], div[data-baseweb="menu"] {
+        background-color: #1E293B !important;
+        color: #F8FAFC !important;
+        border: 1px solid #334155 !important;
+    }
+
+    /* Warna Teks Judul Step & Label Form agar terang dan kontras */
+    .stMarkdown h3, label {
+        color: #F1F5F9 !important;
+    }
+
+    /* Tab Styling (Real Cam & Upload Foto) */
+    button[data-baseweb="tab"] {
+        background-color: #1E293B !important;
+        color: #94A3B8 !important;
+        border-radius: 8px 8px 0 0 !important;
+        border: 1px solid #334155 !important;
+    }
+    
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #4F46E5 !important;
+        color: #FFFFFF !important;
+        border-color: #6366F1 !important;
+    }
+
+    /* Kamera / File Uploader Container Box */
+    div[data-testid="stCameraInput"] > div, div[data-testid="stFileUploader"] {
+        background-color: #1E293B !important;
+        border: 1px dashed #334155 !important;
+        border-radius: 12px;
+        padding: 10px;
     }
 
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
