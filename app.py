@@ -12,7 +12,7 @@ from streamlit_option_menu import option_menu
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
-    page_icon="https://ibb.co.com/Z6dCMx8w",
+    page_icon="VIBEID LOGO.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -113,7 +113,7 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
 
 # Sidebar Navigation
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=250)
+    st.image("VIBEID LOGO.png", width=150)
     st.caption("AI Smart Outfit Personalizer & Analytics")
     st.markdown("---")
     
