@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (CLEAN MOBILE RESPONSIVE)
+# 1. CONFIG & STYLING MODERN (RESPONSIVE AUTO SIDEBAR)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="collapsed" # Biar di HP sidebar ketutup rapi jadi tombol hamburger
+    initial_sidebar_state="auto"  # Otomatis terbuka di PC, jadi hamburger menu di Mobile
 )
 
 st.markdown("""
@@ -37,9 +37,8 @@ st.markdown("""
         max-width: 1250px;
     }
 
-    #MainMenu {visibility: hidden;}
+    /* Footer Streamlit disembunyikan, header dibiarkan agar tombol hamburger muncul */
     footer {visibility: hidden;}
-    /* header TIDAK di-hidden lagi supaya tombol garis tiga sidebar muncul di HP */
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -156,6 +155,7 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 # API & Webhook URLs
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
@@ -184,7 +184,7 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation (Standar Hamburger Menu di Pojok Kiri Atas)
+# Sidebar Navigation
 with st.sidebar:
     st.image("VIBEID LOGO.png", width=150)
     
@@ -378,7 +378,7 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT (CLEAN MOBILE STACKING)
+# 5. USER INTERFACE (UI) LAYOUT
 # =====================================================================
 if menu == "Pembeli":
     with st.container():
