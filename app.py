@@ -125,7 +125,7 @@ with st.sidebar:
             "container": {"padding": "0!important", "background-color": "transparent"},
             "icon": {"color": "#818CF8", "font-size": "16px"},
             "nav-link": {"font-size": "14px", "color": "#94A3B8", "border-radius": "8px", "margin": "4px 0px"},
-            "nav-link-selected": {"background-color": "#4F46E5", "color": "#FFFFFF", "font-weight": "600"}
+            "nav-link-selected": {"background-color": "#4F46E5", "color": "#000000", "font-weight": "600"}
         }
     )
 
