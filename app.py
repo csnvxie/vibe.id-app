@@ -9,8 +9,39 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DENGAN KELINCI BERLARI CSS PURE SMOOTH)
+# 1. STATE INITIALIZATION (UNTUK TOGGLE THEME & LAINNYA)
 # =====================================================================
+if 'theme_mode' not in st.session_state: st.session_state.theme_mode = "Dark"
+if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
+if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
+if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
+if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
+if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
+if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
+if 'order_success' not in st.session_state: st.session_state.order_success = False
+if 'last_order_details' not in st.session_state: st.session_state.last_order_details = {}
+if 'form_reset_counter' not in st.session_state: st.session_state.form_reset_counter = 0
+
+if 'messages' not in st.session_state:
+    st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
+
+# =====================================================================
+# 2. CONFIG & DINAMIS CSS STYLING (DARK & LIGHT MODE SUPPORT)
+# =====================================================================
+is_dark = st.session_state.theme_mode == "Dark"
+
+bg_app = "#07090E" if is_dark else "#F8FAFC"
+bg_container = "rgba(17, 24, 39, 0.75)" if is_dark else "rgba(255, 255, 255, 0.85)"
+text_main = "#E2E8F0" if is_dark else "#1E293B"
+sidebar_bg = "#0B0F17" if is_dark else "#FFFFFF"
+border_color = "#1F2937" if is_dark else "#E2E8F0"
+header_bg = "linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%)" if is_dark else "linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%)"
+banner_text = "#FFFFFF" if is_dark else "#FFFFFF"
+banner_sub = "#C7D2FE" if is_dark else "#E0E7FF"
+input_bg = "#1F2937" if is_dark else "#F1F5F9"
+input_text = "#F8FAFC" if is_dark else "#0F172A"
+receipt_bg = "#1F2937" if is_dark else "#F1F5F9"
+
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
@@ -18,78 +49,55 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
+st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-    html, body, [class*="css"] {
+    html, body, [class*="css"] {{
         font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    }}
 
-    /* BACKGROUND GRADIENT GLOW ELEGAN */
-    .stApp {
-        background-color: #07090E;
-        background-image: 
-            radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-            radial-gradient(at 50% 100%, rgba(30, 27, 75, 0.2) 0px, transparent 60%);
-        color: #E2E8F0;
+    .stApp {{
+        background-color: {bg_app};
+        color: {text_main};
         background-attachment: fixed;
-    }
+    }}
 
-    .block-container {
+    .block-container {{
         padding-top: 1.5rem !important;
         padding-bottom: 3rem !important;
         max-width: 1400px;
-    }
+    }}
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
     
-    header {visibility: visible !important; background-color: transparent !important;}
-    header [data-testid="stHeader"] {background-color: transparent !important;}
+    header {{visibility: visible !important; background-color: transparent !important;}}
+    header [data-testid="stHeader"] {{background-color: transparent !important;}}
 
-    button[kind="header"][aria-label*="collapse"],
-    button[kind="header"][aria-label*="Open"],
-    header [data-testid="collapsedControl"] button,
-    [data-testid="stHeader"] button {
-        background-color: #4F46E5 !important;
-        border-radius: 8px !important;
-        border: 2px solid #818CF8 !important;
-        opacity: 1 !important;
-    }
-
-    button[kind="header"] svg,
-    [data-testid="collapsedControl"] svg {
-        fill: #FFFFFF !important;
-        stroke: #FFFFFF !important;
-        color: #FFFFFF !important;
-    }
-
-    section[data-testid="stSidebar"] {
-        background-color: #0B0F17 !important;
-        border-right: 1px solid #1E293B;
-    }
+    section[data-testid="stSidebar"] {{
+        background-color: {sidebar_bg} !important;
+        border-right: 1px solid {border_color};
+    }}
 
     /* ANIMASI FLOATING KELINCI BESAR DI KANAN */
-    @keyframes floatBunny {
-        0% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-6px) rotate(3deg); }
-        100% { transform: translateY(0px) rotate(0deg); }
-    }
+    @keyframes floatBunny {{
+        0% {{ transform: translateY(0px) rotate(0deg); }}
+        50% {{ transform: translateY(-6px) rotate(3deg); }}
+        100% {{ transform: translateY(0px) rotate(0deg); }}
+    }}
 
     /* ANIMASI KELINCI BERLARI BOLAK-BALIK SMOOTH */
-    @keyframes runBunnySmooth {
-        0% { transform: translateX(0px) scaleX(1); }
-        48% { transform: translateX(180px) scaleX(1); }
-        50% { transform: translateX(180px) scaleX(-1); }
-        98% { transform: translateX(0px) scaleX(-1); }
-        100% { transform: translateX(0px) scaleX(1); }
-    }
+    @keyframes runBunnySmooth {{
+        0% {{ transform: translateX(0px) scaleX(1); }}
+        48% {{ transform: translateX(180px) scaleX(1); }}
+        50% {{ transform: translateX(180px) scaleX(-1); }}
+        98% {{ transform: translateX(0px) scaleX(-1); }}
+        100% {{ transform: translateX(0px) scaleX(1); }}
+    }}
 
-    .vibe-banner {
-        background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
-        border: 1px solid #4338CA;
+    .vibe-banner {{
+        background: {header_bg};
         border-radius: 16px;
         padding: 24px 30px;
         margin-bottom: 25px;
@@ -99,40 +107,40 @@ st.markdown("""
         align-items: center;
         position: relative;
         overflow: hidden;
-    }
+    }}
 
-    .vibe-banner-content h1 {
-        color: #FFFFFF;
+    .vibe-banner-content h1 {{
+        color: {banner_text};
         font-weight: 700;
         font-size: 1.9rem;
         margin: 0;
         position: relative;
         z-index: 2;
-    }
+    }}
 
-    .vibe-banner-content p {
-        color: #C7D2FE;
+    .vibe-banner-content p {{
+        color: {banner_sub};
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
         position: relative;
         z-index: 2;
-    }
+    }}
 
-    .floating-bunny {
+    .floating-bunny {{
         font-size: 3rem;
         animation: floatBunny 3s ease-in-out infinite;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         padding: 10px 16px;
         border-radius: 20px;
         text-align: center;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
         position: relative;
         z-index: 2;
-    }
+    }}
 
-    .running-bunny-1 {
+    .running-bunny-1 {{
         position: absolute;
         bottom: 10px;
         left: 38%;
@@ -140,9 +148,9 @@ st.markdown("""
         animation: runBunnySmooth 6s ease-in-out infinite;
         pointer-events: none;
         z-index: 1;
-    }
+    }}
 
-    .running-bunny-2 {
+    .running-bunny-2 {{
         position: absolute;
         bottom: 12px;
         left: 44%;
@@ -151,9 +159,9 @@ st.markdown("""
         animation-delay: -1.5s;
         pointer-events: none;
         z-index: 1;
-    }
+    }}
 
-    .running-bunny-3 {
+    .running-bunny-3 {{
         position: absolute;
         bottom: 8px;
         left: 50%;
@@ -162,139 +170,92 @@ st.markdown("""
         animation-delay: -3s;
         pointer-events: none;
         z-index: 1;
-    }
+    }}
 
-    /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#111827) */
-    div[data-testid="stContainer"] {
-        background-color: rgba(17, 24, 39, 0.75) !important;
+    div[data-testid="stContainer"] {{
+        background-color: {bg_container} !important;
         backdrop-filter: blur(10px);
-        border: 1px solid #1F2937 !important;
+        border: 1px solid {border_color} !important;
         border-radius: 16px !important;
         padding: 16px !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+    }}
 
-    /* CLEAN PRO SAAS HEADER DENGAN MINI BUNNY MASCOT */
-    .saas-header {
+    .saas-header {{
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #1F2937;
+        border-bottom: 1px solid {border_color};
         padding-bottom: 12px;
         margin-bottom: 18px;
-    }
+    }}
 
-    .saas-badge-group {
+    .saas-badge-group {{
         display: flex;
         align-items: center;
         gap: 8px;
-    }
+    }}
 
-    .mini-mascot {
+    .mini-mascot {{
         background: rgba(99, 102, 241, 0.1);
         border: 1px solid rgba(99, 102, 241, 0.2);
         padding: 4px 10px;
         border-radius: 12px;
         font-size: 1.1rem;
-    }
+    }}
 
-    .saas-title-flex {
+    .saas-title-flex {{
         display: flex;
         align-items: center;
         gap: 12px;
-    }
+    }}
 
-    .saas-icon-box {
+    .saas-icon-box {{
         font-size: 1.4rem;
-        background: #1F2937;
-        border: 1px solid #374151;
+        background: {input_bg};
+        border: 1px solid {border_color};
         border-radius: 10px;
         width: 40px;
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-    }
+    }}
 
-    .saas-title-group h4 {
+    .saas-title-group h4 {{
         margin: 0 !important;
         font-size: 1.05rem !important;
         font-weight: 700 !important;
-        color: #F8FAFC !important;
-    }
+        color: {text_main} !important;
+    }}
 
-    .saas-title-group p {
+    .saas-title-group p {{
         margin: 2px 0 0 0 !important;
         font-size: 0.8rem !important;
         color: #94A3B8 !important;
-    }
+    }}
 
-    label {
-        color: #F1F5F9 !important;
-    }
+    label {{
+        color: {text_main} !important;
+    }}
 
-    div[data-baseweb="select"] {
-        background-color: #1F2937 !important;
+    div[data-baseweb="select"] {{
+        background-color: {input_bg} !important;
         border-radius: 10px !important;
-    }
+    }}
 
     div[data-baseweb="select"] > div,
-    div[data-baseweb="select"] div {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
-        border-color: #374151 !important;
-    }
+    div[data-baseweb="select"] div {{
+        background-color: {input_bg} !important;
+        color: {input_text} !important;
+        border-color: {border_color} !important;
+    }}
 
-    div[data-baseweb="select"] span {
-        color: #F8FAFC !important;
-    }
+    div[data-baseweb="select"] span {{
+        color: {input_text} !important;
+    }}
 
-    div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #374151 !important;
-    }
-
-    div[role="option"] {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
-    }
-    
-    div[role="option"]:hover {
-        background-color: #374151 !important;
-    }
-
-    div[data-testid="stCameraInput"] {
-        background-color: #1F2937 !important;
-        border: 1px solid #374151 !important;
-        border-radius: 12px;
-        padding: 10px;
-    }
-
-    div[data-testid="stCameraInput"] section, 
-    div[data-testid="stCameraInput"] > div {
-        background-color: #1F2937 !important;
-    }
-
-    div[data-testid="stCameraInput"] div[data-baseweb="block"] {
-        background-color: #1F2937 !important;
-    }
-
-    div[data-testid="stCameraInput"] button {
-        background-color: #374151 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #4B5563 !important;
-        border-radius: 8px !important;
-    }
-
-    div[data-testid="stFileUploader"] {
-        background-color: #1F2937 !important;
-        border: 1px dashed #374151 !important;
-        border-radius: 12px;
-        padding: 10px;
-    }
-
-    .stButton > button, div[data-testid="stForm"] button[type="submit"] {
+    .stButton > button, div[data-testid="stForm"] button[type="submit"] {{
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
@@ -303,25 +264,25 @@ st.markdown("""
         font-weight: 600;
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         width: 100%;
-    }
+    }}
 
-    .receipt-box {
-        background-color: #1F2937;
-        border: 1px solid #374151;
+    .receipt-box {{
+        background-color: {receipt_bg};
+        border: 1px solid {border_color};
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 15px;
-        color: #F8FAFC !important;
-    }
+        color: {text_main} !important;
+    }}
 
-    .success-card {
+    .success-card {{
         background: linear-gradient(135deg, #065F46 0%, #047857 100%);
         border: 1px solid #10B981;
         border-radius: 16px;
         padding: 30px;
         text-align: center;
         color: #FFFFFF;
-    }
+    }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -368,11 +329,19 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# SIDEBAR NAVIGATION
+# SIDEBAR NAVIGATION & THEME TOGGLE
 # =====================================================================
 with st.sidebar:
     st.image("VIBEID LOGO.png", width=160)
     
+    # Toggle Theme Mode
+    col_t1, col_t2 = st.columns([2, 3])
+    col_t1.markdown("<p style='padding-top:8px; font-size:13px;'><b>Mode:</b></p>", unsafe_allow_html=True)
+    mode_pilihan = col_t2.selectbox("Theme", ["Dark", "Light"], label_visibility="collapsed", index=0 if st.session_state.theme_mode=="Dark" else 1)
+    if mode_pilihan != st.session_state.theme_mode:
+        st.session_state.theme_mode = mode_pilihan
+        st.rerun()
+
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1F2937 0%, #111827 100%); border: 1px solid #374151; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
@@ -396,10 +365,10 @@ with st.sidebar:
             "nav-link": {
                 "font-size": "14px", 
                 "color": "#94A3B8", 
-                "background-color": "#1F2937", 
+                "background-color": input_bg, 
                 "border-radius": "8px", 
                 "margin": "4px 0px",
-                "border": "1px solid #374151"
+                "border": f"1px solid {border_color}"
             },
             "nav-link-selected": {
                 "background-color": "#4F46E5", 
@@ -416,7 +385,7 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan 3 Kelinci Berlari Smooth via Pure CSS
+# Header Top Banner
 st.markdown("""
 <div class="vibe-banner">
     <div class="vibe-banner-content">
@@ -509,20 +478,6 @@ def load_data_from_n8n():
 
 df_stok = load_data_from_n8n()
 
-# State init
-if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
-if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
-if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
-if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
-if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
-if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
-if 'order_success' not in st.session_state: st.session_state.order_success = False
-if 'last_order_details' not in st.session_state: st.session_state.last_order_details = {}
-if 'form_reset_counter' not in st.session_state: st.session_state.form_reset_counter = 0
-
-if 'messages' not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
-
 # =====================================================================
 # MAIN LAYOUT
 # =====================================================================
@@ -610,6 +565,9 @@ if menu == "Pembeli":
                     st.session_state.ai_label_terdeteksi = ai_label
                     st.session_state.beli_aktif = True
                     st.session_state.order_success = False  
+                    
+                    # Toast Notification Tambahan
+                    st.toast(f"✨ Berhasil mendeteksi warna {nama_warna}!", icon="🎨")
                     st.rerun()
 
     with col_right:
@@ -652,6 +610,7 @@ if menu == "Pembeli":
                     st.session_state.warna_terdeteksi = None
                     st.session_state.ai_label_terdeteksi = None
                     st.session_state.form_reset_counter += 1
+                    st.toast("Kembali ke menu awal siap digunakan.", icon="🔄")
                     st.rerun()
 
             elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
@@ -682,9 +641,9 @@ if menu == "Pembeli":
                 
                 st.markdown(f"""
                 <div class="receipt-box">
-                    <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
-                    <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-                    <hr style="border-color: #374151; margin: 8px 0;">
+                    <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: {text_main};">Rp {total_harga:,.0f}</b><br>
+                    <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: {text_main};">Rp {biaya_admin:,.0f}</b><br>
+                    <hr style="border-color: {border_color}; margin: 8px 0;">
                     <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
                 </div>
                 """, unsafe_allow_html=True)
@@ -712,6 +671,7 @@ if menu == "Pembeli":
                         
                         st.session_state.order_success = True
                         st.balloons()
+                        st.toast("Pembayaran berhasil diverifikasi sistem!", icon="🎉")
                         st.rerun()
 
             else:
