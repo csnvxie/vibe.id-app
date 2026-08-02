@@ -163,17 +163,25 @@ st.markdown("""
 def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
-        # Resize ke 50x50 agar warna tidak tercampur rata menjadi abu-abu netral
-        img = img.resize((50, 50), resample=Image.Resampling.BILINEAR)
-        arr = np.array(img)
+        width, height = img.size
         
-        # Ambil nilai median dari seluruh piksel agar tahan terhadap noise/background
+        # Ambil hanya area tengah (40% bagian tengah foto) tempat baju biasanya berada
+        left = int(width * 0.3)
+        top = int(height * 0.3)
+        right = int(width * 0.7)
+        bottom = int(height * 0.7)
+        
+        cropped = img.crop((left, top, right, bottom))
+        cropped = cropped.resize((30, 30), resample=Image.Resampling.BILINEAR)
+        arr = np.array(cropped)
+        
+        # Ambil rata-rata warna khusus di bagian tengah baju
         pixels = arr.reshape(-1, 3)
-        median_color = np.median(pixels, axis=0).astype(int)
+        mean_color = np.mean(pixels, axis=0).astype(int)
         
-        del img 
+        del img, cropped
         gc.collect()
-        return tuple(median_color)
+        return tuple(mean_color)
     except Exception:
         return (255, 255, 255)
 
