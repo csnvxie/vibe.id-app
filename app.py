@@ -253,7 +253,7 @@ def load_data_from_n8n():
                 if col not in df.columns:
                     if col == 'harga': df[col] = 0
                     elif col == 'target_usia': df[col] = 'Gen Z'
-                    elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
+                    elif col == 'url_gambar': df[col] = 'https://cdn-icons-png.flaticon.com/512/3167/3167159.png'
                     else: df[col] = ''
             
             df['harga'] = df['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
