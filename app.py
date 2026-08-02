@@ -44,22 +44,22 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOTAL KOTAK TOMBOL COLLAPSE SIDEBAR STREAMLIT --- */
-    header [data-testid="collapsedControl"],
-    header button[kind="header"] {
-        background-color: #312E81 !important;
+    /* --- FIX TOTAL KOTAK TOMBOL COLLAPSE SIDEBAR (PANAH GANDA) --- */
+    button[kind="header"][aria-label*="collapse"],
+    button[kind="header"][aria-label*="Open"],
+    header [data-testid="collapsedControl"] button,
+    [data-testid="stHeader"] button {
+        background-color: #4F46E5 !important;
         border-radius: 8px !important;
         border: 2px solid #818CF8 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        padding: 4px !important;
+        opacity: 1 !important;
     }
 
-    header [data-testid="collapsedControl"] svg,
-    header button[kind="header"] svg {
+    button[kind="header"] svg,
+    [data-testid="collapsedControl"] svg {
         fill: #FFFFFF !important;
         stroke: #FFFFFF !important;
+        color: #FFFFFF !important;
     }
 
     section[data-testid="stSidebar"] {
