@@ -296,12 +296,13 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
         
         if st.button("Selesai & Reset ke Beranda", use_container_width=True):
+            # Reset semua state data agar tampilan bersih total
             st.session_state.order_success = False
             st.session_state.beli_aktif = False
             st.session_state.hasil_rekomendasi = None
             st.session_state.warna_terdeteksi = None
             st.session_state.ai_label_terdeteksi = None
-            st.session_state.form_reset_counter += 1  # Reset total komponen form input foto
+            st.session_state.form_reset_counter += 1
             st.rerun()
         return
 
@@ -364,7 +365,6 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # Gunakan st.form dengan clear_on_submit=True agar input foto & kamera bersih total saat submit
         with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
             st.subheader("👤 Step 1: Profil Gaya Kamu")
             col1, col2 = st.columns(2)
@@ -385,7 +385,6 @@ if menu == "Pembeli":
             st.markdown("<br>", unsafe_allow_html=True)
             submit_matching = st.form_submit_button("🚀 RUN AI VISUAL MATCHING")
 
-        # Proses ketika form di-submit
         if submit_matching:
             if img_file_buffer is None:
                 st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
@@ -416,32 +415,30 @@ if menu == "Pembeli":
 
     with col_right:
         st.subheader("🎯 Step 3: Rekomendasi Outfit")
-        if st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None:
+        # Pastikan hanya tampil jika beli_aktif True DAN hasil rekomendasi benar-benar ada
+        if st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
             col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
             
             df_hasil = st.session_state.get('hasil_rekomendasi')
             
-            if not df_hasil.empty:
-                cols = st.columns(min(len(df_hasil), 3))
-                total_harga = 0
-                for i, (idx, row) in enumerate(df_hasil.iterrows()):
-                    if i < 3:
-                        with cols[i]:
-                            if 'url_gambar' in row and row['url_gambar']:
-                                st.image(row['url_gambar'], use_container_width=True)
-                            st.write(f"**{row['nama_produk']}**")
-                            total_harga += float(row.get('harga', 0))
-                
-                st.markdown("---")
-                st.markdown(f"### Total Bundle: **Rp {total_harga:,.0f}**")
-                
-                if st.button("🛒 BELI SATU PAKET SEKARANG", use_container_width=True):
-                    st.session_state.order_success = False
-                    tampilkan_payment_dialog(df_hasil, total_harga)
-            else:
-                st.warning("Tidak ada rekomendasi yang cocok.")
+            cols = st.columns(min(len(df_hasil), 3))
+            total_harga = 0
+            for i, (idx, row) in enumerate(df_hasil.iterrows()):
+                if i < 3:
+                    with cols[i]:
+                        if 'url_gambar' in row and row['url_gambar']:
+                            st.image(row['url_gambar'], use_container_width=True)
+                        st.write(f"**{row['nama_produk']}**")
+                        total_harga += float(row.get('harga', 0))
+            
+            st.markdown("---")
+            st.markdown(f"### Total Bundle: **Rp {total_harga:,.0f}**")
+            
+            if st.button("🛒 BELI SATU PAKET SEKARANG", use_container_width=True):
+                st.session_state.order_success = False
+                tampilkan_payment_dialog(df_hasil, total_harga)
         else:
             st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
 
