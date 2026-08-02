@@ -118,7 +118,7 @@ st.markdown("""
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
-    /* CLEAN PRO SAAS HEADER */
+    /* CLEAN PRO SAAS HEADER DENGAN MINI BUNNY MASCOT */
     .saas-header {
         display: flex;
         align-items: center;
@@ -126,6 +126,20 @@ st.markdown("""
         border-bottom: 1px solid #1E293B;
         padding-bottom: 12px;
         margin-bottom: 18px;
+    }
+
+    .saas-badge-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mini-mascot {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 1rem;
     }
 
     .saas-badge {
@@ -358,7 +372,7 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan VibeBunny Floating Animasi
+# Header Top Banner dengan VibeBunny Floating Animasi Utama
 st.markdown("""
 <div class="vibe-banner">
     <div class="vibe-banner-content">
@@ -469,7 +483,7 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # KOTAK STEP 1
+        # KOTAK STEP 1 (Maskot Bunny Kacamata Gaya 🕶️🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -480,7 +494,10 @@ if menu == "Pembeli":
                         <p>Sesuaikan demografi dan preferensi fashion</p>
                     </div>
                 </div>
-                <div class="saas-badge">Step 01</div>
+                <div class="saas-badge-group">
+                    <div class="mini-mascot" title="Bunny Stylist">🕶️🐰</div>
+                    <div class="saas-badge">Step 01</div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
@@ -490,7 +507,7 @@ if menu == "Pembeli":
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # KOTAK STEP 2
+        # KOTAK STEP 2 (Maskot Bunny Fotografer 📸🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -501,7 +518,10 @@ if menu == "Pembeli":
                         <p>Ambil langsung via kamera atau unggah file</p>
                     </div>
                 </div>
-                <div class="saas-badge">Step 02</div>
+                <div class="saas-badge-group">
+                    <div class="mini-mascot" title="Bunny Photographer">📸🐰</div>
+                    <div class="saas-badge">Step 02</div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
@@ -548,7 +568,7 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
-        # KOTAK STEP 3
+        # KOTAK STEP 3 (Maskot Bunny Belanja / Kasir 🛍️🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -559,7 +579,10 @@ if menu == "Pembeli":
                         <p>Hasil visual AI matching dan sistem pembayaran</p>
                     </div>
                 </div>
-                <div class="saas-badge">Step 03</div>
+                <div class="saas-badge-group">
+                    <div class="mini-mascot" title="Bunny Shopper">🛍️🐰</div>
+                    <div class="saas-badge">Step 03</div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
