@@ -112,11 +112,21 @@ st.markdown("""
         margin-bottom: 15px;
         color: #F8FAFC !important;
     }
+
+    .success-popup {
+        background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+        border: 1px solid #10B981;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        color: #FFFFFF;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # API & Webhook URLs
-API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
 
@@ -179,9 +189,6 @@ def get_color_name(rgb):
         if r > 150 and g > 150: return "Biru Muda"
         if abs(r - g) < 25 and abs(g - b) < 25: return "Abu-abu"
         return "Biru"
-        
-def query_ai_vision(image_bytes):
-    return "casual outfit"
     
 @st.cache_resource(show_spinner=False)
 def load_data_from_n8n():
@@ -247,6 +254,7 @@ if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 if 'order_success' not in st.session_state: st.session_state.order_success = False
 if 'last_order_details' not in st.session_state: st.session_state.last_order_details = {}
+if 'form_reset_key' not in st.session_state: st.session_state.form_reset_key = 0  # Counter untuk reset widget input
 
 if 'messages' not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
@@ -273,20 +281,26 @@ def query_chatbot_n8n(user_text):
 @st.dialog("🛍️ Secure Checkout — VIBE-ID Store")
 def tampilkan_payment_dialog(df_hasil, total_harga):
     if st.session_state.order_success:
-        st.success("✨ Pembayaran Berhasil & Pesanan Diproses!")
-        st.markdown("---")
+        st.markdown("""
+        <div class="success-popup">
+            <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
+            <p style="margin:5px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
         st.markdown("### 🧾 Ringkasan Invoice Resmi")
         st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
         st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
         st.write(f"**Total Dibayar:** **Rp {total_harga:,.0f}**")
         st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
         
-        if st.button("Selesai & Reset ke Beranda", use_container_width=True):
+        if st.button("Tutup & Reset Beranda ke Awal", use_container_width=True):
             st.session_state.order_success = False
             st.session_state.beli_aktif = False
             st.session_state.hasil_rekomendasi = None
             st.session_state.warna_terdeteksi = None
             st.session_state.ai_label_terdeteksi = None
+            st.session_state.form_reset_key += 1  # Mengganti key widget agar kamera & uploader ter-reset total
             st.rerun()
         return
 
@@ -351,24 +365,23 @@ if menu == "Pembeli":
     with col_left:
         st.subheader("👤 Step 1: Profil Gaya Kamu")
         col1, col2 = st.columns(2)
-        pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-        pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+        pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"], key=f"gender_{st.session_state.form_reset_key}")
+        pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"], key=f"usia_{st.session_state.form_reset_key}")
 
         st.subheader("📸 Step 2: Input Foto Pakaian")
         tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
         
         img_file_buffer = None
         with tab_cam:
-            foto_kamera = st.camera_input("Ambil foto pakaian kamu")
+            foto_kamera = st.camera_input("Ambil foto pakaian kamu", key=f"cam_{st.session_state.form_reset_key}")
             if foto_kamera: img_file_buffer = foto_kamera
         with tab_file:
-            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
+            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"], key=f"file_{st.session_state.form_reset_key}")
             if file_foto: img_file_buffer = file_foto
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        if img_file_buffer is None:
-            st.session_state.beli_aktif = False
+        if img_file_buffer is None and not st.session_state.get('beli_aktif'):
             st.session_state.hasil_rekomendasi = None
 
         if st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True):
@@ -401,14 +414,14 @@ if menu == "Pembeli":
 
     with col_right:
         st.subheader("🎯 Step 3: Rekomendasi Outfit")
-        if st.session_state.get('beli_aktif'):
+        if st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
             col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
             
             df_hasil = st.session_state.get('hasil_rekomendasi')
             
-            if df_hasil is not None and not df_hasil.empty:
+            if not df_hasil.empty:
                 cols = st.columns(min(len(df_hasil), 3))
                 total_harga = 0
                 for i, (idx, row) in enumerate(df_hasil.iterrows()):
