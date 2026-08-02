@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (CUSTOM HAMBURGER TOGGLE)
+# 1. CONFIG & STYLING MODERN (FIXED SIDEBAR & RESPONSIVE)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -39,7 +39,9 @@ st.markdown("""
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* Memunculkan kembali header agar tombol panah/titik tiga bawaan Streamlit muncul rapi */
+    header {visibility: visible !important; background-color: transparent !important;}
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -50,7 +52,7 @@ st.markdown("""
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
         border-radius: 16px;
-        padding: 20px 25px;
+        padding: 24px 30px;
         margin-bottom: 25px;
         box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.3);
     }
@@ -58,8 +60,15 @@ st.markdown("""
     .vibe-banner h1 {
         color: #FFFFFF;
         font-weight: 700;
-        font-size: 1.8rem;
+        font-size: 1.9rem;
         margin: 0;
+    }
+
+    .vibe-banner p {
+        color: #C7D2FE;
+        font-size: 0.95rem;
+        margin-top: 6px;
+        margin-bottom: 0;
     }
 
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
@@ -96,10 +105,6 @@ st.markdown("""
 # API & Webhook URLs
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
-
-# Inisialisasi State Menu Toggle
-if 'buka_menu_utama' not in st.session_state:
-    st.session_state.buka_menu_utama = False
 
 # Dialog Chatbot
 @st.dialog("💬 VIBE-ID Smart Assistant")
@@ -140,15 +145,25 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# SIDEBAR KUSTOM (BISA DIBUKA TUTUP DARI TOMBOL UTAMA)
+# SIDEBAR NAVIGATION
 # =====================================================================
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=150)
-    st.markdown("<h3 style='text-align: center; color: #818CF8; margin: 0;'>MENU NAVIGASI</h3>", unsafe_allow_html=True)
+    st.image("VIBEID LOGO.png", width=160)
+    
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
+        <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
+        <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
+        tampilkan_chatbot_popup()
+    
     st.markdown("---")
     
     menu = option_menu(
-        menu_title=None,
+        menu_title="AKSES",
         options=["Pembeli", "Admin"],
         icons=["bag-check-fill", "speedometer"],
         default_index=0,
@@ -160,7 +175,7 @@ with st.sidebar:
                 "color": "#94A3B8", 
                 "background-color": "#1E293B", 
                 "border-radius": "8px", 
-                "margin": "6px 0px",
+                "margin": "4px 0px",
                 "border": "1px solid #334155"
             },
             "nav-link-selected": {
@@ -168,35 +183,25 @@ with st.sidebar:
                 "color": "#FFFFFF", 
                 "font-weight": "600",
                 "border": "1px solid #6366F1"
+            },
+            "menu-title": {
+                "color": "#64748B",
+                "font-size": "12px",
+                "font-weight": "700",
+                "letter-spacing": "1px"
             }
         }
     )
-    
-    st.markdown("---")
-    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
-        tampilkan_chatbot_popup()
 
-# =====================================================================
-# HEADER UTAMA DENGAN TOMBOL HAMBURGER KONTROL
-# =====================================================================
-col_top_btn, col_top_title = st.columns([0.15, 0.85])
-with col_top_btn:
-    # Tombol Hamburger Kustom di Layar Utama
-    if st.button("≡ MENU", help="Buka/Tutup Sidebar Navigasi"):
-        st.session_state.buka_menu_utama = not st.session_state.buka_menu_utama
-        st.rerun()
+# Header Top Banner
+st.markdown("""
+<div class="vibe-banner">
+    <h1>VIBE-ID Smart Assistant & Analytics</h1>
+    <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
+</div>
+""", unsafe_allow_html=True)
 
-with col_top_title:
-    st.markdown("""
-    <div class="vibe-banner" style="margin-bottom: 0px; padding: 15px 25px;">
-        <h1>VIBE-ID Smart Assistant & Analytics</h1>
-        <p style="margin: 0; font-size: 0.85rem;">Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("<br>", unsafe_allow_html=True)
-
-# Fungsi Helpers & Database
+# Helper & Database Functions
 def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -288,7 +293,7 @@ if 'messages' not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
 
 # =====================================================================
-# LAYOUT UTAMA 2 KOLOM KIRI-KANAN
+# MAIN LAYOUT
 # =====================================================================
 if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
@@ -431,7 +436,7 @@ if menu == "Pembeli":
                     st.rerun()
 
         else:
-            st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
+            st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
