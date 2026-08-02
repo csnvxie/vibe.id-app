@@ -272,6 +272,12 @@ if menu == "Pembeli":
             if file_foto: img_file_buffer = file_foto
 
         st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Reset rekomendasi jika foto dihapus/kosong
+        if img_file_buffer is None:
+            st.session_state.beli_aktif = False
+            st.session_state.hasil_rekomendasi = None
+
         if st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True):
             if img_file_buffer is None:
                 st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
@@ -287,8 +293,8 @@ if menu == "Pembeli":
                     rgb_dominan = get_dominant_color(img_bytes)
                     nama_warna = get_color_name(rgb_dominan)
                     
-                    # 2. Deteksi Klasifikasi AI HuggingFace
-                    ai_label = query_ai_vision(img_bytes)
+                    # 2. Deteksi Warna Dinamis (Bypass AI HuggingFace)
+                    ai_label = f"stylish {nama_warna.lower()} outfit"
                     
                     matching_products = pd.DataFrame()
                     if df_stok is not None and not df_stok.empty and 'warna' in df_stok.columns:
