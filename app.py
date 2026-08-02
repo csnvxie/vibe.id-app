@@ -40,11 +40,9 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* AMANKAN HEADER & TOMBOL COLLAPSE */
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOTAL KOTAK TOMBOL COLLAPSE SIDEBAR (PANAH GANDA) --- */
     button[kind="header"][aria-label*="collapse"],
     button[kind="header"][aria-label*="Open"],
     header [data-testid="collapsedControl"] button,
@@ -88,16 +86,6 @@ st.markdown("""
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
-    }
-
-    /* KOTAK PEMBUNGKUS STEP INDIVIDUAL */
-    .vibe-step-box {
-        background-color: #0F172A !important;
-        border: 1px solid #1E293B !important;
-        border-radius: 16px;
-        padding: 20px 24px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     }
 
     .stMarkdown h3, label {
@@ -394,29 +382,29 @@ if menu == "Pembeli":
 
     with col_left:
         # KOTAK STEP 1
-        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
-        st.subheader("👤 Step 1: Profil Gaya Kamu")
-        sub_c1, sub_c2 = st.columns(2)
-        pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-        pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        # KOTAK STEP 2
-        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
-        st.subheader("📸 Step 2: Input Foto Pakaian")
-        tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
-        
-        img_file_buffer = None
-        with tab_cam:
-            foto_kamera = st.camera_input("Ambil foto pakaian kamu")
-            if foto_kamera: img_file_buffer = foto_kamera
-        with tab_file:
-            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
-            if file_foto: img_file_buffer = file_foto
+        with st.container(border=True):
+            st.subheader("👤 Step 1: Profil Gaya Kamu")
+            sub_c1, sub_c2 = st.columns(2)
+            pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+            pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
         st.markdown("<br>", unsafe_allow_html=True)
-        submit_matching = st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+
+        # KOTAK STEP 2
+        with st.container(border=True):
+            st.subheader("📸 Step 2: Input Foto Pakaian")
+            tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
+            
+            img_file_buffer = None
+            with tab_cam:
+                foto_kamera = st.camera_input("Ambil foto pakaian kamu")
+                if foto_kamera: img_file_buffer = foto_kamera
+            with tab_file:
+                file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
+                if file_foto: img_file_buffer = file_foto
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            submit_matching = st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True)
 
         if submit_matching:
             if img_file_buffer is None:
@@ -449,96 +437,95 @@ if menu == "Pembeli":
 
     with col_right:
         # KOTAK STEP 3
-        st.markdown('<div class="vibe-step-box">', unsafe_allow_html=True)
-        st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
-        
-        if st.session_state.get('order_success'):
-            st.markdown("""
-            <div class="success-card">
-                <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
-                <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
-            </div>
-            """, unsafe_allow_html=True)
+        with st.container(border=True):
+            st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
             
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("### 🧾 Ringkasan Invoice")
-            st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
-            st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-            st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu. Terima kasih telah berbelanja! 🚀")
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
-                st.session_state.order_success = False
-                st.session_state.beli_aktif = False
-                st.session_state.hasil_rekomendasi = None
-                st.session_state.warna_terdeteksi = None
-                st.session_state.ai_label_terdeteksi = None
-                st.session_state.form_reset_counter += 1
-                st.rerun()
-
-        elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
-            col_tag1, col_tag2 = st.columns(2)
-            col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
-            col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
-            
-            df_hasil = st.session_state.get('hasil_rekomendasi')
-            
-            cols = st.columns(min(len(df_hasil), 3))
-            total_harga = 0
-            for i, (idx, row) in enumerate(df_hasil.iterrows()):
-                if i < 3:
-                    with cols[i]:
-                        img_url = str(row.get('url_gambar', ''))
-                        if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
-                            img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
-                        try:
-                            st.image(img_url, use_container_width=True)
-                        except Exception:
-                            st.warning("Gagal memuat gambar")
-                        st.write(f"**{row['nama_produk']}**")
-                        total_harga += float(row.get('harga', 0))
-            
-            st.markdown("---")
-            biaya_admin = 2500
-            grand_total = total_harga + biaya_admin
-            
-            st.markdown(f"""
-            <div class="receipt-box">
-                <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
-                <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-                <hr style="border-color: #334155; margin: 8px 0;">
-                <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            metode_bayar = st.selectbox(
-                "Pilih Metode Pembayaran:", 
-                ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
-            )
-            
-            if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
-                va_num = f"8888{random.randint(100000000, 999999999)}"
-                st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
-
-            st.markdown("<br>", unsafe_allow_html=True)
-            if st.button("✅ BAYAR SEKARANG", use_container_width=True):
-                with st.spinner("Memproses transaksi perbankan & gateway..."):
-                    import time
-                    time.sleep(1.2)
-                    st.session_state.total_omzet_toko += grand_total
-                    st.session_state.last_order_details = {"metode": metode_bayar}
-                    
-                    for idx, row in df_hasil.iterrows():
-                        if 'vibe' in row and row['vibe']:
-                            st.session_state.log_vibe_dibeli.append(row['vibe'])
-                    
-                    st.session_state.order_success = True
-                    st.balloons()
+            if st.session_state.get('order_success'):
+                st.markdown("""
+                <div class="success-card">
+                    <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
+                    <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("### 🧾 Ringkasan Invoice")
+                st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
+                st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
+                st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu. Terima kasih telah berbelanja! 🚀")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
+                    st.session_state.order_success = False
+                    st.session_state.beli_aktif = False
+                    st.session_state.hasil_rekomendasi = None
+                    st.session_state.warna_terdeteksi = None
+                    st.session_state.ai_label_terdeteksi = None
+                    st.session_state.form_reset_counter += 1
                     st.rerun()
 
-        else:
-            st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
-        st.markdown('</div>', unsafe_allow_html=True)
+            elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
+                col_tag1, col_tag2 = st.columns(2)
+                col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
+                col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
+                
+                df_hasil = st.session_state.get('hasil_rekomendasi')
+                
+                cols = st.columns(min(len(df_hasil), 3))
+                total_harga = 0
+                for i, (idx, row) in enumerate(df_hasil.iterrows()):
+                    if i < 3:
+                        with cols[i]:
+                            img_url = str(row.get('url_gambar', ''))
+                            if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
+                                img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
+                            try:
+                                st.image(img_url, use_container_width=True)
+                            except Exception:
+                                st.warning("Gagal memuat gambar")
+                            st.write(f"**{row['nama_produk']}**")
+                            total_harga += float(row.get('harga', 0))
+                
+                st.markdown("---")
+                biaya_admin = 2500
+                grand_total = total_harga + biaya_admin
+                
+                st.markdown(f"""
+                <div class="receipt-box">
+                    <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
+                    <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
+                    <hr style="border-color: #334155; margin: 8px 0;">
+                    <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                metode_bayar = st.selectbox(
+                    "Pilih Metode Pembayaran:", 
+                    ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
+                )
+                
+                if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
+                    va_num = f"8888{random.randint(100000000, 999999999)}"
+                    st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
+
+                st.markdown("<br>", unsafe_allow_html=True)
+                if st.button("✅ BAYAR SEKARANG", use_container_width=True):
+                    with st.spinner("Memproses transaksi perbankan & gateway..."):
+                        import time
+                        time.sleep(1.2)
+                        st.session_state.total_omzet_toko += grand_total
+                        st.session_state.last_order_details = {"metode": metode_bayar}
+                        
+                        for idx, row in df_hasil.iterrows():
+                            if 'vibe' in row and row['vibe']:
+                                st.session_state.log_vibe_dibeli.append(row['vibe'])
+                        
+                        st.session_state.order_success = True
+                        st.balloons()
+                        st.rerun()
+
+            else:
+                st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
