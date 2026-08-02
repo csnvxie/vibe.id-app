@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DENGAN ANIMASI KELINCI BERLARI DI BANNER)
+# 1. CONFIG & STYLING MODERN (FIX ANIMASI KELINCI KANAN & KELINCI LARI)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -71,11 +71,11 @@ st.markdown("""
         border-right: 1px solid #1E293B;
     }
 
-    /* BANNER DENGAN ANIMASI 3 KELINCI LARI BOLAK-BALIK */
+    /* ANIMASI KELINCI BERLARI DI TENGAH */
     @keyframes runRabbits1 {
         0% { left: 35%; transform: scaleX(1); }
-        48% { left: 65%; transform: scaleX(1); }
-        50% { left: 65%; transform: scaleX(-1); }
+        48% { left: 60%; transform: scaleX(1); }
+        50% { left: 60%; transform: scaleX(-1); }
         98% { left: 35%; transform: scaleX(-1); }
         100% { left: 35%; transform: scaleX(1); }
     }
@@ -84,16 +84,23 @@ st.markdown("""
         0% { left: 45%; transform: scaleX(-1); }
         48% { left: 30%; transform: scaleX(-1); }
         50% { left: 30%; transform: scaleX(1); }
-        98% { left: 60%; transform: scaleX(1); }
+        98% { left: 55%; transform: scaleX(1); }
         100% { left: 45%; transform: scaleX(-1); }
     }
 
     @keyframes runRabbits3 {
-        0% { left: 55%; transform: scaleX(1); }
-        48% { left: 40%; transform: scaleX(1); }
-        50% { left: 40%; transform: scaleX(-1); }
-        98% { left: 55%; transform: scaleX(-1); }
-        100% { left: 55%; transform: scaleX(1); }
+        0% { left: 52%; transform: scaleX(1); }
+        48% { left: 38%; transform: scaleX(1); }
+        50% { left: 38%; transform: scaleX(-1); }
+        98% { left: 52%; transform: scaleX(-1); }
+        100% { left: 52%; transform: scaleX(1); }
+    }
+
+    /* ANIMASI FLOATING KELINCI BESAR DI KANAN */
+    @keyframes floatBunny {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-6px) rotate(3deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
     }
 
     .vibe-banner {
@@ -113,14 +120,15 @@ st.markdown("""
     .running-bunny {
         position: absolute;
         bottom: 12px;
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         pointer-events: none;
         filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        z-index: 1;
     }
 
     .rb-1 { animation: runRabbits1 7s ease-in-out infinite; }
     .rb-2 { animation: runRabbits2 5.5s ease-in-out infinite; bottom: 8px; }
-    .rb-3 { animation: runRabbits3 8s ease-in-out infinite; bottom: 15px; }
+    .rb-3 { animation: runRabbits3 8s ease-in-out infinite; bottom: 14px; }
 
     .vibe-banner-content h1 {
         color: #FFFFFF;
@@ -141,7 +149,8 @@ st.markdown("""
     }
 
     .floating-bunny {
-        font-size: 3.2rem;
+        font-size: 3rem;
+        animation: floatBunny 3s ease-in-out infinite;
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
         padding: 10px 16px;
@@ -404,7 +413,7 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan Animasi 3 Kelinci Berlari Bolak-balik di dalamnya
+# Header Top Banner dengan Kelinci Lari di Tengah & Kelinci Besar Floating di Kanan
 st.markdown("""
 <div class="vibe-banner">
     <div class="vibe-banner-content">
