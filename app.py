@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (DENGAN JS KELINCI SMOOTH BERLARI)
+# 1. CONFIG & STYLING MODERN (FIXED SYNTAX ERROR)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -362,7 +362,7 @@ with st.sidebar:
             },
             "nav-link-selected": {
                 "background-color": "#4F46E5", 
-                "color": #FFFFFF", 
+                "color": '#FFFFFF', 
                 "font-weight": "600",
                 "border": "1px solid #6366F1"
             },
@@ -403,13 +403,10 @@ st.markdown("""
             t2 += 0.022;
             t3 += 0.012;
             
-            // Perhitungan posisi bolak-balik menggunakan fungsi sinyal sinusoidal agar sangat smooth
-            // Batasan area gerak antara 35% sampai 62% lebar banner
             let pos1 = 48 + 14 * Math.sin(t1);
             let pos2 = 45 + 16 * Math.sin(t2);
             let pos3 = 50 + 12 * Math.sin(t3);
             
-            // Deteksi arah hadap kelinci (flip scaleX jika bergeser ke kiri atau kanan)
             let dir1 = Math.cos(t1) >= 0 ? 1 : -1;
             let dir2 = Math.cos(t2) >= 0 ? 1 : -1;
             let dir3 = Math.cos(t3) >= 0 ? 1 : -1;
