@@ -393,13 +393,21 @@ if menu == "Pembeli":
             
             df_hasil = st.session_state.get('hasil_rekomendasi')
             
-            cols = st.columns(min(len(df_hasil), 3))
+cols = st.columns(min(len(df_hasil), 3))
             total_harga = 0
             for i, (idx, row) in enumerate(df_hasil.iterrows()):
                 if i < 3:
                     with cols[i]:
-                        if 'url_gambar' in row and row['url_gambar']:
-                            st.image(row['url_gambar'], use_container_width=True)
+                        img_url = str(row.get('url_gambar', ''))
+                        
+                        if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
+                            img_url = "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500"
+                        
+                        try:
+                            st.image(img_url, use_container_width=True)
+                        except Exception:
+                            st.warning("Gagal memuat gambar")
+                            
                         st.write(f"**{row['nama_produk']}**")
                         total_harga += float(row.get('harga', 0))
             
