@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (SIDEBAR HAMBURGER + 2 KOLOM KIRI-KANAN)
+# 1. CONFIG & STYLING MODERN (COLLAPSIBLE SIDEBAR & RESPONSIVE GRID)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="auto"
+    initial_sidebar_state="expanded"
 )
 
 st.markdown("""
@@ -34,13 +34,14 @@ st.markdown("""
     .block-container {
         padding-top: 1.5rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1300px;
+        max-width: 1400px;
     }
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
+    /* Styling Sidebar agar rapi dan tidak patah di mobile */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B;
@@ -72,7 +73,7 @@ st.markdown("""
     .vibe-banner h1 {
         color: #FFFFFF;
         font-weight: 700;
-        font-size: 2rem;
+        font-size: 1.9rem;
         margin: 0;
         letter-spacing: -0.5px;
     }
@@ -169,9 +170,9 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation (Hamburger Menu)
+# Sidebar Navigation (Hamburger Menu Toggle Bawaan Streamlit yang Bersih)
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=170)
+    st.image("VIBEID LOGO.png", width=160)
     
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
@@ -338,17 +339,18 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT - 2 KOLOM KIRI-KANAN + HAMBURGER SIDEBAR
+# 5. USER INTERFACE (UI) LAYOUT - DESKTOP 2 KOLOM & MOBILE RESPONSIVE
 # =====================================================================
 if menu == "Pembeli":
+    # Menggunakan container fleksibel agar otomatis menyesuaikan jika dibuka di HP atau Laptop
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
         with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
             st.subheader("👤 Step 1: Profil Gaya Kamu")
-            col1, col2 = st.columns(2)
-            pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-            pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+            sub_c1, sub_c2 = st.columns(2)
+            pilihan_gender = sub_c1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+            pilihan_usia = sub_c2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
             st.subheader("📸 Step 2: Input Foto Pakaian")
             tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
