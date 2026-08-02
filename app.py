@@ -137,21 +137,9 @@ st.markdown("""
     .mini-mascot {
         background: rgba(99, 102, 241, 0.1);
         border: 1px solid rgba(99, 102, 241, 0.2);
-        padding: 4px 8px;
+        padding: 4px 10px;
         border-radius: 12px;
-        font-size: 1rem;
-    }
-
-    .saas-badge {
-        background: rgba(99, 102, 241, 0.15);
-        color: #818CF8;
-        border: 1px solid rgba(99, 102, 241, 0.3);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.72rem;
-        font-weight: 700;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
+        font-size: 1.1rem;
     }
 
     .saas-title-flex {
@@ -483,7 +471,7 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        # KOTAK STEP 1 (Maskot Bunny Kacamata Gaya 🕶️🐰)
+        # KOTAK 1 (Maskot Bunny Kacamata Gaya 🕶️🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -496,7 +484,6 @@ if menu == "Pembeli":
                 </div>
                 <div class="saas-badge-group">
                     <div class="mini-mascot" title="Bunny Stylist">🕶️🐰</div>
-                    <div class="saas-badge">Step 01</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -507,7 +494,7 @@ if menu == "Pembeli":
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # KOTAK STEP 2 (Maskot Bunny Fotografer 📸🐰)
+        # KOTAK 2 (Maskot Bunny Fotografer 📸🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -520,7 +507,6 @@ if menu == "Pembeli":
                 </div>
                 <div class="saas-badge-group">
                     <div class="mini-mascot" title="Bunny Photographer">📸🐰</div>
-                    <div class="saas-badge">Step 02</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -568,7 +554,7 @@ if menu == "Pembeli":
                     st.rerun()
 
     with col_right:
-        # KOTAK STEP 3 (Maskot Bunny Belanja / Kasir 🛍️🐰)
+        # KOTAK 3 (Maskot Bunny Belanja / Kasir 🛍️🐰)
         with st.container(border=True):
             st.markdown("""
             <div class="saas-header">
@@ -581,7 +567,6 @@ if menu == "Pembeli":
                 </div>
                 <div class="saas-badge-group">
                     <div class="mini-mascot" title="Bunny Shopper">🛍️🐰</div>
-                    <div class="saas-badge">Step 03</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
