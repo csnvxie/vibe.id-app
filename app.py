@@ -113,12 +113,11 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook-test/VibeID-ChattBot"
 
 # Sidebar Navigation
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=150)
-    st.caption("AI Smart Outfit Personalizer & Analytics")
+    st.image("VIBEID LOGO.png", width=200)
     st.markdown("---")
     
     menu = option_menu(
-        menu_title="HAK AKSES",
+        menu_title="AKSES",
         options=["Pembeli", "Admin"],
         icons=["bag-check-fill", "speedometer"],
         default_index=0,
