@@ -82,40 +82,44 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* --- FIX TOTAL TAMPILAN AWAL SELECTBOX (SUPAYA TIDAK PUTIH) --- */
+    /* --- KOTAK SELECTBOX WARNA BIRU SENADA BANNER ATAS & TEKS PUTIH --- */
     div[data-baseweb="select"] {
-        background-color: #1E293B !important;
+        background: linear-gradient(135deg, #312E81 0%, #1E1B4B 100%) !important;
+        border: 1px solid #4338CA !important;
         border-radius: 10px !important;
     }
 
-    /* Paksa semua elemen bagian dalam container selectbox jadi gelap di tampilan awal */
     div[data-baseweb="select"] > div {
-        background-color: #1E293B !important;
-        color: #F8FAFC !important;
-        border-color: #334155 !important;
+        background: transparent !important;
+        border-color: transparent !important;
         border-radius: 10px !important;
     }
 
-    div[data-baseweb="select"] div[data-testid="stMarkdownContainer"],
-    div[data-baseweb="select"] span {
+    div[data-baseweb="select"] span, 
+    div[data-baseweb="select"] div,
+    div[data-baseweb="select"] p {
+        color: #FFFFFF !important;
         background-color: transparent !important;
-        color: #F8FAFC !important;
+    }
+
+    div[data-baseweb="select"] svg {
+        fill: #C7D2FE !important;
     }
 
     /* Bagian dropdown popup list-nya */
     div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #1E293B !important;
-        color: #F8FAFC !important;
-        border: 1px solid #334155 !important;
+        background-color: #1E1B4B !important;
+        color: #FFFFFF !important;
+        border: 1px solid #4338CA !important;
     }
 
     div[role="option"] {
-        background-color: #1E293B !important;
-        color: #F8FAFC !important;
+        background-color: #1E1B4B !important;
+        color: #FFFFFF !important;
     }
     
     div[role="option"]:hover {
-        background-color: #334155 !important;
+        background-color: #312E81 !important;
     }
 
     button[data-baseweb="tab"] {
@@ -168,6 +172,11 @@ st.markdown("""
         width: 100%;
     }
 
+    .stButton > button *, div[data-testid="stForm"] button[type="submit"] * {
+        color: #FFFFFF !important;
+        fill: #FFFFFF !important;
+    }
+
     .receipt-box {
         background-color: #1E293B;
         border: 1px solid #334155;
@@ -194,7 +203,6 @@ import streamlit.components.v1 as components
 components.html("""
 <script>
     const observer = new MutationObserver((mutations, obs) => {
-        // Target dropdown / selectbox dan tombol kamera/submit yang putih
         const whiteElements = window.parent.document.querySelectorAll('div[data-baseweb="select"] > div, div[data-testid="stCameraInput"] > div > div:last-child, .stButton > button');
         
         whiteElements.forEach(el => {
@@ -205,10 +213,9 @@ components.html("""
             }
         });
         
-        // Target elemen span atau teks di dalam selectbox
         const spans = window.parent.document.querySelectorAll('div[data-baseweb="select"] span');
         spans.forEach(s => {
-            s.style.setProperty('color', '#F8FAFC', 'important');
+            s.style.setProperty('color', '#FFFFFF', 'important');
         });
     });
 
