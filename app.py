@@ -44,18 +44,20 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOTAL IKON & KOTAK HAMBURGER MENU STREAMLIT --- */
+    /* --- FIX TOTAL TOMBOL SIDEBAR COLLAPSE AGAR JELAS --- */
+    header [data-testid="stSidebarNavCollapseButton"],
+    header button[kind="header"] {
+        background-color: #4F46E5 !important;
+        border-radius: 8px !important;
+        border: 2px solid #818CF8 !important;
+        opacity: 1 !important;
+    }
+
     header [data-testid="stSidebarNavCollapseButton"] svg,
     header button svg {
         stroke: #FFFFFF !important;
         fill: #FFFFFF !important;
-    }
-
-    header [data-testid="stSidebarNavCollapseButton"],
-    header button[kind="header"] {
-        background-color: #334155 !important;
-        border-radius: 8px !important;
-        border: 1px solid #475569 !important;
+        color: #FFFFFF !important;
     }
 
     section[data-testid="stSidebar"] {
