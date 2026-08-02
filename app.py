@@ -12,7 +12,7 @@ from streamlit_option_menu import option_menu
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
-    page_icon="🛍️",
+    page_icon="https://ibb.co.com/Z6dCMx8w",
     layout="wide",
     initial_sidebar_state="expanded"
 )
