@@ -160,7 +160,6 @@ def get_color_name(rgb):
     if r < 100 and g < 100 and b > 180: return "Biru"
     if r > 180 and r > 180 and b < 100: return "Kuning"
     if r > 180 and g < 100 and b > 180: return "Ungu"
-    if abs(r - g) < 30 and abs(g - b) < 30 and abs(r - b) < 30: return "Abu-abu"
     return "Warna Campuran"
 
 def query_ai_vision(image_bytes):
