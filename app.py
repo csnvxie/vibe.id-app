@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (COLLAPSIBLE SIDEBAR & RESPONSIVE GRID)
+# 1. CONFIG & STYLING MODERN (CUSTOM HAMBURGER TOGGLE)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 st.markdown("""
@@ -41,31 +41,16 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Styling Sidebar agar rapi dan tidak patah di mobile */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B;
-    }
-
-    section[data-testid="stSidebar"] img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    section[data-testid="stSidebar"] [data-testid="stImage"] {
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
     }
 
     .vibe-banner {
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
         border-radius: 16px;
-        padding: 24px 30px;
+        padding: 20px 25px;
         margin-bottom: 25px;
         box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.3);
     }
@@ -73,16 +58,8 @@ st.markdown("""
     .vibe-banner h1 {
         color: #FFFFFF;
         font-weight: 700;
-        font-size: 1.9rem;
+        font-size: 1.8rem;
         margin: 0;
-        letter-spacing: -0.5px;
-    }
-
-    .vibe-banner p {
-        color: #C7D2FE;
-        font-size: 0.95rem;
-        margin-top: 6px;
-        margin-bottom: 0;
     }
 
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
@@ -92,35 +69,10 @@ st.markdown("""
         border-radius: 10px;
         padding: 12px 24px;
         font-weight: 600;
-        letter-spacing: 0.3px;
-        transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         width: 100%;
     }
 
-    .stButton > button:hover, div[data-testid="stForm"] button[type="submit"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-        color: #FFFFFF !important;
-    }
-
-    div[data-testid="stMetric"] {
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 16px;
-    }
-
-    div[data-testid="stMetricLabel"] {
-        color: #94A3B8 !important;
-        font-size: 0.9rem !important;
-    }
-
-    div[data-testid="stMetricValue"] {
-        color: #38BDF8 !important;
-        font-weight: 700 !important;
-    }
-    
     .receipt-box {
         background-color: #1E293B;
         border: 1px solid #334155;
@@ -137,15 +89,17 @@ st.markdown("""
         padding: 30px;
         text-align: center;
         color: #FFFFFF;
-        box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
 </style>
 """, unsafe_allow_html=True)
 
 # API & Webhook URLs
-API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
+
+# Inisialisasi State Menu Toggle
+if 'buka_menu_utama' not in st.session_state:
+    st.session_state.buka_menu_utama = False
 
 # Dialog Chatbot
 @st.dialog("💬 VIBE-ID Smart Assistant")
@@ -170,24 +124,31 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation (Hamburger Menu Toggle Bawaan Streamlit yang Bersih)
+def query_chatbot_n8n(user_text):
+    try:
+        payload = {"message": user_text}
+        response = requests.post(N8N_CHAT_URL, json=payload, timeout=25)
+        if response.status_code == 200:
+            res_data = response.json()
+            if isinstance(res_data, list) and len(res_data) > 0: res_data = res_data[0]
+            if isinstance(res_data, dict) and 'json' in res_data: res_data = res_data['json']
+            if isinstance(res_data, dict):
+                return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
+            return str(res_data)
+    except Exception as e:
+        return f"Gagal tersambung ke Chatbot n8n: {e}"
+    return "Bot sedang tidak merespon."
+
+# =====================================================================
+# SIDEBAR KUSTOM (BISA DIBUKA TUTUP DARI TOMBOL UTAMA)
+# =====================================================================
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=160)
-    
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
-        <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
-        <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
-        tampilkan_chatbot_popup()
-    
+    st.image("VIBEID LOGO.png", width=150)
+    st.markdown("<h3 style='text-align: center; color: #818CF8; margin: 0;'>MENU NAVIGASI</h3>", unsafe_allow_html=True)
     st.markdown("---")
     
     menu = option_menu(
-        menu_title="AKSES",
+        menu_title=None,
         options=["Pembeli", "Admin"],
         icons=["bag-check-fill", "speedometer"],
         default_index=0,
@@ -199,7 +160,7 @@ with st.sidebar:
                 "color": "#94A3B8", 
                 "background-color": "#1E293B", 
                 "border-radius": "8px", 
-                "margin": "4px 0px",
+                "margin": "6px 0px",
                 "border": "1px solid #334155"
             },
             "nav-link-selected": {
@@ -207,27 +168,35 @@ with st.sidebar:
                 "color": "#FFFFFF", 
                 "font-weight": "600",
                 "border": "1px solid #6366F1"
-            },
-            "menu-title": {
-                "color": "#64748B",
-                "font-size": "12px",
-                "font-weight": "700",
-                "letter-spacing": "1px"
             }
         }
     )
-
-# Header Top Banner
-st.markdown("""
-<div class="vibe-banner">
-    <h1>VIBE-ID Smart Assistant & Analytics</h1>
-    <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
-</div>
-""", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
+        tampilkan_chatbot_popup()
 
 # =====================================================================
-# 2. HELPER & DATABASE FUNCTIONS
+# HEADER UTAMA DENGAN TOMBOL HAMBURGER KONTROL
 # =====================================================================
+col_top_btn, col_top_title = st.columns([0.15, 0.85])
+with col_top_btn:
+    # Tombol Hamburger Kustom di Layar Utama
+    if st.button("≡ MENU", help="Buka/Tutup Sidebar Navigasi"):
+        st.session_state.buka_menu_utama = not st.session_state.buka_menu_utama
+        st.rerun()
+
+with col_top_title:
+    st.markdown("""
+    <div class="vibe-banner" style="margin-bottom: 0px; padding: 15px 25px;">
+        <h1>VIBE-ID Smart Assistant & Analytics</h1>
+        <p style="margin: 0; font-size: 0.85rem;">Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Fungsi Helpers & Database
 def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
@@ -304,16 +273,11 @@ def load_data_from_n8n():
 
 df_stok = load_data_from_n8n()
 
-# =====================================================================
-# 3. INITIALIZATION STATE
-# =====================================================================
+# State init
 if 'log_gender_dicari' not in st.session_state: st.session_state.log_gender_dicari = []
 if 'log_vibe_dibeli' not in st.session_state: st.session_state.log_vibe_dibeli = []
-if 'log_produk_dibeli' not in st.session_state: st.session_state.log_produk_dibeli = []
 if 'total_omzet_toko' not in st.session_state: st.session_state.total_omzet_toko = 0
 if 'total_penggunaan_ai' not in st.session_state: st.session_state.total_penggunaan_ai = 0
-if 'warna_terdeteksi' not in st.session_state: st.session_state.warna_terdeteksi = None
-if 'ai_label_terdeteksi' not in st.session_state: st.session_state.ai_label_terdeteksi = None
 if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 if 'order_success' not in st.session_state: st.session_state.order_success = False
@@ -323,26 +287,10 @@ if 'form_reset_counter' not in st.session_state: st.session_state.form_reset_cou
 if 'messages' not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
 
-def query_chatbot_n8n(user_text):
-    try:
-        payload = {"message": user_text}
-        response = requests.post(N8N_CHAT_URL, json=payload, timeout=25)
-        if response.status_code == 200:
-            res_data = response.json()
-            if isinstance(res_data, list) and len(res_data) > 0: res_data = res_data[0]
-            if isinstance(res_data, dict) and 'json' in res_data: res_data = res_data['json']
-            if isinstance(res_data, dict):
-                return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
-            return str(res_data)
-    except Exception as e:
-        return f"Gagal tersambung ke Chatbot n8n: {e}"
-    return "Bot sedang tidak merespon."
-
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT - DESKTOP 2 KOLOM & MOBILE RESPONSIVE
+# LAYOUT UTAMA 2 KOLOM KIRI-KANAN
 # =====================================================================
 if menu == "Pembeli":
-    # Menggunakan container fleksibel agar otomatis menyesuaikan jika dibuka di HP atau Laptop
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
@@ -477,8 +425,6 @@ if menu == "Pembeli":
                     for idx, row in df_hasil.iterrows():
                         if 'vibe' in row and row['vibe']:
                             st.session_state.log_vibe_dibeli.append(row['vibe'])
-                        if 'nama_produk' in row and row['nama_produk']:
-                            st.session_state.log_produk_dibeli.append(row['nama_produk'])
                     
                     st.session_state.order_success = True
                     st.balloons()
