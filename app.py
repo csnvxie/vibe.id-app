@@ -70,7 +70,6 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    /* Perbaikan Tombol Utama & Form Submit agar teks selalu putih kontras */
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
         color: #FFFFFF !important;
@@ -116,15 +115,14 @@ st.markdown("""
         color: #F8FAFC !important;
     }
 
-    .success-popup {
+    .success-card {
         background: linear-gradient(135deg, #065F46 0%, #047857 100%);
         border: 1px solid #10B981;
-        border-radius: 14px;
-        padding: 20px;
+        border-radius: 16px;
+        padding: 30px;
         text-align: center;
         color: #FFFFFF;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+        box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -279,87 +277,6 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 4. PROFESSIONAL PAYMENT DIALOG POP-UP
-# =====================================================================
-@st.dialog("🛍️ Secure Checkout — VIBE-ID Store")
-def tampilkan_payment_dialog(df_hasil, total_harga):
-    if st.session_state.order_success:
-        st.markdown("""
-        <div class="success-popup">
-            <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
-            <p style="margin:5px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("### 🧾 Ringkasan Invoice Resmi")
-        st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
-        st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-        st.write(f"**Total Dibayar:** **Rp {total_harga:,.0f}**")
-        st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
-        
-        if st.button("Selesai & Reset ke Beranda", use_container_width=True):
-            st.session_state.order_success = False
-            st.session_state.beli_aktif = False
-            st.session_state.hasil_rekomendasi = None
-            st.session_state.warna_terdeteksi = None
-            st.session_state.ai_label_terdeteksi = None
-            st.session_state.form_reset_counter += 1
-            st.rerun()
-        return
-
-    st.markdown("### Ringkasan Belanja Paket Outfit")
-    
-    for idx, row in df_hasil.iterrows():
-        st.markdown(f"- **{row['nama_produk']}** — `Rp {float(row.get('harga', 0)):,.0f}`")
-    
-    st.markdown("---")
-    biaya_admin = 2500
-    grand_total = total_harga + biaya_admin
-    
-    st.markdown(f"""
-    <div class="receipt-box">
-        <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
-        <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-        <hr style="border-color: #334155; margin: 8px 0;">
-        <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    metode_bayar = st.selectbox(
-        "Pilih Metode Pembayaran:", 
-        ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
-    )
-    
-    if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
-        va_num = f"8888{random.randint(100000000, 999999999)}"
-        st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`** (Simulasi aktif 24 Jam)")
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        if st.button("Batal", use_container_width=True):
-            st.rerun()
-    with col_btn2:
-        if st.button("✅ Bayar Sekarang", use_container_width=True):
-            with st.spinner("Memproses transaksi perbankan & gateway..."):
-                import time
-                time.sleep(1.2)
-                
-                st.session_state.total_omzet_toko += grand_total
-                st.session_state.last_order_details = {"metode": metode_bayar}
-                
-                for idx, row in df_hasil.iterrows():
-                    if 'vibe' in row and row['vibe']:
-                        st.session_state.log_vibe_dibeli.append(row['vibe'])
-                    if 'nama_produk' in row and row['nama_produk']:
-                        st.session_state.log_produk_dibeli.append(row['nama_produk'])
-                
-                st.session_state.order_success = True
-                st.balloons()
-                st.rerun()
-
-# =====================================================================
 # 5. USER INTERFACE (UI) LAYOUT
 # =====================================================================
 if menu == "Pembeli":
@@ -412,13 +329,39 @@ if menu == "Pembeli":
                     st.session_state.warna_terdeteksi = nama_warna
                     st.session_state.ai_label_terdeteksi = ai_label
                     st.session_state.beli_aktif = True
+                    st.session_state.order_success = False  # Reset status sukses saat scan baru
                     st.rerun()
 
     with col_right:
-        st.subheader("🎯 Step 3: Rekomendasi Outfit")
+        st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
         
-        # Hanya tampil jika beli_aktif True dan data rekomendasinya valid/tidak kosong
-        if st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
+        # KONDISI 1: JIKA PEMBAYARAN SUKSES, GANTI KOLOM KANAN DENGAN KARTU SUKSES
+        if st.session_state.get('order_success'):
+            st.markdown("""
+            <div class="success-card">
+                <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
+                <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("### 🧾 Ringkasan Invoice")
+            st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
+            st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
+            st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
+                st.session_state.order_success = False
+                st.session_state.beli_aktif = False
+                st.session_state.hasil_rekomendasi = None
+                st.session_state.warna_terdeteksi = None
+                st.session_state.ai_label_terdeteksi = None
+                st.session_state.form_reset_counter += 1
+                st.rerun()
+
+        # KONDISI 2: JIKA REKOMENDASI AKTIF (BELUM BAYAR)
+        elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
             col_tag1, col_tag2 = st.columns(2)
             col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
             col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
@@ -436,11 +379,47 @@ if menu == "Pembeli":
                         total_harga += float(row.get('harga', 0))
             
             st.markdown("---")
-            st.markdown(f"### Total Bundle: **Rp {total_harga:,.0f}**")
+            biaya_admin = 2500
+            grand_total = total_harga + biaya_admin
             
-            if st.button("🛒 BELI SATU PAKET SEKARANG", use_container_width=True):
-                st.session_state.order_success = False
-                tampilkan_payment_dialog(df_hasil, total_harga)
+            st.markdown(f"""
+            <div class="receipt-box">
+                <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
+                <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
+                <hr style="border-color: #334155; margin: 8px 0;">
+                <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            metode_bayar = st.selectbox(
+                "Pilih Metode Pembayaran:", 
+                ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
+            )
+            
+            if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
+                va_num = f"8888{random.randint(100000000, 999999999)}"
+                st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("✅ BAYAR SEKARANG", use_container_width=True):
+                with st.spinner("Memproses transaksi perbankan & gateway..."):
+                    import time
+                    time.sleep(1.2)
+                    
+                    st.session_state.total_omzet_toko += grand_total
+                    st.session_state.last_order_details = {"metode": metode_bayar}
+                    
+                    for idx, row in df_hasil.iterrows():
+                        if 'vibe' in row and row['vibe']:
+                            st.session_state.log_vibe_dibeli.append(row['vibe'])
+                        if 'nama_produk' in row and row['nama_produk']:
+                            st.session_state.log_produk_dibeli.append(row['nama_produk'])
+                    
+                    st.session_state.order_success = True
+                    st.balloons()
+                    st.rerun()
+
+        # KONDISI 3: TAMPILAN AWAL SEBELUM SCAN
         else:
             st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
 
