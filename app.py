@@ -288,7 +288,7 @@ if 'messages' not in st.session_state:
 def query_chatbot_n8n(user_text):
     try:
         payload = {"message": user_text}
-        response = requests.post(N8N_CHAT_URL, json=payload, timeout=8)
+        response = requests.post(N8N_CHAT_URL, json=payload, timeout=30)
         
         if response.status_code == 200:
             res_data = response.json()
