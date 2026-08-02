@@ -163,17 +163,8 @@ def get_color_name(rgb):
     return "Warna Campuran"
 
 def query_ai_vision(image_bytes):
-    headers = {"Authorization": "Bearer hf_AAsldkfjHsdkfjHskdjfHskdjfHskdjfHskd"} 
-    try:
-        response = requests.post(API_URL, headers=headers, data=image_bytes, timeout=5)
-        if response.status_code == 200:
-            res_json = response.json()
-            if isinstance(res_json, list) and len(res_json) > 0:
-                return str(res_json[0].get('label', '')).lower()
-    except Exception:
-        return "error"
-    return "unknown"
-
+    return "casual outfit"
+    
 @st.cache_resource(show_spinner=False)
 def load_data_from_n8n():
     df = pd.DataFrame()
