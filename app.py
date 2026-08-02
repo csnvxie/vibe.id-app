@@ -17,7 +17,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling SaaS / Dark Theme
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
@@ -151,14 +150,12 @@ def get_dominant_color(image_bytes):
     except Exception:
         return (255, 255, 255)
 
+# Fungsi get_color_name milik lo sendiri tetap dipertahankan di sini
 def get_color_name(rgb):
     r, g, b = rgb
-    
-    # 1. Hitam dan Putih Pekat saja
     if r < 45 and g < 45 and b < 45: return "Hitam"
     if r > 210 and g > 210 and b > 210: return "Putih"
     
-    # 2. Deteksi Warna Berdasarkan Dominasi Komponen Terbesar
     if r > g and r > b:
         if g > 130 and b < 100: return "Kuning"
         if g > 100 and b < 80: return "Jingga"
@@ -217,7 +214,6 @@ def load_data_from_n8n():
                     elif col == 'url_gambar': df[col] = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500'
                     else: df[col] = ''
             
-            # Format Kolom Harga Langsung di Fungsi
             df['harga'] = df['harga'].astype(str).str.replace('Rp', '', regex=False).str.replace('.', '', regex=False).str.strip()
             df['harga'] = pd.to_numeric(df['harga'], errors='coerce').fillna(0)
             return df
@@ -261,7 +257,32 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 4. USER INTERFACE (UI) LAYOUT
+# 4. PAYMENT DIALOG POP-UP
+# =====================================================================
+@st.dialog("💳 Checkout & Pembayaran Paket")
+def tampilkan_payment_dialog(df_hasil, total_harga):
+    st.markdown(f"### Total Tagihan: **Rp {total_harga:,.0f}**")
+    st.write("Silakan pilih metode pembayaran favorit Anda di bawah ini:")
+    
+    metode_bayar = st.radio("Metode Pembayaran:", ["QRIS (GoPay/OVO/Dana)", "Virtual Account BCA", "Transfer Bank Mandiri", "COD (Bayar di Tempat)"])
+    
+    st.markdown("---")
+    if st.button("Konfirmasi & Bayar Sekarang", use_container_width=True):
+        st.session_state.total_omzet_toko += total_harga
+        
+        for idx, row in df_hasil.iterrows():
+            if 'vibe' in row and row['vibe']:
+                st.session_state.log_vibe_dibeli.append(row['vibe'])
+            if 'nama_produk' in row and row['nama_produk']:
+                st.session_state.log_produk_dibeli.append(row['nama_produk'])
+                
+        st.balloons()
+        st.success("🎉 Pembayaran Berhasil! Pesanan Anda sedang diproses.")
+        st.session_state.beli_aktif = False
+        st.rerun()
+
+# =====================================================================
+# 5. USER INTERFACE (UI) LAYOUT
 # =====================================================================
 if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
@@ -285,7 +306,6 @@ if menu == "Pembeli":
 
         st.markdown("<br>", unsafe_allow_html=True)
         
-        # Reset rekomendasi jika foto dihapus/kosong
         if img_file_buffer is None:
             st.session_state.beli_aktif = False
             st.session_state.hasil_rekomendasi = None
@@ -301,11 +321,8 @@ if menu == "Pembeli":
                     st.session_state.total_penggunaan_ai += 1
                     st.session_state.log_gender_dicari.append(pilihan_gender)
                     
-                    # 1. Deteksi Warna
                     rgb_dominan = get_dominant_color(img_bytes)
                     nama_warna = get_color_name(rgb_dominan)
-                    
-                    # 2. Deteksi Warna Dinamis (Bypass AI HuggingFace)
                     ai_label = f"stylish {nama_warna.lower()} outfit"
                     
                     matching_products = pd.DataFrame()
@@ -345,17 +362,7 @@ if menu == "Pembeli":
                 st.markdown(f"### Total Bundle: **Rp {total_harga:,.0f}**")
                 
                 if st.button("🛒 BELI SATU PAKET SEKARANG", use_container_width=True):
-                    st.session_state.total_omzet_toko += total_harga
-                    
-                    for idx, row in df_hasil.iterrows():
-                        if 'vibe' in row and row['vibe']:
-                            st.session_state.log_vibe_dibeli.append(row['vibe'])
-                        if 'nama_produk' in row and row['nama_produk']:
-                            st.session_state.log_produk_dibeli.append(row['nama_produk'])
-                            
-                    st.balloons()
-                    st.success("🎉 Transaksi Berhasil! Terima kasih sudah berbelanja.")
-                    st.session_state.beli_aktif = False
+                    tampilkan_payment_dialog(df_hasil, total_harga)
             else:
                 st.warning("Tidak ada rekomendasi yang cocok.")
         else:
@@ -363,7 +370,6 @@ if menu == "Pembeli":
 
     st.markdown("---")
     
-    # POP-UP CHATBOT N8N (FIKSasi: Tanpa st.rerun agar dialog tidak tertutup)
     @st.dialog("💬 VIBE-ID Smart Assistant")
     def tampilkan_chatbot_popup():
         st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
@@ -391,7 +397,6 @@ if menu == "Pembeli":
         tampilkan_chatbot_popup()
 
 else:
-    # DASBOR ADMIN / ANALYTICS
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
     
     col_a, col_b, col_c = st.columns(3)
