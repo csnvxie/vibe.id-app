@@ -160,6 +160,17 @@ st.markdown("""
 # =====================================================================
 # 2. HELPER & DATABASE FUNCTIONS
 # =====================================================================
+def get_dominant_color(image_bytes):
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        img = img.resize((1, 1), resample=Image.BOX) 
+        color = img.getpixel((0, 0))
+        del img 
+        gc.collect()
+        return color
+    except Exception:
+        return (255, 255, 255)
+
 def get_color_name(rgb):
     r, g, b = rgb
     
