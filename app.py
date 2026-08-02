@@ -65,6 +65,13 @@ st.markdown("""
         border-right: 1px solid #1E293B;
     }
 
+    /* BANNER DENGAN ANIMASI BUNNY FLOATING */
+    @keyframes floatBunny {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-8px) rotate(3deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+    }
+
     .vibe-banner {
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
@@ -72,20 +79,34 @@ st.markdown("""
         padding: 24px 30px;
         margin-bottom: 25px;
         box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .vibe-banner h1 {
+    .vibe-banner-content h1 {
         color: #FFFFFF;
         font-weight: 700;
         font-size: 1.9rem;
         margin: 0;
     }
 
-    .vibe-banner p {
+    .vibe-banner-content p {
         color: #C7D2FE;
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
+    }
+
+    .floating-bunny {
+        font-size: 3.2rem;
+        animation: floatBunny 3s ease-in-out infinite;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 10px 16px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
 
     /* KUSTOMISASI CONTAINER STREAMLIT AGAR BERWARNA & NYARU (#131B2E) */
@@ -337,11 +358,16 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner
+# Header Top Banner dengan VibeBunny Floating Animasi
 st.markdown("""
 <div class="vibe-banner">
-    <h1>VIBE-ID Smart Assistant & Analytics</h1>
-    <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
+    <div class="vibe-banner-content">
+        <h1>VIBE-ID Smart Assistant & Analytics</h1>
+        <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
+    </div>
+    <div class="floating-bunny" title="VibeBunny AI Assistant">
+        🐰✨
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
