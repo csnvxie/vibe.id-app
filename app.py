@@ -201,7 +201,6 @@ def get_color_name(rgb):
         "Cokelat": (110, 70, 40),
         "Ungu": (90, 40, 110),
         "Pink": (230, 120, 160),
-        "Jingga": (230, 110, 40)
     }
     
     jarak_terkecil = float('inf')
