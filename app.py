@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING UWU & PASTEL EDITION
+# 1. CONFIG & STYLING 
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -73,7 +73,6 @@ st.markdown("""
         border-right: 1px solid #2D3748;
     }
 
-    /* ANIMASI FLOATING KELINCI UWU DI KANAN */
     @keyframes floatBunny {
         0% { transform: translateY(0px) rotate(0deg); }
         50% { transform: translateY(-8px) rotate(5deg); }
@@ -229,7 +228,7 @@ st.markdown("""
     }
 
     /* BADGE STIKER ESTETIK */
-    .uwu-badge {
+    . {
         background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
         color: white;
         padding: 3px 10px;
@@ -325,7 +324,7 @@ st.markdown("""
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
-# Dialog Chatbot UwU
+# Dialog Chatbot
 @st.dialog("💬 VIBE-ID Smart Assistant")
 def tampilkan_chatbot_popup():
     st.caption("✨ Hai kak! VibeBunny siap bantu cariin outfit impianmu 🥺👉👈")
@@ -372,7 +371,7 @@ with st.sidebar:
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #D8B4FE;">🐰 <b>VibeBunny Status:</b></span><br>
-        <span style="font-size: 12px; color: #34D399;">● Super UwU & Online</span>
+        <span style="font-size: 12px; color: #34D399;">● Online</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -422,7 +421,7 @@ st.markdown("""
     <div class="running-bunny-1">🐇</div>
     <div class="running-bunny-2">🐇</div>
     <div class="running-bunny-3">🐇</div>
-    <div class="floating-bunny" title="VibeBunny UwU">
+    <div class="floating-bunny" title="VibeBunny">
         🐰💖
     </div>
 </div>
@@ -640,7 +639,7 @@ if menu == "Pembeli":
                 st.markdown("### 🧾 Ringkasan Invoice")
                 st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
                 st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-                st.markdown("Kurir ekspedisi siap mengirimkan paket uwu kamu ke rumah. Makasih ya kak! ✨")
+                st.markdown("Kurir ekspedisi siap mengirimkan paket outfit kamu ke rumah. Makasih ya kak! ✨")
                 
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("🔄 Selesai & Kembali ke Beranda", use_container_width=True):
