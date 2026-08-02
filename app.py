@@ -9,7 +9,7 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (FIX TOMBOL COLLAPSE UNGU + KELINCI BERLARI)
+# 1. CONFIG & STYLING UWU & PASTEL EDITION
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
@@ -26,14 +26,14 @@ st.markdown("""
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* BACKGROUND GRADIENT GLOW ELEGAN */
+    /* BACKGROUND PASTEL LAVENDER & EFEK SPARKLE */
     .stApp {
-        background-color: #07090E;
+        background-color: #0B0F19;
         background-image: 
-            radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.12) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-            radial-gradient(at 50% 100%, rgba(30, 27, 75, 0.2) 0px, transparent 60%);
-        color: #E2E8F0;
+            radial-gradient(at 10% 20%, rgba(236, 72, 153, 0.12) 0px, transparent 50%),
+            radial-gradient(at 90% 10%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+            radial-gradient(at 50% 90%, rgba(99, 102, 241, 0.12) 0px, transparent 60%);
+        color: #F3F4F6;
         background-attachment: fixed;
     }
 
@@ -49,15 +49,16 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* KOTAK UNGU TOMBOL COLLAPSE / EXPAND (>>) */
+    /* KOTAK UNGU MANIS TOMBOL COLLAPSE / EXPAND (>>) */
     button[kind="header"][aria-label*="collapse"],
     button[kind="header"][aria-label*="Open"],
     header [data-testid="collapsedControl"] button,
     [data-testid="stHeader"] button {
-        background-color: #4F46E5 !important;
-        border-radius: 8px !important;
-        border: 2px solid #818CF8 !important;
+        background-color: #A855F7 !important;
+        border-radius: 10px !important;
+        border: 2px solid #F472B6 !important;
         opacity: 1 !important;
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
     }
 
     button[kind="header"] svg,
@@ -68,18 +69,17 @@ st.markdown("""
     }
 
     section[data-testid="stSidebar"] {
-        background-color: #0B0F17 !important;
-        border-right: 1px solid #1E293B;
+        background-color: #121826 !important;
+        border-right: 1px solid #2D3748;
     }
 
-    /* ANIMASI FLOATING KELINCI BESAR DI KANAN */
+    /* ANIMASI FLOATING KELINCI UWU DI KANAN */
     @keyframes floatBunny {
         0% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-6px) rotate(3deg); }
+        50% { transform: translateY(-8px) rotate(5deg); }
         100% { transform: translateY(0px) rotate(0deg); }
     }
 
-    /* ANIMASI KELINCI BERLARI BOLAK-BALIK SMOOTH */
     @keyframes runBunnySmooth {
         0% { transform: translateX(0px) scaleX(1); }
         48% { transform: translateX(180px) scaleX(1); }
@@ -89,12 +89,12 @@ st.markdown("""
     }
 
     .vibe-banner {
-        background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
-        border: 1px solid #4338CA;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #7E22CE 0%, #4C1D95 50%, #1E1B4B 100%);
+        border: 1px solid #A855F7;
+        border-radius: 20px;
         padding: 24px 30px;
         margin-bottom: 25px;
-        box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 10px 30px -10px rgba(168, 85, 247, 0.4);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -112,7 +112,7 @@ st.markdown("""
     }
 
     .vibe-banner-content p {
-        color: #C7D2FE;
+        color: #E9D5FF;
         font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
@@ -123,10 +123,10 @@ st.markdown("""
     .floating-bunny {
         font-size: 3rem;
         animation: floatBunny 3s ease-in-out infinite;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.25);
         padding: 10px 16px;
-        border-radius: 20px;
+        border-radius: 24px;
         text-align: center;
         box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         position: relative;
@@ -166,19 +166,19 @@ st.markdown("""
     }
 
     div[data-testid="stContainer"] {
-        background-color: rgba(17, 24, 39, 0.75) !important;
-        backdrop-filter: blur(10px);
-        border: 1px solid #1F2937 !important;
-        border-radius: 16px !important;
-        padding: 16px !important;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        background-color: rgba(18, 24, 38, 0.8) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(168, 85, 247, 0.2) !important;
+        border-radius: 18px !important;
+        padding: 18px !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
     }
 
     .saas-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 1px solid #1F2937;
+        border-bottom: 1px solid rgba(168, 85, 247, 0.2);
         padding-bottom: 12px;
         margin-bottom: 18px;
     }
@@ -190,10 +190,10 @@ st.markdown("""
     }
 
     .mini-mascot {
-        background: rgba(99, 102, 241, 0.1);
-        border: 1px solid rgba(99, 102, 241, 0.2);
+        background: rgba(236, 72, 153, 0.15);
+        border: 1px solid rgba(236, 72, 153, 0.3);
         padding: 4px 10px;
-        border-radius: 12px;
+        border-radius: 14px;
         font-size: 1.1rem;
     }
 
@@ -205,9 +205,9 @@ st.markdown("""
 
     .saas-icon-box {
         font-size: 1.4rem;
-        background: #1F2937;
-        border: 1px solid #374151;
-        border-radius: 10px;
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 12px;
         width: 40px;
         height: 40px;
         display: flex;
@@ -219,104 +219,101 @@ st.markdown("""
         margin: 0 !important;
         font-size: 1.05rem !important;
         font-weight: 700 !important;
-        color: #F8FAFC !important;
+        color: #F9FAFB !important;
     }
 
     .saas-title-group p {
         margin: 2px 0 0 0 !important;
         font-size: 0.8rem !important;
-        color: #94A3B8 !important;
+        color: #D8B4FE !important;
+    }
+
+    /* BADGE STIKER ESTETIK */
+    .uwu-badge {
+        background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 6px;
+        box-shadow: 0 2px 8px rgba(236, 72, 153, 0.4);
     }
 
     label {
-        color: #F1F5F9 !important;
+        color: #F3F4F6 !important;
     }
 
     div[data-baseweb="select"] {
-        background-color: #1F2937 !important;
-        border-radius: 10px !important;
+        background-color: #1E293B !important;
+        border-radius: 12px !important;
     }
 
     div[data-baseweb="select"] > div,
     div[data-baseweb="select"] div {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
-        border-color: #374151 !important;
+        background-color: #1E293B !important;
+        color: #F9FAFB !important;
+        border-color: rgba(168, 85, 247, 0.3) !important;
     }
 
     div[data-baseweb="select"] span {
-        color: #F8FAFC !important;
+        color: #F9FAFB !important;
     }
 
     div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #374151 !important;
+        background-color: #1E293B !important;
+        color: #F9FAFB !important;
+        border: 1px solid rgba(168, 85, 247, 0.3) !important;
     }
 
     div[role="option"] {
-        background-color: #1F2937 !important;
-        color: #F8FAFC !important;
+        background-color: #1E293B !important;
+        color: #F9FAFB !important;
     }
     
     div[role="option"]:hover {
-        background-color: #374151 !important;
+        background-color: #334155 !important;
     }
 
     div[data-testid="stCameraInput"] {
-        background-color: #1F2937 !important;
-        border: 1px solid #374151 !important;
-        border-radius: 12px;
+        background-color: #1E293B !important;
+        border: 1px solid rgba(168, 85, 247, 0.3) !important;
+        border-radius: 14px;
         padding: 10px;
     }
 
-    div[data-testid="stCameraInput"] section, 
-    div[data-testid="stCameraInput"] > div {
-        background-color: #1F2937 !important;
-    }
-
-    div[data-testid="stCameraInput"] div[data-baseweb="block"] {
-        background-color: #1F2937 !important;
-    }
-
-    div[data-testid="stCameraInput"] button {
-        background-color: #374151 !important;
-        color: #F8FAFC !important;
-        border: 1px solid #4B5563 !important;
-        border-radius: 8px !important;
-    }
-
     div[data-testid="stFileUploader"] {
-        background-color: #1F2937 !important;
-        border: 1px dashed #374151 !important;
-        border-radius: 12px;
+        background-color: #1E293B !important;
+        border: 1px dashed rgba(168, 85, 247, 0.4) !important;
+        border-radius: 14px;
         padding: 10px;
     }
 
     .stButton > button, div[data-testid="stForm"] button[type="submit"] {
-        background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%) !important;
+        background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%) !important;
         color: #FFFFFF !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         padding: 12px 24px;
         font-weight: 600;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        box-shadow: 0 4px 15px rgba(236, 72, 153, 0.35);
         width: 100%;
     }
 
     .receipt-box {
-        background-color: #1F2937;
-        border: 1px solid #374151;
-        border-radius: 12px;
+        background-color: #1E293B;
+        border: 1px solid rgba(168, 85, 247, 0.3);
+        border-radius: 14px;
         padding: 16px;
         margin-bottom: 15px;
-        color: #F8FAFC !important;
+        color: #F9FAFB !important;
     }
 
     .success-card {
-        background: linear-gradient(135deg, #065F46 0%, #047857 100%);
-        border: 1px solid #10B981;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+        border: 1px solid #34D399;
+        border-radius: 18px;
         padding: 30px;
         text-align: center;
         color: #FFFFFF;
@@ -328,10 +325,10 @@ st.markdown("""
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 
-# Dialog Chatbot
+# Dialog Chatbot UwU
 @st.dialog("💬 VIBE-ID Smart Assistant")
 def tampilkan_chatbot_popup():
-    st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
+    st.caption("✨ Hai kak! VibeBunny siap bantu cariin outfit impianmu 🥺👉👈")
     chat_container = st.container(height=320)
     
     with chat_container:
@@ -339,14 +336,14 @@ def tampilkan_chatbot_popup():
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
     
-    prompt = st.chat_input("Ketik pesan kamu...")
+    prompt = st.chat_input("Ketik pesan kamu ke VibeBunny...")
     if prompt:
         st.session_state.messages.append({"role": "user", "content": prompt})
         with chat_container:
             with st.chat_message("user"):
                 st.markdown(prompt)
             with st.chat_message("assistant"):
-                with st.spinner("Memikirkan jawaban..."):
+                with st.spinner("VibeBunny lagi ngetik... 🐇💭"):
                     response_bot = query_chatbot_n8n(prompt)
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
@@ -363,8 +360,8 @@ def query_chatbot_n8n(user_text):
                 return res_data.get("output", res_data.get("response", res_data.get("reply", "Format JSON valid, tapi isi teks tidak ditemukan.")))
             return str(res_data)
     except Exception as e:
-        return f"Gagal tersambung ke Chatbot n8n: {e}"
-    return "Bot sedang tidak merespon."
+        return f"Duh, gagal nyambung ke bot nih kak: {e}"
+    return "Bot-nya lagi ngantuk nih."
 
 # =====================================================================
 # SIDEBAR NAVIGATION
@@ -373,13 +370,13 @@ with st.sidebar:
     st.image("VIBEID LOGO.png", width=160)
     
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #1F2937 0%, #111827 100%); border: 1px solid #374151; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
-        <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
-        <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid rgba(168,85,247,0.3); border-radius: 12px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
+        <span style="font-size: 13px; color: #D8B4FE;">🐰 <b>VibeBunny Status:</b></span><br>
+        <span style="font-size: 12px; color: #34D399;">● Super UwU & Online</span>
     </div>
     """, unsafe_allow_html=True)
     
-    if st.button("💬 Buka AI Assistant Chat", use_container_width=True):
+    if st.button("💬 Chat sama VibeBunny", use_container_width=True):
         tampilkan_chatbot_popup()
     
     st.markdown("---")
@@ -391,23 +388,23 @@ with st.sidebar:
         default_index=0,
         styles={
             "container": {"padding": "0!important", "background-color": "transparent"},
-            "icon": {"color": "#818CF8", "font-size": "16px"},
+            "icon": {"color": "#F472B6", "font-size": "16px"},
             "nav-link": {
                 "font-size": "14px", 
-                "color": "#94A3B8", 
-                "background-color": "#1F2937", 
-                "border-radius": "8px", 
+                "color": "#D8B4FE", 
+                "background-color": "#1E293B", 
+                "border-radius": "10px", 
                 "margin": "4px 0px",
-                "border": "1px solid #374151"
+                "border": "1px solid rgba(168, 85, 247, 0.2)"
             },
             "nav-link-selected": {
-                "background-color": "#4F46E5", 
+                "background-color": "#8B5CF6", 
                 "color": '#FFFFFF', 
                 "font-weight": "600",
-                "border": "1px solid #6366F1"
+                "border": "1px solid #EC4899"
             },
             "menu-title": {
-                "color": "#64748B",
+                "color": "#A855F7",
                 "font-size": "12px",
                 "font-weight": "700",
                 "letter-spacing": "1px"
@@ -415,18 +412,18 @@ with st.sidebar:
         }
     )
 
-# Header Top Banner dengan 3 Kelinci Berlari Smooth via Pure CSS
+# Header Banner UwU
 st.markdown("""
 <div class="vibe-banner">
     <div class="vibe-banner-content">
         <h1>VIBE-ID Smart Assistant & Analytics</h1>
-        <p>Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub</p>
+        <p>✨ Visual AI Outfit Matcher • n8n Automated Inventory • Business Intelligence Hub 💖</p>
     </div>
     <div class="running-bunny-1">🐇</div>
     <div class="running-bunny-2">🐇</div>
     <div class="running-bunny-3">🐇</div>
-    <div class="floating-bunny" title="VibeBunny AI Assistant">
-        🐰✨
+    <div class="floating-bunny" title="VibeBunny UwU">
+        🐰💖
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -520,7 +517,7 @@ if 'last_order_details' not in st.session_state: st.session_state.last_order_det
 if 'form_reset_counter' not in st.session_state: st.session_state.form_reset_counter = 0
 
 if 'messages' not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Halo kak! VibeBunny siap bantu pilihkan outfit tercakep buat kamu hari ini ✨🐰"}]
 
 # =====================================================================
 # MAIN LAYOUT
@@ -541,7 +538,7 @@ if menu == "Pembeli":
                     </div>
                 </div>
                 <div class="saas-badge-group">
-                    <div class="mini-mascot" title="Bunny Stylist">🕶️🐰</div>
+                    <div class="mini-mascot" title="Bunny Stylist">💖🐰</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -584,11 +581,11 @@ if menu == "Pembeli":
 
         if submit_matching:
             if img_file_buffer is None:
-                st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
+                st.warning("⚠️ Ambil foto atau upload file dulu ya kak, Bre! 🥺")
             else:
                 img_bytes = img_file_buffer.getvalue() 
                 if len(img_bytes) > 2 * 1024 * 1024:
-                    st.error("Foto terlalu besar! Maksimal 2MB.")
+                    st.error("Fotonya kegedean, kak! Maksimal 2MB ya.")
                 else:
                     st.session_state.total_penggunaan_ai += 1
                     st.session_state.log_gender_dicari.append(pilihan_gender)
@@ -610,8 +607,7 @@ if menu == "Pembeli":
                     st.session_state.beli_aktif = True
                     st.session_state.order_success = False  
                     
-                    # Notifikasi Toast Keren
-                    st.toast(f"✨ AI berhasil mendeteksi warna {nama_warna}!", icon="🎨")
+                    st.toast(f"✨ Yeay! AI berhasil mendeteksi warna {nama_warna}!", icon="🎨")
                     st.rerun()
 
     with col_right:
@@ -636,7 +632,7 @@ if menu == "Pembeli":
                 st.markdown("""
                 <div class="success-card">
                     <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
-                    <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+                    <p style="margin:8px 0 0 0; color:#D1FAE5;">Hore! Transaksi kamu udah diverifikasi VibeBunny. 💖</p>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -644,17 +640,17 @@ if menu == "Pembeli":
                 st.markdown("### 🧾 Ringkasan Invoice")
                 st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
                 st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-                st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu. Terima kasih telah berbelanja! 🚀")
+                st.markdown("Kurir ekspedisi siap mengirimkan paket uwu kamu ke rumah. Makasih ya kak! ✨")
                 
                 st.markdown("<br>", unsafe_allow_html=True)
-                if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
+                if st.button("🔄 Selesai & Kembali ke Beranda", use_container_width=True):
                     st.session_state.order_success = False
                     st.session_state.beli_aktif = False
                     st.session_state.hasil_rekomendasi = None
                     st.session_state.warna_terdeteksi = None
                     st.session_state.ai_label_terdeteksi = None
                     st.session_state.form_reset_counter += 1
-                    st.toast("Kembali ke menu awal.", icon="🔄")
+                    st.toast("Kembali ke menu awal siap berbelanja lagi!", icon="🔄")
                     st.rerun()
 
             elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
@@ -669,6 +665,7 @@ if menu == "Pembeli":
                 for i, (idx, row) in enumerate(df_hasil.iterrows()):
                     if i < 3:
                         with cols[i]:
+                            st.markdown('<div class="uwu-badge">✨ Vibe Choice</div>', unsafe_allow_html=True)
                             img_url = str(row.get('url_gambar', ''))
                             if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
                                 img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
@@ -685,10 +682,10 @@ if menu == "Pembeli":
                 
                 st.markdown(f"""
                 <div class="receipt-box">
-                    <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
-                    <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-                    <hr style="border-color: #374151; margin: 8px 0;">
-                    <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
+                    <span style="color: #D8B4FE;">Subtotal Produk:</span> <b style="color: #F9FAFB;">Rp {total_harga:,.0f}</b><br>
+                    <span style="color: #D8B4FE;">Biaya Layanan / Admin:</span> <b style="color: #F9FAFB;">Rp {biaya_admin:,.0f}</b><br>
+                    <hr style="border-color: rgba(168,85,247,0.3); margin: 8px 0;">
+                    <span style="color: #F472B6; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -699,11 +696,11 @@ if menu == "Pembeli":
                 
                 if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
                     va_num = f"8888{random.randint(100000000, 999999999)}"
-                    st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
+                    st.info(f"💡 Kode / Nomor Pembayaran Kamu: **`{va_num}`**")
 
                 st.markdown("<br>", unsafe_allow_html=True)
                 if st.button("✅ BAYAR SEKARANG", use_container_width=True):
-                    with st.spinner("Memproses transaksi perbankan & gateway..."):
+                    with st.spinner("Memproses pembayaran aman bersama VibeBunny... 💳"):
                         import time
                         time.sleep(1.2)
                         st.session_state.total_omzet_toko += grand_total
@@ -715,11 +712,11 @@ if menu == "Pembeli":
                         
                         st.session_state.order_success = True
                         st.balloons()
-                        st.toast("Pembayaran berhasil diverifikasi!", icon="🎉")
+                        st.toast("Yey! Pembayaran berhasil diverifikasi!", icon="🎉")
                         st.rerun()
 
             else:
-                st.info("👈 Buka menu sidebar di pojok kiri atas untuk navigasi atau upload foto untuk mulai AI Visual Matching.")
+                st.info("👈 Buka menu sidebar di pojok kiri atas buat navigasi atau upload foto untuk mulai AI Visual Matching ya kak!")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
@@ -741,9 +738,9 @@ else:
             vibe_counts = df_vibe_log['Vibe Style'].value_counts()
             st.bar_chart(vibe_counts)
             top_vibe = vibe_counts.index[0]
-            st.info(f"💡 **Insight:** Pakaian bertema **{top_vibe}** sedang menjadi tren teratas.")
+            st.info(f"💡 **Insight:** Pakaian bertema **{top_vibe}** lagi jadi tren paling hits nih.")
         else:
-            st.warning("📊 Lakukan simulasi pembelian di menu Pembeli untuk melihat grafik tren.")
+            st.warning("📊 Yuk simulasi pembelian dulu di menu Pembeli buat nampilin grafik trennya.")
 
     with col_table:
         st.subheader(f"📋 Data Stok Gudang Live ({len(df_stok)} Produk)")
