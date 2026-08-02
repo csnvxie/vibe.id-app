@@ -44,27 +44,19 @@ st.markdown("""
     header {visibility: visible !important; background-color: transparent !important;}
     header [data-testid="stHeader"] {background-color: transparent !important;}
 
-    /* --- FIX TOMBOL COLLAPSE SIDEBAR (PAS TERBUKA & TERTUTUP) --- */
-    section[data-testid="stSidebar"] button[kind="header"],
-    section[data-testid="stSidebar"] [data-testid="collapsedControl"] button {
+    /* --- FIX TOMBOL COLLAPSE SIDEBAR (FINAL & AMAN) --- */
+    [data-testid="collapsedControl"] button,
+    button[aria-label="Collapse sidebar"],
+    button[aria-label="Expand sidebar"] {
         background-color: #4F46E5 !important;
         border-radius: 8px !important;
         border: 2px solid #818CF8 !important;
         padding: 4px !important;
     }
 
-    header [data-testid="collapsedControl"] button,
-    header button[kind="header"] {
-        background-color: #4F46E5 !important;
-        border-radius: 8px !important;
-        border: 2px solid #818CF8 !important;
-        padding: 4px !important;
-    }
-
-    section[data-testid="stSidebar"] button[kind="header"] svg,
-    section[data-testid="stSidebar"] [data-testid="collapsedControl"] svg,
-    header [data-testid="collapsedControl"] svg,
-    header button[kind="header"] svg {
+    [data-testid="collapsedControl"] button svg,
+    button[aria-label="Collapse sidebar"] svg,
+    button[aria-label="Expand sidebar"] svg {
         fill: #FFFFFF !important;
         stroke: #FFFFFF !important;
         color: #FFFFFF !important;
