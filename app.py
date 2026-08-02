@@ -160,10 +160,35 @@ st.markdown("""
 # =====================================================================
 # 2. HELPER & DATABASE FUNCTIONS
 # =====================================================================
+def get_dominant_color(image_bytes):
+    try:
+        img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+        width, height = img.size
+        
+        # Ambil hanya area tengah (40% bagian tengah foto) tempat baju biasanya berada
+        left = int(width * 0.3)
+        top = int(height * 0.3)
+        right = int(width * 0.7)
+        bottom = int(height * 0.7)
+        
+        cropped = img.crop((left, top, right, bottom))
+        cropped = cropped.resize((30, 30), resample=Image.Resampling.BILINEAR)
+        arr = np.array(cropped)
+        
+        # Ambil rata-rata warna khusus di bagian tengah baju
+        pixels = arr.reshape(-1, 3)
+        mean_color = np.mean(pixels, axis=0).astype(int)
+        
+        del img, cropped
+        gc.collect()
+        return tuple(mean_color)
+    except Exception:
+        return (255, 255, 255)
+
 def get_color_name(rgb):
     r, g, b = rgb
     
-    # Palet warna fesyen dengan rentang acuan yang lebih pas untuk kamera HP/Webcam
+    # Palet warna fesyen dengan rentang acuan yang pas untuk kamera HP/Webcam
     palet_warna = {
         "Hitam": (40, 40, 40),
         "Putih": (220, 220, 220),
@@ -184,40 +209,8 @@ def get_color_name(rgb):
     warna_terpilih = "Abu-abu"
     
     for nama_warna, (pr, pg, pb) in palet_warna.items():
-        # Menggunakan bobot warna agar mata manusia (sensitif ke hijau/merah) lebih akurat terdeteksi
+        # Menggunakan bobot warna agar lebih akurat sesuai persepsi mata manusia
         jarak = np.sqrt(0.3 * (r - pr)**2 + 0.59 * (g - pg)**2 + 0.11 * (b - pb)**2)
-        if jarak < jarak_terkecil:
-            jarak_terkecil = jarak
-            warna_terpilih = nama_warna
-            
-    return warna_terpilih
-
-def get_color_name(rgb):
-    r, g, b = rgb
-    
-    # Palet standar warna fesyen beserta nilai RGB acuannya
-    palet_warna = {
-        "Hitam": (20, 20, 20),
-        "Putih": (240, 240, 240),
-        "Abu-abu": (128, 128, 128),
-        "Navy": (15, 23, 42),
-        "Biru": (30, 144, 255),
-        "Merah": (220, 20, 60),
-        "Hijau": (34, 139, 34),
-        "Kuning": (255, 215, 0),
-        "Cokelat": (139, 69, 19),
-        "Ungu": (128, 0, 128),
-        "Pink": (255, 105, 180),
-        "Krem": (245, 222, 179),
-        "Jingga": (255, 140, 0)
-    }
-    
-    # Menghitung jarak terdekat (Euclidean distance) dari warna foto ke palet standar
-    jarak_terkecil = float('inf')
-    warna_terpilih = "Abu-abu"
-    
-    for nama_warna, (pr, pg, pb) in palet_warna.items():
-        jarak = np.sqrt((r - pr)**2 + (g - pg)**2 + (b - pb)**2)
         if jarak < jarak_terkecil:
             jarak_terkecil = jarak
             warna_terpilih = nama_warna
@@ -362,13 +355,13 @@ if menu == "Pembeli":
                     st.session_state.warna_terdeteksi = nama_warna
                     st.session_state.ai_label_terdeteksi = ai_label
                     st.session_state.beli_aktif = True
-                    st.session_state.order_success = False  # Reset status sukses saat scan baru
+                    st.session_state.order_success = False  
                     st.rerun()
 
     with col_right:
         st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
         
-        # KONDISI 1: JIKA PEMBAYARAN SUKSES, GANTI KOLOM KANAN DENGAN KARTU SUKSES
+        # KONDISI 1: JIKA PEMBAYARAN SUKSES
         if st.session_state.get('order_success'):
             st.markdown("""
             <div class="success-card">
