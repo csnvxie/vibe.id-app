@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (RESPONSIVE AUTO SIDEBAR)
+# 1. CONFIG & STYLING KEMBALI KE SEMULA (CLEAN & NORMAL)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="expanded"  # PC dipaksa terbuka otomatis
+    initial_sidebar_state="auto"
 )
 
 st.markdown("""
@@ -32,12 +32,14 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 1.5rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1250px;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+        max-width: 100% !important;
     }
 
-    /* Footer Streamlit disembunyikan, header dibiarkan agar tombol hamburger muncul */
+    /* Hilangkan footer bawaan Streamlit */
     footer {visibility: hidden;}
 
     section[data-testid="stSidebar"] {
@@ -136,22 +138,6 @@ st.markdown("""
         text-align: center;
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
-    }
-
-    @media (max-width: 768px) {
-        .vibe-banner {
-            padding: 16px 18px;
-        }
-        .vibe-banner h1 {
-            font-size: 1.4rem !important;
-        }
-        .vibe-banner p {
-            font-size: 0.8rem !important;
-        }
-        .block-container {
-            padding-left: 0.75rem !important;
-            padding-right: 0.75rem !important;
-        }
     }
 </style>
 """, unsafe_allow_html=True)
