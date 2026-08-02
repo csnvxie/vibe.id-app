@@ -153,15 +153,27 @@ def get_dominant_color(image_bytes):
 
 def get_color_name(rgb):
     r, g, b = rgb
-    if r < 40 and g < 40 and b < 40: return "Hitam"
-    if r > 220 and g > 220 and b > 220: return "Putih"
-    if r > 120 and r > g + 40 and r > b + 40: return "Merah"
-    if r < 100 and g > 180 and b < 100: return "Hijau"
-    if r < 100 and g < 100 and b > 180: return "Biru"
-    if r > 180 and r > 180 and b < 100: return "Kuning"
-    if r > 180 and g < 100 and b > 180: return "Ungu"
-    return "Warna Campuran"
-
+    
+    # 1. Warna Dasar Hitam & Putih (Grayscale)
+    if r < 60 and g < 60 and b < 60: return "Hitam"
+    if r > 200 and g > 200 and b > 200: return "Putih"
+    if abs(r - g) < 20 and abs(g - b) < 20 and abs(r - b) < 20:
+        return "Abu-abu"
+        
+    # 2. Warna Dominan Berdasarkan Nilai Tertinggi
+    max_val = max(r, g, b)
+    
+    if max_val == r:
+        if g > 150 and b < 100: return "Kuning"
+        if g > b + 30: return "Jingga"
+        return "Merah"
+    elif max_val == g:
+        if r > 130 and b < 100: return "Kuning"
+        return "Hijau"
+    else:  # max_val == b
+        if r > 130 and g < 100: return "Ungu"
+        if r > 150 and g > 150: return "Biru Muda"
+        return "Biru"
 def query_ai_vision(image_bytes):
     return "casual outfit"
     
