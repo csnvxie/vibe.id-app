@@ -70,7 +70,7 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    .stButton > button {
+    .stButton > button, div[data-testid="stForm"] button[type="submit"] {
         background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
         color: #FFFFFF !important;
         border: none;
@@ -80,9 +80,10 @@ st.markdown("""
         letter-spacing: 0.3px;
         transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        width: 100%;
     }
 
-    .stButton > button:hover {
+    .stButton > button:hover, div[data-testid="stForm"] button[type="submit"]:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
     }
@@ -254,7 +255,7 @@ if 'beli_aktif' not in st.session_state: st.session_state.beli_aktif = False
 if 'hasil_rekomendasi' not in st.session_state: st.session_state.hasil_rekomendasi = None
 if 'order_success' not in st.session_state: st.session_state.order_success = False
 if 'last_order_details' not in st.session_state: st.session_state.last_order_details = {}
-if 'form_reset_key' not in st.session_state: st.session_state.form_reset_key = 0  # Counter untuk reset widget input
+if 'form_reset_counter' not in st.session_state: st.session_state.form_reset_counter = 0
 
 if 'messages' not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": "Halo! Ada yang bisa aku bantu buat cari outfit atau cek stok hari ini? 🙌"}]
@@ -294,13 +295,13 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         st.write(f"**Total Dibayar:** **Rp {total_harga:,.0f}**")
         st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
         
-        if st.button("Tutup & Reset Beranda ke Awal", use_container_width=True):
+        if st.button("Selesai & Reset ke Beranda", use_container_width=True):
             st.session_state.order_success = False
             st.session_state.beli_aktif = False
             st.session_state.hasil_rekomendasi = None
             st.session_state.warna_terdeteksi = None
             st.session_state.ai_label_terdeteksi = None
-            st.session_state.form_reset_key += 1  # Mengganti key widget agar kamera & uploader ter-reset total
+            st.session_state.form_reset_counter += 1  # Reset total komponen form input foto
             st.rerun()
         return
 
@@ -363,28 +364,29 @@ if menu == "Pembeli":
     col_left, col_right = st.columns([1, 1], gap="large")
 
     with col_left:
-        st.subheader("👤 Step 1: Profil Gaya Kamu")
-        col1, col2 = st.columns(2)
-        pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"], key=f"gender_{st.session_state.form_reset_key}")
-        pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"], key=f"usia_{st.session_state.form_reset_key}")
+        # Gunakan st.form dengan clear_on_submit=True agar input foto & kamera bersih total saat submit
+        with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
+            st.subheader("👤 Step 1: Profil Gaya Kamu")
+            col1, col2 = st.columns(2)
+            pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+            pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
-        st.subheader("📸 Step 2: Input Foto Pakaian")
-        tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
-        
-        img_file_buffer = None
-        with tab_cam:
-            foto_kamera = st.camera_input("Ambil foto pakaian kamu", key=f"cam_{st.session_state.form_reset_key}")
-            if foto_kamera: img_file_buffer = foto_kamera
-        with tab_file:
-            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"], key=f"file_{st.session_state.form_reset_key}")
-            if file_foto: img_file_buffer = file_foto
+            st.subheader("📸 Step 2: Input Foto Pakaian")
+            tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
+            
+            img_file_buffer = None
+            with tab_cam:
+                foto_kamera = st.camera_input("Ambil foto pakaian kamu")
+                if foto_kamera: img_file_buffer = foto_kamera
+            with tab_file:
+                file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
+                if file_foto: img_file_buffer = file_foto
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        if img_file_buffer is None and not st.session_state.get('beli_aktif'):
-            st.session_state.hasil_rekomendasi = None
+            st.markdown("<br>", unsafe_allow_html=True)
+            submit_matching = st.form_submit_button("🚀 RUN AI VISUAL MATCHING")
 
-        if st.button("🚀 RUN AI VISUAL MATCHING", use_container_width=True):
+        # Proses ketika form di-submit
+        if submit_matching:
             if img_file_buffer is None:
                 st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
             else:
