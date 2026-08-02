@@ -110,6 +110,7 @@ st.markdown("""
         border-radius: 12px;
         padding: 16px;
         margin-bottom: 15px;
+        color: #F8FAFC !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -280,15 +281,17 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         st.write(f"**Total Dibayar:** **Rp {total_harga:,.0f}**")
         st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
         
-        if st.button("Tutup & Kembali Belanja", use_container_width=True):
+        if st.button("Selesai & Reset ke Beranda", use_container_width=True):
             st.session_state.order_success = False
             st.session_state.beli_aktif = False
+            st.session_state.hasil_rekomendasi = None
+            st.session_state.warna_terdeteksi = None
+            st.session_state.ai_label_terdeteksi = None
             st.rerun()
         return
 
     st.markdown("### Ringkasan Belanja Paket Outfit")
     
-    # List produk ringkas
     for idx, row in df_hasil.iterrows():
         st.markdown(f"- **{row['nama_produk']}** — `Rp {float(row.get('harga', 0)):,.0f}`")
     
@@ -298,10 +301,10 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
     
     st.markdown(f"""
     <div class="receipt-box">
-        <b>Subtotal Produk:</b> Rp {total_harga:,.0f}<br>
-        <b>Biaya Layanan / Admin:</b> Rp {biaya_admin:,.0f}<br>
+        <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
+        <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
         <hr style="border-color: #334155; margin: 8px 0;">
-        <b style="color: #38BDF8; font-size: 1.1rem;">Total Pembayaran: Rp {grand_total:,.0f}</b>
+        <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -324,7 +327,7 @@ def tampilkan_payment_dialog(df_hasil, total_harga):
         if st.button("✅ Bayar Sekarang", use_container_width=True):
             with st.spinner("Memproses transaksi perbankan & gateway..."):
                 import time
-                time.sleep(1.5) # Efek loading nyata
+                time.sleep(1.5)
                 
                 st.session_state.total_omzet_toko += grand_total
                 st.session_state.last_order_details = {"metode": metode_bayar}
