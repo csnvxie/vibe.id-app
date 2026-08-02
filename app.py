@@ -127,7 +127,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# API & Webhook URLs
+# API & Webhook URLs (Pastikan jalur chat menggunakan /webhook/ production)
 API_URL = "https://api-inference.huggingface.co/models/google/vit-base-patch16-224"
 N8N_DATA_URL = "https://csnvxie.app.n8n.cloud/webhook/Ambil-stok-gudang"
 N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
@@ -166,7 +166,6 @@ def get_dominant_color(image_bytes):
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         width, height = img.size
         
-        # Ambil hanya area tengah (40% bagian tengah foto) tempat baju biasanya berada
         left = int(width * 0.3)
         top = int(height * 0.3)
         right = int(width * 0.7)
@@ -176,7 +175,6 @@ def get_dominant_color(image_bytes):
         cropped = cropped.resize((30, 30), resample=Image.Resampling.BILINEAR)
         arr = np.array(cropped)
         
-        # Ambil rata-rata warna khusus di bagian tengah baju
         pixels = arr.reshape(-1, 3)
         mean_color = np.mean(pixels, axis=0).astype(int)
         
@@ -189,7 +187,6 @@ def get_dominant_color(image_bytes):
 def get_color_name(rgb):
     r, g, b = rgb
     
-    # Palet warna fesyen dengan rentang acuan yang pas untuk kamera HP/Webcam
     palet_warna = {
         "Hitam": (40, 40, 40),
         "Putih": (220, 220, 220),
@@ -208,7 +205,6 @@ def get_color_name(rgb):
     warna_terpilih = "Abu-abu"
     
     for nama_warna, (pr, pg, pb) in palet_warna.items():
-        # Menggunakan bobot warna agar lebih akurat sesuai persepsi mata manusia
         jarak = np.sqrt(0.3 * (r - pr)**2 + 0.59 * (g - pg)**2 + 0.11 * (b - pb)**2)
         if jarak < jarak_terkecil:
             jarak_terkecil = jarak
@@ -220,7 +216,7 @@ def get_color_name(rgb):
 def load_data_from_n8n():
     df = pd.DataFrame()
     try:
-        response = requests.get(N8N_DATA_URL, timeout=5) 
+        response = requests.get(N8N_DATA_URL, timeout=8)  
         if response.status_code == 200:
             raw_data = response.json()
             if isinstance(raw_data, list) and len(raw_data) > 0:
@@ -249,11 +245,10 @@ def load_data_from_n8n():
             }
             df = df.rename(columns=mapping_kolom)
             
-            kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'target_usia', 'url_gambar']
+            kolom_wajib = ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'url_gambar']
             for col in kolom_wajib:
                 if col not in df.columns:
                     if col == 'harga': df[col] = 0
-                    elif col == 'target_usia': df[col] = 'Gen Z'
                     elif col == 'url_gambar': df[col] = 'https://cdn-icons-png.flaticon.com/512/3167/3167159.png'
                     else: df[col] = ''
             
@@ -263,7 +258,7 @@ def load_data_from_n8n():
     except Exception as e:
         st.error(f"Gagal mengambil data dari n8n: {e}")
     
-    return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'target_usia', 'harga', 'url_gambar'])
+    return pd.DataFrame(columns=['nama_produk', 'kategori_baju', 'vibe', 'warna', 'gender', 'harga', 'url_gambar'])
 
 df_stok = load_data_from_n8n()
 
@@ -289,7 +284,7 @@ if 'messages' not in st.session_state:
 def query_chatbot_n8n(user_text):
     try:
         payload = {"message": user_text}
-        response = requests.post(N8N_CHAT_URL, json=payload, timeout=30)
+        response = requests.post(N8N_CHAT_URL, json=payload, timeout=25)
         
         if response.status_code == 200:
             res_data = response.json()
@@ -401,6 +396,7 @@ if menu == "Pembeli":
                     with cols[i]:
                         img_url = str(row.get('url_gambar', ''))
                         
+                        # Validasi link agar tidak manggil thumbnail Google / foto brewok yang rusak
                         if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
                             img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
                         
