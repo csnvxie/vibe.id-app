@@ -9,13 +9,13 @@ import random
 from streamlit_option_menu import option_menu
 
 # =====================================================================
-# 1. CONFIG & STYLING MODERN (RESPONSIVE MOBILE FIX)
+# 1. CONFIG & STYLING MODERN (FIX HAMBURGER MENU & 2 KOLOM MOBILE)
 # =====================================================================
 st.set_page_config(
     page_title="VIBE-ID — AI Outfit & Fashion Suite",
     page_icon="VIBEID LOGO.png",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"  # Default collapsed di HP supaya bersih
 )
 
 st.markdown("""
@@ -32,15 +32,16 @@ st.markdown("""
     }
 
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 1.5rem !important;
         padding-bottom: 3rem !important;
-        max-width: 1250px;
+        max-width: 1300px;
     }
 
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
+    /* Styling Sidebar */
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
         border-right: 1px solid #1E293B;
@@ -60,26 +61,34 @@ st.markdown("""
         width: 100%;
     }
 
+    /* Memperbaiki posisi tombol Hamburger Streamlit di HP supaya tidak ketutup */
+    button[kind="header"] {
+        background-color: #1E293B !important;
+        color: #38BDF8 !important;
+        border-radius: 8px !important;
+        border: 1px solid #334155 !important;
+    }
+
     .vibe-banner {
         background: linear-gradient(135deg, #312E81 0%, #1E1B4B 50%, #0F172A 100%);
         border: 1px solid #4338CA;
         border-radius: 16px;
-        padding: 20px 24px;
-        margin-bottom: 20px;
+        padding: 24px 30px;
+        margin-bottom: 25px;
         box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.3);
     }
 
     .vibe-banner h1 {
         color: #FFFFFF;
         font-weight: 700;
-        font-size: 1.8rem;
+        font-size: 2rem;
         margin: 0;
         letter-spacing: -0.5px;
     }
 
     .vibe-banner p {
         color: #C7D2FE;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         margin-top: 6px;
         margin-bottom: 0;
     }
@@ -107,12 +116,12 @@ st.markdown("""
         background-color: #1E293B;
         border: 1px solid #334155;
         border-radius: 12px;
-        padding: 14px;
+        padding: 16px;
     }
 
     div[data-testid="stMetricLabel"] {
         color: #94A3B8 !important;
-        font-size: 0.85rem !important;
+        font-size: 0.9rem !important;
     }
 
     div[data-testid="stMetricValue"] {
@@ -133,7 +142,7 @@ st.markdown("""
         background: linear-gradient(135deg, #065F46 0%, #047857 100%);
         border: 1px solid #10B981;
         border-radius: 16px;
-        padding: 24px;
+        padding: 30px;
         text-align: center;
         color: #FFFFFF;
         box-shadow: 0 15px 30px -5px rgba(16, 185, 129, 0.4);
@@ -150,7 +159,7 @@ N8N_CHAT_URL = "https://csnvxie.app.n8n.cloud/webhook/VibeID-ChattBot"
 @st.dialog("💬 VIBE-ID Smart Assistant")
 def tampilkan_chatbot_popup():
     st.caption("Tanyakan ketersediaan stok, harga, atau rekomendasi langsung ke AI n8n")
-    chat_container = st.container(height=300)
+    chat_container = st.container(height=320)
     
     with chat_container:
         for message in st.session_state.messages:
@@ -169,14 +178,14 @@ def tampilkan_chatbot_popup():
                     st.markdown(response_bot)
         st.session_state.messages.append({"role": "assistant", "content": response_bot})
 
-# Sidebar Navigation
+# Sidebar Navigation (Menu Hamburger di HP)
 with st.sidebar:
-    st.image("VIBEID LOGO.png", width=150)
+    st.image("VIBEID LOGO.png", width=170)
     
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px; text-align: center;">
+    <div style="background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); border: 1px solid #334155; border-radius: 10px; padding: 10px 14px; margin: 10px 0px 10px 0px; text-align: center;">
         <span style="font-size: 13px; color: #94A3B8;">🐰 <b>VibeBunny Status:</b></span><br>
-        <span style="font-size: 12px; color: #34D399;">● AI Engine Online</span>
+        <span style="font-size: 12px; color: #34D399;">● AI Engine Online & Ready</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -231,8 +240,8 @@ def get_dominant_color(image_bytes):
     try:
         img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
         width, height = img.size
-        left, top, right, bottom = int(width * 0.3), int(height * 0.3), int(width * 0.7), int(height * 0.7)
-        cropped = img.crop((left, top, right, bottom)).resize((30, 30), resample=Image.Resampling.BILINEAR)
+        cropped = img.crop((int(width * 0.3), int(height * 0.3), int(width * 0.7), int(height * 0.7)))
+        cropped = cropped.resize((30, 30), resample=Image.Resampling.BILINEAR)
         arr = np.array(cropped)
         mean_color = np.mean(arr.reshape(-1, 3), axis=0).astype(int)
         del img, cropped
@@ -338,150 +347,152 @@ def query_chatbot_n8n(user_text):
     return "Bot sedang tidak merespon."
 
 # =====================================================================
-# 5. USER INTERFACE (UI) LAYOUT - MOBILE ADAPTIVE
+# 5. USER INTERFACE (UI) LAYOUT (2 KOLOM KIRI-KANAN KEMBALI)
 # =====================================================================
 if menu == "Pembeli":
-    # Menggunakan container biasa agar di HP elemen turun ke bawah secara natural (stacked)
-    st.subheader("👤 Step 1: Profil Gaya Kamu")
-    with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
-        col1, col2 = st.columns(2)
-        pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
-        pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
+    col_left, col_right = st.columns([1, 1], gap="large")
 
-        st.subheader("📸 Step 2: Input Foto Pakaian")
-        tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
-        
-        img_file_buffer = None
-        with tab_cam:
-            foto_kamera = st.camera_input("Ambil foto pakaian kamu")
-            if foto_kamera: img_file_buffer = foto_kamera
-        with tab_file:
-            file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
-            if file_foto: img_file_buffer = file_foto
+    with col_left:
+        with st.form(key=f"matching_form_{st.session_state.form_reset_counter}", clear_on_submit=True):
+            st.subheader("👤 Step 1: Profil Gaya Kamu")
+            col1, col2 = st.columns(2)
+            pilihan_gender = col1.selectbox("Gender Kamu:", ["Wanita", "Pria"])
+            pilihan_usia = col2.selectbox("Target Usia:", ["Gen Z", "Milenial / Gen Z"])
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        submit_matching = st.form_submit_button("🚀 RUN AI VISUAL MATCHING")
+            st.subheader("📸 Step 2: Input Foto Pakaian")
+            tab_cam, tab_file = st.tabs(["📷 Real Cam", "📁 Upload Foto"])
+            
+            img_file_buffer = None
+            with tab_cam:
+                foto_kamera = st.camera_input("Ambil foto pakaian kamu")
+                if foto_kamera: img_file_buffer = foto_kamera
+            with tab_file:
+                file_foto = st.file_uploader("Upload file pakaian...", type=["jpg", "jpeg", "png"])
+                if file_foto: img_file_buffer = file_foto
 
-    if submit_matching:
-        if img_file_buffer is None:
-            st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
-        else:
-            img_bytes = img_file_buffer.getvalue() 
-            if len(img_bytes) > 2 * 1024 * 1024:
-                st.error("Foto terlalu besar! Maksimal 2MB.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            submit_matching = st.form_submit_button("🚀 RUN AI VISUAL MATCHING")
+
+        if submit_matching:
+            if img_file_buffer is None:
+                st.warning("⚠️ Ambil foto atau upload file dulu, bre!")
             else:
-                st.session_state.total_penggunaan_ai += 1
-                st.session_state.log_gender_dicari.append(pilihan_gender)
-                
-                rgb_dominan = get_dominant_color(img_bytes)
-                nama_warna = get_color_name(rgb_dominan)
-                ai_label = f"stylish {nama_warna.lower()} outfit"
-                
-                matching_products = pd.DataFrame()
-                if df_stok is not None and not df_stok.empty and 'warna' in df_stok.columns:
-                    matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(nama_warna.lower(), na=False)]
-                
-                if matching_products.empty:
-                    matching_products = df_stok.head(3) if df_stok is not None else pd.DataFrame()
-                
-                st.session_state.hasil_rekomendasi = matching_products
-                st.session_state.warna_terdeteksi = nama_warna
-                st.session_state.ai_label_terdeteksi = ai_label
-                st.session_state.beli_aktif = True
-                st.session_state.order_success = False  
+                img_bytes = img_file_buffer.getvalue() 
+                if len(img_bytes) > 2 * 1024 * 1024:
+                    st.error("Foto terlalu besar! Maksimal 2MB.")
+                else:
+                    st.session_state.total_penggunaan_ai += 1
+                    st.session_state.log_gender_dicari.append(pilihan_gender)
+                    
+                    rgb_dominan = get_dominant_color(img_bytes)
+                    nama_warna = get_color_name(rgb_dominan)
+                    ai_label = f"stylish {nama_warna.lower()} outfit"
+                    
+                    matching_products = pd.DataFrame()
+                    if df_stok is not None and not df_stok.empty and 'warna' in df_stok.columns:
+                        matching_products = df_stok[df_stok['warna'].astype(str).str.lower().str.contains(nama_warna.lower(), na=False)]
+                    
+                    if matching_products.empty:
+                        matching_products = df_stok.head(3) if df_stok is not None else pd.DataFrame()
+                    
+                    st.session_state.hasil_rekomendasi = matching_products
+                    st.session_state.warna_terdeteksi = nama_warna
+                    st.session_state.ai_label_terdeteksi = ai_label
+                    st.session_state.beli_aktif = True
+                    st.session_state.order_success = False  
+                    st.rerun()
+
+    with col_right:
+        st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
+        
+        if st.session_state.get('order_success'):
+            st.markdown("""
+            <div class="success-card">
+                <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
+                <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("### 🧾 Ringkasan Invoice")
+            st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
+            st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
+            st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu dari gudang. Terima kasih telah berbelanja! 🚀")
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
+                st.session_state.order_success = False
+                st.session_state.beli_aktif = False
+                st.session_state.hasil_rekomendasi = None
+                st.session_state.warna_terdeteksi = None
+                st.session_state.ai_label_terdeteksi = None
+                st.session_state.form_reset_counter += 1
                 st.rerun()
 
-    st.markdown("---")
-    st.subheader("🎯 Step 3: Rekomendasi & Transaksi")
-    
-    if st.session_state.get('order_success'):
-        st.markdown("""
-        <div class="success-card">
-            <h2 style="margin:0; color:#FFFFFF;">🎉 PEMBAYARAN BERHASIL!</h2>
-            <p style="margin:8px 0 0 0; color:#D1FAE5;">Transaksi Anda telah dikonfirmasi oleh sistem gateway.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("### 🧾 Ringkasan Invoice")
-        st.write(f"**No. Pesanan:** `INV-VIBE-{random.randint(10000, 99999)}`")
-        st.write(f"**Metode Bayar:** {st.session_state.last_order_details.get('metode', 'Virtual Account')}")
-        st.markdown("Kurir ekspedisi akan segera menjemput paket outfit kamu. Terima kasih telah berbelanja! 🚀")
-        
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🔄 Selesai & Kembali ke Beranda Awal", use_container_width=True):
-            st.session_state.order_success = False
-            st.session_state.beli_aktif = False
-            st.session_state.hasil_rekomendasi = None
-            st.session_state.warna_terdeteksi = None
-            st.session_state.ai_label_terdeteksi = None
-            st.session_state.form_reset_counter += 1
-            st.rerun()
+        elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
+            col_tag1, col_tag2 = st.columns(2)
+            col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
+            col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
+            
+            df_hasil = st.session_state.get('hasil_rekomendasi')
+            
+            cols = st.columns(min(len(df_hasil), 3))
+            total_harga = 0
+            for i, (idx, row) in enumerate(df_hasil.iterrows()):
+                if i < 3:
+                    with cols[i]:
+                        img_url = str(row.get('url_gambar', ''))
+                        if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
+                            img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
+                        try:
+                            st.image(img_url, use_container_width=True)
+                        except Exception:
+                            st.warning("Gagal memuat gambar")
+                        st.write(f"**{row['nama_produk']}**")
+                        total_harga += float(row.get('harga', 0))
+            
+            st.markdown("---")
+            biaya_admin = 2500
+            grand_total = total_harga + biaya_admin
+            
+            st.markdown(f"""
+            <div class="receipt-box">
+                <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
+                <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
+                <hr style="border-color: #334155; margin: 8px 0;">
+                <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            metode_bayar = st.selectbox(
+                "Pilih Metode Pembayaran:", 
+                ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
+            )
+            
+            if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
+                va_num = f"8888{random.randint(100000000, 999999999)}"
+                st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
 
-    elif st.session_state.get('beli_aktif') and st.session_state.get('hasil_rekomendasi') is not None and not st.session_state.get('hasil_rekomendasi').empty:
-        col_tag1, col_tag2 = st.columns(2)
-        col_tag1.success(f"🎨 Warna: **{st.session_state.get('warna_terdeteksi', 'Unknown')}**")
-        col_tag2.info(f"🤖 AI ViT Label: **{st.session_state.get('ai_label_terdeteksi', 'N/A')}**")
-        
-        df_hasil = st.session_state.get('hasil_rekomendasi')
-        
-        cols = st.columns(min(len(df_hasil), 3))
-        total_harga = 0
-        for i, (idx, row) in enumerate(df_hasil.iterrows()):
-            if i < 3:
-                with cols[i]:
-                    img_url = str(row.get('url_gambar', ''))
-                    if not img_url or img_url == 'nan' or 'encrypted-tbn' in img_url:
-                        img_url = "https://cdn-icons-png.flaticon.com/512/892/892458.png" 
-                    try:
-                        st.image(img_url, use_container_width=True)
-                    except Exception:
-                        st.warning("Gagal memuat gambar")
-                    st.write(f"**{row['nama_produk']}**")
-                    total_harga += float(row.get('harga', 0))
-        
-        st.markdown("---")
-        biaya_admin = 2500
-        grand_total = total_harga + biaya_admin
-        
-        st.markdown(f"""
-        <div class="receipt-box">
-            <span style="color: #94A3B8;">Subtotal Produk:</span> <b style="color: #F8FAFC;">Rp {total_harga:,.0f}</b><br>
-            <span style="color: #94A3B8;">Biaya Layanan / Admin:</span> <b style="color: #F8FAFC;">Rp {biaya_admin:,.0f}</b><br>
-            <hr style="border-color: #334155; margin: 8px 0;">
-            <span style="color: #38BDF8; font-size: 1.1rem; font-weight: 700;">Total Pembayaran: Rp {grand_total:,.0f}</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        metode_bayar = st.selectbox(
-            "Pilih Metode Pembayaran:", 
-            ["Virtual Account BCA", "Virtual Account Mandiri", "QRIS (Instan & Otomatis)", "GoPay / OVO / Dana", "COD (Bayar di Tempat)"]
-        )
-        
-        if "Virtual Account" in metode_bayar or "QRIS" in metode_bayar:
-            va_num = f"8888{random.randint(100000000, 999999999)}"
-            st.info(f"💡 Kode / Nomor Pembayaran Anda: **`{va_num}`**")
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("✅ BAYAR SEKARANG", use_container_width=True):
+                with st.spinner("Memproses transaksi perbankan & gateway..."):
+                    import time
+                    time.sleep(1.2)
+                    st.session_state.total_omzet_toko += grand_total
+                    st.session_state.last_order_details = {"metode": metode_bayar}
+                    
+                    for idx, row in df_hasil.iterrows():
+                        if 'vibe' in row and row['vibe']:
+                            st.session_state.log_vibe_dibeli.append(row['vibe'])
+                        if 'nama_produk' in row and row['nama_produk']:
+                            st.session_state.log_produk_dibeli.append(row['nama_produk'])
+                    
+                    st.session_state.order_success = True
+                    st.balloons()
+                    st.rerun()
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("✅ BAYAR SEKARANG", use_container_width=True):
-            with st.spinner("Memproses transaksi perbankan & gateway..."):
-                import time
-                time.sleep(1.2)
-                st.session_state.total_omzet_toko += grand_total
-                st.session_state.last_order_details = {"metode": metode_bayar}
-                
-                for idx, row in df_hasil.iterrows():
-                    if 'vibe' in row and row['vibe']:
-                        st.session_state.log_vibe_dibeli.append(row['vibe'])
-                    if 'nama_produk' in row and row['nama_produk']:
-                        st.session_state.log_produk_dibeli.append(row['nama_produk'])
-                
-                st.session_state.order_success = True
-                st.balloons()
-                st.rerun()
-
-    else:
-        st.info("👆 Upload foto dan klik **RUN AI VISUAL MATCHING** di atas untuk melihat rekomendasi outfit.")
+        else:
+            st.info("👈 Silakan upload foto dan klik **RUN AI VISUAL MATCHING** di sebelah kiri untuk melihat rekomendasi outfit.")
 
 else:
     st.subheader("📈 Real-Time Business Intelligence & Market Trends Dashboard")
@@ -494,20 +505,23 @@ else:
     col_c.metric("Total Omzet Toko", f"Rp {st.session_state.total_omzet_toko:,.0f}")
     
     st.markdown("---")
-    st.subheader("🔥 Vibe Style Terpopuler")
-    if st.session_state.log_vibe_dibeli:
-        df_vibe_log = pd.DataFrame(st.session_state.log_vibe_dibeli, columns=['Vibe Style'])
-        vibe_counts = df_vibe_log['Vibe Style'].value_counts()
-        st.bar_chart(vibe_counts)
-        top_vibe = vibe_counts.index[0]
-        st.info(f"💡 **Insight:** Pakaian bertema **{top_vibe}** sedang menjadi tren teratas.")
-    else:
-        st.warning("📊 Lakukan simulasi pembelian di menu Pembeli untuk melihat grafik tren.")
+    col_trend, col_table = st.columns([1, 1], gap="large")
+    
+    with col_trend:
+        st.subheader("🔥 Vibe Style Terpopuler")
+        if st.session_state.log_vibe_dibeli:
+            df_vibe_log = pd.DataFrame(st.session_state.log_vibe_dibeli, columns=['Vibe Style'])
+            vibe_counts = df_vibe_log['Vibe Style'].value_counts()
+            st.bar_chart(vibe_counts)
+            top_vibe = vibe_counts.index[0]
+            st.info(f"💡 **Insight:** Pakaian bertema **{top_vibe}** sedang menjadi tren teratas.")
+        else:
+            st.warning("📊 Lakukan simulasi pembelian di menu Pembeli untuk melihat grafik tren.")
 
-    st.markdown("---")
-    st.subheader(f"📋 Data Stok Gudang Live ({len(df_stok)} Produk)")
-    if not df_stok.empty:
-        kolom_tampil = [col for col in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga'] if col in df_stok.columns]
-        st.dataframe(df_stok[kolom_tampil], use_container_width=True, height=300)
-    else:
-        st.info("Belum ada data stok yang terload dari database.")
+    with col_table:
+        st.subheader(f"📋 Data Stok Gudang Live ({len(df_stok)} Produk)")
+        if not df_stok.empty:
+            kolom_tampil = [col for col in ['nama_produk', 'kategori_baju', 'vibe', 'warna', 'harga'] if col in df_stok.columns]
+            st.dataframe(df_stok[kolom_tampil], use_container_width=True, height=300)
+        else:
+            st.info("Belum ada data stok yang terload dari database.")
