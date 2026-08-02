@@ -40,9 +40,9 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* HEADER AMAN: Memastikan tombol hamburger / menu atas tidak hilang */
+    /* AMANKAN HEADER & HAMBURGER MENU */
     header {visibility: visible !important; background-color: transparent !important;}
-    header button {color: #E2E8F0 !important;}
+    header [data-testid="stHeader"] {background-color: transparent !important;}
 
     section[data-testid="stSidebar"] {
         background-color: #0F172A !important;
@@ -84,49 +84,64 @@ st.markdown("""
         color: #F1F5F9 !important;
     }
 
-    /* --- TARGET SPESIFIK SELECTBOX STREAMLIT (WANITA & GEN Z) --- */
+    /* --- FIX TOTAL KOTAK SELECTBOX & DROPDOWN (WANITA & GEN Z) --- */
     div[data-baseweb="select"] {
         background-color: #1E293B !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
     }
-    
-    div[data-baseweb="select"] > div {
+
+    /* Menghilangkan background putih di dalam container selectbox */
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="select"] div {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border-color: #334155 !important;
-        border-radius: 8px !important;
     }
 
-    /* Memaksa teks nilai dalam selectbox agar terang */
     div[data-baseweb="select"] span {
         color: #F8FAFC !important;
     }
 
-    /* Dropdown popup pilihan itemnya */
-    div[data-baseweb="popover"], div[data-baseweb="menu"] {
+    /* Menu popup dropdown saat diklik */
+    div[data-baseweb="popover"], div[data-baseweb="menu"], div[role="listbox"] {
         background-color: #1E293B !important;
         color: #F8FAFC !important;
         border: 1px solid #334155 !important;
     }
 
-    button[data-baseweb="tab"] {
+    div[role="option"] {
         background-color: #1E293B !important;
-        color: #94A3B8 !important;
-        border-radius: 8px 8px 0 0 !important;
-        border: 1px solid #334155 !important;
+        color: #F8FAFC !important;
     }
     
-    button[data-baseweb="tab"][aria-selected="true"] {
-        background-color: #4F46E5 !important;
-        color: #FFFFFF !important;
-        border-color: #6366F1 !important;
+    div[role="option"]:hover {
+        background-color: #334155 !important;
     }
 
+    /* --- FIX TOTAL AREA CAMERA INPUT & TOMBOL TAKE PHOTO --- */
     div[data-testid="stCameraInput"] {
         background-color: #1E293B !important;
         border: 1px solid #334155 !important;
         border-radius: 12px;
         padding: 10px;
+    }
+
+    div[data-testid="stCameraInput"] section, 
+    div[data-testid="stCameraInput"] > div {
+        background-color: #1E293B !important;
+    }
+
+    /* Memaksa area container bawah tombol kamera jadi gelap */
+    div[data-testid="stCameraInput"] div[data-baseweb="block"] {
+        background-color: #1E293B !important;
+    }
+
+    /* Tombol Take Photo bawaan kamera */
+    div[data-testid="stCameraInput"] button {
+        background-color: #334155 !important;
+        color: #F8FAFC !important;
+        border: 1px solid #475569 !important;
+        border-radius: 8px !important;
     }
 
     div[data-testid="stFileUploader"] {
