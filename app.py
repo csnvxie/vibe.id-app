@@ -73,6 +73,14 @@ st.markdown("""
         border-right: 1px solid #2D3748;
     }
 
+    /* FIX WARNA TEKS METRIK AGAR TERLIHAT JELAS (PUTIH TERANG) */
+    [data-testid="stMetricValue"], [data-testid="stMetricLabel"], [data-testid="stMetricDelta"] {
+        color: #FFFFFF !important;
+    }
+    [data-testid="stMetric"] div {
+        color: #FFFFFF !important;
+    }
+
     @keyframes floatBunny {
         0% { transform: translateY(0px) rotate(0deg); }
         50% { transform: translateY(-8px) rotate(5deg); }
@@ -227,8 +235,7 @@ st.markdown("""
         color: #D8B4FE !important;
     }
 
-    /* BADGE STIKER ESTETIK */
-    . {
+    .uwu-badge {
         background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);
         color: white;
         padding: 3px 10px;
